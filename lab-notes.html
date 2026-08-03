@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Lab-Notes | Junlong</title>
+
+    <meta
+        name="description"
+        content="Electrical engineering lab notes, circuit references, formulas, embedded systems experiments, and technical learning documentation by Junlong He."
+    >
+
+    <meta
+        name="theme-color"
+        content="#0f1115"
+    >
+
+    <script src="js/theme-init.js"></script>
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css"
+        integrity="sha384-1vdNCNel6Tx/NQa8IR1mGOGKsbGreCkOPfbtPPnUURJ5Tu2PRVfQ/7KLZC+Pi1p1"
+        crossorigin="anonymous"
+    >
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body id="top">
+
+    <a href="#main-content" class="skip-link">
+        Skip to main content
+    </a>
+
+    <header class="site-header">
+
+        <div class="container">
+
+            <nav class="navbar" aria-label="Primary navigation">
+
+                <a href="index.html" class="logo">
+                    EE Portfolio
+                </a>
+
+                <button
+                    class="nav-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="primary-navigation"
+                    aria-label="Open navigation"
+                >
+                    <span class="nav-toggle-line"></span>
+                    <span class="nav-toggle-line"></span>
+                </button>
+
+                <ul class="nav-menu" id="primary-navigation">
+
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+
+                    <li>
+                        <a href="about.html">
+                            About
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="projects.html">Projects</a>
+                    </li>
+
+                   <li>
+                        <a
+                            href="lab-notes.html"
+                            aria-current="page"
+                        >
+                            Lab Notes
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="components.html">
+                            Components
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a href="resources.html">Resources</a>
+                    </li>
+
+                    <li class="nav-theme-item">
+
+                        <button
+                            class="theme-toggle"
+                            type="button"
+                            data-theme-toggle
+                            aria-label="Switch theme"
+                            title="Switch theme"
+                        >
+
+                            <svg
+                                class="
+                                    theme-toggle-icon
+                                    theme-toggle-icon-sun
+                                "
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="4"
+                                ></circle>
+
+                                <path d="M12 2v2"></path>
+                                <path d="M12 20v2"></path>
+                                <path d="M4.93 4.93l1.42 1.42"></path>
+                                <path d="M17.65 17.65l1.42 1.42"></path>
+                                <path d="M2 12h2"></path>
+                                <path d="M20 12h2"></path>
+                                <path d="M4.93 19.07l1.42-1.42"></path>
+                                <path d="M17.65 6.35l1.42-1.42"></path>
+                            </svg>
+
+
+                            <svg
+                                class="
+                                    theme-toggle-icon
+                                    theme-toggle-icon-moon
+                                "
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="
+                                        M20.5 14.2
+                                        A8 8 0 0 1
+                                        9.8 3.5
+                                        A8.5 8.5 0 1 0
+                                        20.5 14.2
+                                    "
+                                ></path>
+                            </svg>
+
+
+                            <span class="theme-toggle-label">
+                                Theme
+                            </span>
+
+                        </button>
+
+                    </li>
+
+                </ul>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <main id="main-content">
+
+        <section class="page-hero lab-notes-hero">
+
+            <div class="container">
+
+                <div class="page-hero-content">
+
+                    <p class="page-eyebrow">
+                        Engineering Knowledge Base
+                    </p>
+
+                    <h1 class="page-title">
+                        Lab Notes
+                    </h1>
+
+                    <p class="page-description">
+                        Experiments, circuit references, formulas, design notes,
+                        and lessons learned while studying electrical engineering.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="lab-notes-section">
+
+            <div class="container">
+
+                <div class="notes-search">
+
+                    <label
+                        class="notes-search-label"
+                        for="note-search"
+                    >
+                        Search notes
+                    </label>
+
+                    <div class="notes-search-field">
+
+                        <svg
+                            class="notes-search-icon"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <circle
+                                cx="11"
+                                cy="11"
+                                r="7"
+                            ></circle>
+
+                            <path d="M20 20l-4-4"></path>
+                        </svg>
+
+                        <input
+                            class="notes-search-input"
+                            id="note-search"
+                            type="search"
+                            placeholder="Search circuits, formulas, tags..."
+                            autocomplete="off"
+                            spellcheck="false"
+                        >
+
+                        <button
+                            class="notes-search-clear"
+                            id="notes-search-clear"
+                            type="button"
+                            aria-label="Clear note search"
+                            hidden
+                        >
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path d="M6 6l12 12"></path>
+                                <path d="M18 6L6 18"></path>
+                            </svg>
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="notes-toolbar">
+
+                    <div
+                        class="note-filters"
+                        role="group"
+                        aria-label="Filter lab notes by type"
+                    >
+
+                        <button
+                            class="note-filter-button is-active"
+                            type="button"
+                            data-note-filter="all"
+                            aria-pressed="true"
+                        >
+                            All
+                        </button>
+
+                        <button
+                            class="note-filter-button"
+                            type="button"
+                            data-note-filter="lab"
+                            aria-pressed="false"
+                        >
+                            Labs
+                        </button>
+
+                        <button
+                            class="note-filter-button"
+                            type="button"
+                            data-note-filter="circuit"
+                            aria-pressed="false"
+                        >
+                            Circuits
+                        </button>
+
+                        <button
+                            class="note-filter-button"
+                            type="button"
+                            data-note-filter="formula"
+                            aria-pressed="false"
+                        >
+                            Formulas
+                        </button>
+
+                    </div>
+
+
+                    <p
+                        class="notes-status"
+                        id="notes-status"
+                        role="status"
+                        aria-live="polite"
+                    ></p>
+
+                </div>
+
+
+                <div
+                    class="notes-grid"
+                    id="notes-grid"
+                ></div>
+
+
+                <div
+                    class="notes-empty-state"
+                    id="notes-empty-state"
+                    hidden
+                >
+
+                    <svg
+                        class="notes-empty-icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="M4 5h16v14H4z"></path>
+                        <path d="M8 9h8"></path>
+                        <path d="M8 13h5"></path>
+                    </svg>
+
+                    <h2 id="notes-empty-title">
+                        No notes found
+                    </h2>
+
+                    <p id="notes-empty-text">
+                        There are currently no notes matching these filters.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer class="site-footer">
+
+        <div class="container">
+
+            <div class="footer-grid">
+
+                <div class="footer-brand">
+
+                    <a href="index.html" class="footer-logo">
+                        EE Portfolio
+                    </a>
+
+                    <p class="footer-description">
+                        Documenting embedded systems, digital design,
+                        PCB development, and hands-on electrical engineering.
+                    </p>
+
+                </div>
+
+
+                <nav
+                    class="footer-navigation"
+                    aria-label="Footer navigation"
+                >
+
+                    <h2 class="footer-heading">
+                        Explore
+                    </h2>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a href="index.html">
+                                Home
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="about.html">
+                                About
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#featured-projects">
+                                Projects
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="lab-notes.html">
+                                Lab Notes
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="components.html">
+                                Components
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="resources.html">
+                                Resources
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+
+                <div class="footer-contact">
+
+                    <h2 class="footer-heading">
+                        Connect
+                    </h2>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a
+                                href="https://github.com/YOUR-USERNAME"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                GitHub
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="https://www.linkedin.com/in/YOUR-USERNAME/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                LinkedIn
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="mailto:YOUR-EMAIL@example.com">
+                                Email
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p>
+                    © <span id="current-year"></span>
+                    Junlong He. Built with HTML, CSS, and JavaScript.
+                </p>
+
+                <a href="#top" class="back-to-top">
+
+                    Back to top
+
+                    <svg
+                        class="icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="M12 19V5"></path>
+                        <path d="M6 11l6-6 6 6"></path>
+                    </svg>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.js"
+        integrity="sha384-ycJ6GAwiS15LoUPipwJOrWTvkUHl/YqELValBwI5I4awP1EeEQJYarj+w85ntcz7"
+        crossorigin="anonymous"
+    ></script>
+
+    <script src="js/lab-notes-data.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>

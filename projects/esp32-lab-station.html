@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ESP32-S3 Portable Lab Station</title>
+
+    <meta
+        name="description"
+        content="An ESP32-S3 portable engineering platform combining an OLED interface, signal generator, oscilloscope, logic analysis, and expandable hardware tools."
+    >
+
+    <meta
+        name="theme-color"
+        content="#0f1115"
+    >
+
+    <script src="../js/theme-init.js"></script>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body id="top">
+
+    <a href="#main-content" class="skip-link">
+        Skip to main content
+    </a>
+
+
+    <header class="site-header">
+
+        <div class="container">
+
+            <nav class="navbar" aria-label="Primary navigation">
+
+                <a href="../index.html" class="logo">
+                    EE Portfolio
+                </a>
+
+                <button
+                    class="nav-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="primary-navigation"
+                    aria-label="Open navigation"
+                >
+                    <span class="nav-toggle-line"></span>
+                    <span class="nav-toggle-line"></span>
+                </button>
+
+                <ul class="nav-menu" id="primary-navigation">
+
+                    <li>
+                        <a href="../index.html">Home</a>
+                    </li>
+
+                    <li>
+                        <a href="../projects.html" aria-current="page">
+                            Projects
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="../lab-notes.html">
+                            Lab Notes
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#">Components</a>
+                    </li>
+
+                    <li>
+                        <a href="#">Resources</a>
+                    </li>
+
+                    <li class="nav-theme-item">
+
+                        <button
+                            class="theme-toggle"
+                            type="button"
+                            data-theme-toggle
+                            aria-label="Switch theme"
+                            title="Switch theme"
+                        >
+
+                            <svg
+                                class="
+                                    theme-toggle-icon
+                                    theme-toggle-icon-sun
+                                "
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="4"
+                                ></circle>
+
+                                <path d="M12 2v2"></path>
+                                <path d="M12 20v2"></path>
+                                <path d="M4.93 4.93l1.42 1.42"></path>
+                                <path d="M17.65 17.65l1.42 1.42"></path>
+                                <path d="M2 12h2"></path>
+                                <path d="M20 12h2"></path>
+                                <path d="M4.93 19.07l1.42-1.42"></path>
+                                <path d="M17.65 6.35l1.42-1.42"></path>
+                            </svg>
+
+
+                            <svg
+                                class="
+                                    theme-toggle-icon
+                                    theme-toggle-icon-moon
+                                "
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="
+                                        M20.5 14.2
+                                        A8 8 0 0 1
+                                        9.8 3.5
+                                        A8.5 8.5 0 1 0
+                                        20.5 14.2
+                                    "
+                                ></path>
+                            </svg>
+
+
+                            <span class="theme-toggle-label">
+                                Theme
+                            </span>
+
+                        </button>
+
+                    </li>
+
+                </ul>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <main id="main-content">
+
+        <section class="project-hero">
+
+            <div class="container">
+
+                <nav
+                    class="breadcrumb"
+                    aria-label="Breadcrumb"
+                >
+                    <ol>
+
+                        <li>
+                            <a href="../index.html">
+                                Home
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../about.html">
+                                About
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../projects.html">
+                                Projects
+                            </a>
+                        </li>
+
+                        <li>
+                            <span aria-current="page">
+                                ESP32-S3 Lab Station
+                            </span>
+                        </li>
+
+                    </ol>
+                </nav>
+
+
+                <div class="project-hero-grid">
+
+                    <div class="project-hero-content">
+
+                        <p class="project-page-eyebrow">
+                            Embedded Systems · Case Study
+                        </p>
+
+                        <h1 class="project-page-title">
+                            ESP32-S3 Portable Lab Station
+                        </h1>
+
+                        <p class="project-page-description">
+                            A modular handheld engineering platform designed to
+                            combine signal generation, waveform measurement,
+                            digital analysis, and an OLED-based user interface
+                            in one portable device.
+                        </p>
+
+                        <div class="project-hero-actions">
+
+                            <a
+                                href="#overview"
+                                class="button button-primary"
+                            >
+                                Read Case Study
+
+                                <svg
+                                    class="icon"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M12 5v14"></path>
+                                    <path d="M18 13l-6 6-6-6"></path>
+                                </svg>
+                            </a>
+
+                            <a
+                                href="https://github.com/YOUR-USERNAME/YOUR-REPOSITORY"
+                                class="button button-secondary"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                View Repository
+
+                                <svg
+                                    class="icon"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M14 5h5v5"></path>
+                                    <path d="M10 14L19 5"></path>
+                                    <path d="M19 13v6H5V5h6"></path>
+                                </svg>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                    <aside
+                        class="project-summary"
+                        aria-label="Project summary"
+                    >
+
+                        <dl class="project-meta">
+
+                            <div>
+                                <dt>Status</dt>
+                                <dd>
+                                    <span class="status-indicator"></span>
+                                    In Development
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt>Platform</dt>
+                                <dd>ESP32-S3 N16R8</dd>
+                            </div>
+
+                            <div>
+                                <dt>Language</dt>
+                                <dd>C++ / Arduino</dd>
+                            </div>
+
+                            <div>
+                                <dt>Interface</dt>
+                                <dd>OLED · I²C · Buttons</dd>
+                            </div>
+
+                        </dl>
+
+                    </aside>
+
+                </div>
+
+                <div class="project-media-frame">
+
+                    <div class="project-media-placeholder">
+
+                        <div class="media-placeholder-content">
+
+                            <svg
+                                class="media-placeholder-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <rect
+                                    x="3"
+                                    y="5"
+                                    width="18"
+                                    height="14"
+                                    rx="2"
+                                ></rect>
+
+                                <circle
+                                    cx="9"
+                                    cy="10"
+                                    r="1.5"
+                                ></circle>
+
+                                <path d="M4 17l5-5 4 4 2-2 5 5"></path>
+                            </svg>
+
+                            <p class="media-placeholder-label">
+                                Visual Documentation
+                            </p>
+
+                            <p class="media-placeholder-title">
+                                Project photo coming soon
+                            </p>
+
+                            <p class="media-placeholder-description">
+                                This area will contain the current ESP32-S3 Lab Station
+                                prototype and hardware layout.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+        <nav
+            class="project-toc"
+            aria-label="Case study sections"
+        >
+
+            <div class="container">
+
+                <ul class="project-toc-list">
+
+                    <li>
+                        <a
+                            href="#overview"
+                            class="project-toc-link"
+                            aria-current="location"
+                        >
+                            Overview
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="#features"
+                            class="project-toc-link"
+                        >
+                            Features
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="#architecture"
+                            class="project-toc-link"
+                        >
+                            Architecture
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="#media"
+                            class="project-toc-link"
+                        >
+                            Media
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="#pin-assignment"
+                            class="project-toc-link"
+                        >
+                            Pin Assignment
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="#roadmap"
+                            class="project-toc-link"
+                        >
+                            Roadmap
+                        </a>
+                    </li>
+
+                </ul>
+                <div
+                    class="reading-progress"
+                    role="progressbar"
+                    aria-label="Page reading progress"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow="0"
+                >
+                    <span class="reading-progress-bar"></span>
+                </div>
+            </div>
+
+        </nav>
+
+        <section
+            class="case-study-section"
+            id="overview"
+        >
+
+            <div class="container">
+
+                <div class="case-study-layout">
+
+                    <article class="case-study-content">
+
+                        <p class="section-label">
+                            Overview
+                        </p>
+
+                        <h2 class="case-study-title">
+                            Why I am building it
+                        </h2>
+
+                        <p>
+                            Electrical engineering projects often require several
+                            separate tools: an oscilloscope, signal generator,
+                            logic analyzer, development board, and computer.
+                            This project explores how many basic laboratory
+                            functions can be integrated into one compact,
+                            programmable platform.
+                        </p>
+
+                        <p>
+                            The ESP32-S3 acts as the central controller. It manages
+                            the OLED interface, user input, waveform generation,
+                            analog sampling, digital signal capture, wireless
+                            communication, and future hardware expansion.
+                        </p>
+
+                        <p>
+                            The goal is not to replace professional laboratory
+                            equipment. The goal is to create a portable learning
+                            tool for debugging low-voltage embedded systems and
+                            documenting the engineering decisions behind it.
+                        </p>
+
+                    </article>
+
+
+                    <aside class="project-highlights">
+
+                        <h2 class="project-highlights-title">
+                            Project Goals
+                        </h2>
+
+                        <ul class="highlight-list">
+
+                            <li>
+                                Portable and USB-powered
+                            </li>
+
+                            <li>
+                                Modular software architecture
+                            </li>
+
+                            <li>
+                                Expandable hardware interfaces
+                            </li>
+
+                            <li>
+                                Safe low-voltage signal testing
+                            </li>
+
+                            <li>
+                                Clear documentation and revision history
+                            </li>
+
+                        </ul>
+
+                    </aside>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section
+            class="case-study-section section-surface"
+            id="features"
+        >
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <p class="section-label">
+                        Development
+                    </p>
+
+                    <h2 class="section-title">
+                        Feature Status
+                    </h2>
+
+                    <p class="section-description">
+                        The project is being developed incrementally so that each
+                        subsystem can be tested independently before integration.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-status-grid">
+
+                    <article class="feature-status-card">
+
+                        <span class="status-badge status-complete">
+                            Implemented
+                        </span>
+
+                        <h3>
+                            OLED Menu System
+                        </h3>
+
+                        <p>
+                            A multi-level user interface controlled by physical
+                            buttons and designed for future tool expansion.
+                        </p>
+
+                    </article>
+
+
+                    <article class="feature-status-card">
+
+                        <span class="status-badge status-prototype">
+                            Prototype
+                        </span>
+
+                        <h3>
+                            Signal Generator
+                        </h3>
+
+                        <p>
+                            Configurable PWM waveform generation with adjustable
+                            frequency and duty cycle.
+                        </p>
+
+                    </article>
+
+
+                    <article class="feature-status-card">
+
+                        <span class="status-badge status-prototype">
+                            Prototype
+                        </span>
+
+                        <h3>
+                            Oscilloscope
+                        </h3>
+
+                        <p>
+                            ADC-based waveform sampling with basic voltage
+                            measurement and OLED visualization.
+                        </p>
+
+                    </article>
+
+
+                    <article class="feature-status-card">
+
+                        <span class="status-badge status-planned">
+                            Planned
+                        </span>
+
+                        <h3>
+                            Logic Analyzer
+                        </h3>
+
+                        <p>
+                            Multi-channel digital capture for observing timing,
+                            communication protocols, and embedded signals.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section
+            class="case-study-section"
+            id="architecture"
+        >
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <p class="section-label">
+                        Architecture
+                    </p>
+
+                    <h2 class="section-title">
+                        System Architecture
+                    </h2>
+
+                    <p class="section-description">
+                        The platform separates user input, signal processing,
+                        and output functions into independent subsystems.
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="architecture-flow"
+                    aria-label="System architecture flow"
+                >
+
+                    <div class="architecture-node">
+
+                        <p class="architecture-node-label">
+                            Input Layer
+                        </p>
+
+                        <h3>
+                            Controls and Signals
+                        </h3>
+
+                        <ul>
+                            <li>Physical buttons</li>
+                            <li>Analog signal input</li>
+                            <li>Digital logic channels</li>
+                            <li>I²C peripherals</li>
+                        </ul>
+
+                    </div>
+
+
+                    <div
+                        class="architecture-arrow"
+                        aria-hidden="true"
+                    >
+                        →
+                    </div>
+
+
+                    <div class="architecture-node architecture-node-primary">
+
+                        <p class="architecture-node-label">
+                            Processing Layer
+                        </p>
+
+                        <h3>
+                            ESP32-S3
+                        </h3>
+
+                        <ul>
+                            <li>Menu state management</li>
+                            <li>ADC sampling</li>
+                            <li>PWM generation</li>
+                            <li>Data processing</li>
+                        </ul>
+
+                    </div>
+
+
+                    <div
+                        class="architecture-arrow"
+                        aria-hidden="true"
+                    >
+                        →
+                    </div>
+
+
+                    <div class="architecture-node">
+
+                        <p class="architecture-node-label">
+                            Output Layer
+                        </p>
+
+                        <h3>
+                            Display and Interfaces
+                        </h3>
+
+                        <ul>
+                            <li>OLED visualization</li>
+                            <li>Signal output</li>
+                            <li>USB communication</li>
+                            <li>Wi-Fi connectivity</li>
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section
+            class="case-study-section"
+            id="media"
+        >
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <p class="section-label">
+                        Development Media
+                    </p>
+
+                    <h2 class="section-title">
+                        Prototype and Testing
+                    </h2>
+
+                    <p class="section-description">
+                        Hardware photos, interface screenshots, and measurement
+                        results will be added as each subsystem is developed
+                        and verified.
+                    </p>
+
+                </div>
+
+
+                <div class="project-media-grid">
+
+                    <article class="media-plan-card media-plan-card-wide">
+
+                        <div class="media-plan-visual">
+
+                            <svg
+                                class="media-plan-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <rect
+                                    x="3"
+                                    y="5"
+                                    width="18"
+                                    height="14"
+                                    rx="2"
+                                ></rect>
+
+                                <path d="M7 15l3-3 2 2 3-4 3 5"></path>
+                            </svg>
+
+                        </div>
+
+                        <div class="media-plan-content">
+
+                            <p class="media-plan-label">
+                                Interface
+                            </p>
+
+                            <h3>
+                                OLED Menu Screenshot
+                            </h3>
+
+                            <p>
+                                A clear photo or screenshot showing the multi-level
+                                tool-selection interface.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="media-plan-card">
+
+                        <div class="media-plan-visual">
+
+                            <svg
+                                class="media-plan-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <rect
+                                    x="4"
+                                    y="4"
+                                    width="16"
+                                    height="16"
+                                    rx="2"
+                                ></rect>
+
+                                <path d="M8 2v4"></path>
+                                <path d="M12 2v4"></path>
+                                <path d="M16 2v4"></path>
+
+                                <path d="M8 18v4"></path>
+                                <path d="M12 18v4"></path>
+                                <path d="M16 18v4"></path>
+
+                                <path d="M2 8h4"></path>
+                                <path d="M2 12h4"></path>
+                                <path d="M2 16h4"></path>
+
+                                <path d="M18 8h4"></path>
+                                <path d="M18 12h4"></path>
+                                <path d="M18 16h4"></path>
+                            </svg>
+
+                        </div>
+
+                        <div class="media-plan-content">
+
+                            <p class="media-plan-label">
+                                Hardware
+                            </p>
+
+                            <h3>
+                                Prototype Assembly
+                            </h3>
+
+                            <p>
+                                A photo documenting the ESP32-S3, OLED, buttons,
+                                wiring, and prototype-board layout.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="media-plan-card">
+
+                        <div class="media-plan-visual">
+
+                            <svg
+                                class="media-plan-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path d="M3 12h3l2-6 4 12 3-9 2 6h4"></path>
+                            </svg>
+
+                        </div>
+
+                        <div class="media-plan-content">
+
+                            <p class="media-plan-label">
+                                Measurement
+                            </p>
+
+                            <h3>
+                                Waveform Test Result
+                            </h3>
+
+                            <p>
+                                An oscilloscope capture or test screenshot showing
+                                the generated frequency and duty cycle.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section
+            class="case-study-section section-surface"
+            id="pin-assignment"
+        >
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <p class="section-label">
+                        Hardware
+                    </p>
+
+                    <h2 class="section-title">
+                        Current Pin Assignment
+                    </h2>
+
+                    <p class="section-description">
+                        Confirmed interface pins are documented first. Measurement
+                        and signal pins will be finalized after the protection
+                        and analog front-end design is complete.
+                    </p>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table class="pin-table">
+
+                        <caption>
+                            ESP32-S3 interface pin assignments
+                        </caption>
+
+                        <thead>
+
+                            <tr>
+                                <th scope="col">Function</th>
+                                <th scope="col">GPIO</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Notes</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>I²C SDA</td>
+                                <td><code>GPIO 8</code></td>
+                                <td>Confirmed</td>
+                                <td>Shared OLED and peripheral data line</td>
+                            </tr>
+
+                            <tr>
+                                <td>I²C SCL</td>
+                                <td><code>GPIO 9</code></td>
+                                <td>Confirmed</td>
+                                <td>Shared OLED and peripheral clock line</td>
+                            </tr>
+
+                            <tr>
+                                <td>Up / Left Button</td>
+                                <td><code>GPIO 48</code></td>
+                                <td>Confirmed</td>
+                                <td>Configured with internal pull-up</td>
+                            </tr>
+
+                            <tr>
+                                <td>Down / Right Button</td>
+                                <td><code>GPIO 39</code></td>
+                                <td>Confirmed</td>
+                                <td>Configured with internal pull-up</td>
+                            </tr>
+
+                            <tr>
+                                <td>Confirm Button</td>
+                                <td><code>GPIO 40</code></td>
+                                <td>Confirmed</td>
+                                <td>Menu selection input</td>
+                            </tr>
+
+                            <tr>
+                                <td>Signal Output</td>
+                                <td><code>TBD</code></td>
+                                <td>Under Review</td>
+                                <td>Final PWM-capable pin not yet assigned</td>
+                            </tr>
+
+                            <tr>
+                                <td>Oscilloscope Input</td>
+                                <td><code>TBD</code></td>
+                                <td>Under Review</td>
+                                <td>Requires an ADC pin and protected front end</td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section
+            class="case-study-section"
+            id="roadmap"
+        >
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <p class="section-label">
+                        Roadmap
+                    </p>
+
+                    <h2 class="section-title">
+                        Next Development Steps
+                    </h2>
+
+                </div>
+
+
+                <ol class="roadmap-list">
+
+                    <li class="roadmap-item">
+
+                        <span class="roadmap-number">
+                            01
+                        </span>
+
+                        <div>
+                            <h3>
+                                Stabilize the menu architecture
+                            </h3>
+
+                            <p>
+                                Separate display, input, and tool logic into
+                                maintainable software modules.
+                            </p>
+                        </div>
+
+                    </li>
+
+
+                    <li class="roadmap-item">
+
+                        <span class="roadmap-number">
+                            02
+                        </span>
+
+                        <div>
+                            <h3>
+                                Build the analog input front end
+                            </h3>
+
+                            <p>
+                                Add voltage limiting, scaling, filtering, and
+                                protection before connecting external signals.
+                            </p>
+                        </div>
+
+                    </li>
+
+
+                    <li class="roadmap-item">
+
+                        <span class="roadmap-number">
+                            03
+                        </span>
+
+                        <div>
+                            <h3>
+                                Implement digital signal capture
+                            </h3>
+
+                            <p>
+                                Develop buffered multi-channel sampling for the
+                                logic analyzer subsystem.
+                            </p>
+                        </div>
+
+                    </li>
+
+
+                    <li class="roadmap-item">
+
+                        <span class="roadmap-number">
+                            04
+                        </span>
+
+                        <div>
+                            <h3>
+                                Design a custom carrier PCB
+                            </h3>
+
+                            <p>
+                                Move from a prototype board to an organized,
+                                protected, and expandable hardware platform.
+                            </p>
+                        </div>
+
+                    </li>
+
+                </ol>
+
+            </div>
+
+        </section>
+
+
+        <section class="project-cta">
+
+            <div class="container">
+
+                <div class="project-cta-content">
+
+                    <div>
+
+                        <p class="section-label">
+                            More Engineering Work
+                        </p>
+
+                        <h2>
+                            Explore the complete project collection.
+                        </h2>
+
+                    </div>
+
+                    <a
+                        href="../projects.html"
+                        class="button button-secondary"
+                    >
+                        View All Projects
+
+                        <svg
+                            class="icon"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path d="M5 12h14"></path>
+                            <path d="M13 6l6 6-6 6"></path>
+                        </svg>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer class="site-footer">
+
+        <div class="container">
+
+            <div class="footer-grid">
+
+                <div class="footer-brand">
+
+                    <a href="index.html" class="footer-logo">
+                        EE Portfolio
+                    </a>
+
+                    <p class="footer-description">
+                        Documenting embedded systems, digital design,
+                        PCB development, and hands-on electrical engineering.
+                    </p>
+
+                </div>
+
+
+                <nav
+                    class="footer-navigation"
+                    aria-label="Footer navigation"
+                >
+
+                    <h2 class="footer-heading">
+                        Explore
+                    </h2>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a href="../index.html">
+                                Home
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../about.html">
+                                About
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../projects.html">
+                                Projects
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../lab-notes.html">
+                                Lab Notes
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#">
+                                Components
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#">
+                                Resources
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+
+                <div class="footer-contact">
+
+                    <h2 class="footer-heading">
+                        Connect
+                    </h2>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a
+                                href="https://github.com/YOUR-USERNAME"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                GitHub
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="https://www.linkedin.com/in/YOUR-USERNAME/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                LinkedIn
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="mailto:YOUR-EMAIL@example.com">
+                                Email
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p>
+                    © <span id="current-year"></span>
+                    Junlong He. Built with HTML, CSS, and JavaScript.
+                </p>
+
+                <a href="#top" class="back-to-top">
+
+                    Back to top
+
+                    <svg
+                        class="icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="M12 19V5"></path>
+                        <path d="M6 11l6-6 6 6"></path>
+                    </svg>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <a
+        href="#top"
+        class="floating-back-to-top"
+        aria-label="Back to top"
+    >
+        <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+        >
+            <path d="M12 19V5"></path>
+            <path d="M6 11l6-6 6 6"></path>
+        </svg>
+    </a>
+
+    <script src="../js/main.js"></script>
+
+</body>
+
+</html>

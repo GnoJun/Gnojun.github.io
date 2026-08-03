@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Template | Components</title>
+
+    <meta
+        name="description"
+        content="Internal template for creating component reference pages."
+    >
+
+    <meta
+        name="robots"
+        content="noindex, nofollow"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0f1115"
+    >
+
+    <script src="../js/theme-init.js"></script>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body id="top">
+
+    <a href="#main-content" class="skip-link">
+        Skip to main content
+    </a>
+
+    <header class="site-header">
+
+        <div class="container">
+
+            <nav class="navbar" aria-label="Primary navigation">
+
+                <a href="index.html" class="logo">
+                    EE Portfolio
+                </a>
+
+                <button
+                    class="nav-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="primary-navigation"
+                    aria-label="Open navigation"
+                >
+                    <span class="nav-toggle-line"></span>
+                    <span class="nav-toggle-line"></span>
+                </button>
+
+                <ul class="nav-menu" id="primary-navigation">
+
+                    <li>
+                        <a href="../index.html">Home</a>
+                    </li>
+
+                    <li>
+                        <a href="../about.html">
+                            About
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="../projects.html">Projects</a>
+                    </li>
+
+                    <li>
+                        <a href="../lab-notes.html">
+                            Lab Notes
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="../components.html" aria-current="page">
+                            Components
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a href="../resources.html">Resources</a>
+                    </li>
+
+                    <li class="nav-theme-item">
+
+                        <button
+                            class="theme-toggle"
+                            type="button"
+                            data-theme-toggle
+                            aria-label="Switch theme"
+                            title="Switch theme"
+                        >
+
+                            <svg
+                                class="
+                                    theme-toggle-icon
+                                    theme-toggle-icon-sun
+                                "
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="4"
+                                ></circle>
+
+                                <path d="M12 2v2"></path>
+                                <path d="M12 20v2"></path>
+                                <path d="M4.93 4.93l1.42 1.42"></path>
+                                <path d="M17.65 17.65l1.42 1.42"></path>
+                                <path d="M2 12h2"></path>
+                                <path d="M20 12h2"></path>
+                                <path d="M4.93 19.07l1.42-1.42"></path>
+                                <path d="M17.65 6.35l1.42-1.42"></path>
+                            </svg>
+
+
+                            <svg
+                                class="
+                                    theme-toggle-icon
+                                    theme-toggle-icon-moon
+                                "
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="
+                                        M20.5 14.2
+                                        A8 8 0 0 1
+                                        9.8 3.5
+                                        A8.5 8.5 0 1 0
+                                        20.5 14.2
+                                    "
+                                ></path>
+                            </svg>
+
+
+                            <span class="theme-toggle-label">
+                                Theme
+                            </span>
+
+                        </button>
+
+                    </li>
+
+                </ul>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+<main id="main-content">
+
+    <!--
+        COMPONENT PAGE TEMPLATE
+
+        创建正式详情页时：
+
+        1. 修改文件名
+        2. 修改 title
+        3. 修改 meta description
+        4. 删除 noindex
+        5. 修改 Breadcrumb
+        6. 替换器件名称和内容
+        7. 删除不适用的章节
+        8. 保持章节编号连续
+        9. 在 components-data.js 中添加 detailsUrl
+    -->
+
+    <section class="component-detail-hero">
+
+        <div class="container component-detail-shell">
+
+            <nav
+                class="breadcrumb"
+                aria-label="Breadcrumb"
+            >
+                <ol>
+
+                    <li>
+                        <a href="../index.html">
+                            Home
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="../components.html">
+                            Components
+                        </a>
+                    </li>
+
+                    <li>
+                        <span aria-current="page">
+                            ESP32-S3 N16R8
+                        </span>
+                    </li>
+
+                </ol>
+            </nav>
+
+
+            <div class="component-detail-heading">
+
+                <p class="component-detail-eyebrow">
+                    Microcontroller · In Use
+                </p>
+
+                <h1 class="component-detail-title">
+                    ESP32-S3 N16R8
+                </h1>
+
+                <p class="component-detail-lead">
+                    The primary microcontroller platform for my portable
+                    engineering lab station, embedded user interfaces,
+                    wireless communication, signal generation, and
+                    measurement experiments.
+                </p>
+
+
+                <ul
+                    class="component-detail-tags"
+                    aria-label="Component topics"
+                >
+                    <li>Embedded Systems</li>
+                    <li>Wi-Fi</li>
+                    <li>Bluetooth</li>
+                    <li>I²C</li>
+                    <li>USB</li>
+                </ul>
+
+            </div>
+
+
+            <dl class="component-detail-summary">
+
+                <div>
+                    <dt>Platform</dt>
+                    <dd>ESP32-S3</dd>
+                </div>
+
+                <div>
+                    <dt>Logic Level</dt>
+                    <dd>3.3 V</dd>
+                </div>
+
+                <div>
+                    <dt>Configuration</dt>
+                    <dd>N16R8</dd>
+                </div>
+
+                <div>
+                    <dt>Primary Project</dt>
+                    <dd>Portable Lab Station</dd>
+                </div>
+
+            </dl>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         Component Content
+    ========================== -->
+
+    <section class="component-detail-body">
+
+        <div class="container component-detail-shell">
+
+            <article class="component-detail-article">
+
+
+                <!-- 01 Overview -->
+
+                <section
+                    class="component-detail-section"
+                    id="overview"
+                >
+
+                    <header class="component-detail-section-head">
+
+                        <span
+                            class="component-detail-section-number"
+                            aria-hidden="true"
+                        >
+                            01
+                        </span>
+
+                        <div>
+
+                            <p class="component-detail-section-label">
+                                Overview
+                            </p>
+
+                            <h2 class="component-detail-section-title">
+                                Role in my engineering projects
+                            </h2>
+
+                        </div>
+
+                    </header>
+
+
+                    <div class="component-detail-section-content">
+
+                        <p>
+                            The ESP32-S3 is the main controller used in my
+                            portable lab-station project. It coordinates the
+                            display, buttons, menu system, wireless features,
+                            signal-generation functions, and future measurement
+                            tools.
+                        </p>
+
+                        <p>
+                            The board is useful because it combines general
+                            GPIO, communication peripherals, wireless
+                            connectivity, USB support, and enough processing
+                            capability for interactive embedded projects.
+                        </p>
+
+
+                        <div class="component-detail-role-grid">
+
+                            <div>
+
+                                <span>Current Role</span>
+
+                                <strong>
+                                    Main system controller
+                                </strong>
+
+                            </div>
+
+                            <div>
+
+                                <span>Development Focus</span>
+
+                                <strong>
+                                    Embedded instrumentation
+                                </strong>
+
+                            </div>
+
+                            <div>
+
+                                <span>Current Status</span>
+
+                                <strong>
+                                    Active development
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- 02 Key Specifications -->
+
+                <section
+                    class="component-detail-section"
+                    id="specifications"
+                >
+
+                    <header class="component-detail-section-head">
+
+                        <span
+                            class="component-detail-section-number"
+                            aria-hidden="true"
+                        >
+                            02
+                        </span>
+
+                        <div>
+
+                            <p class="component-detail-section-label">
+                                Key Specifications
+                            </p>
+
+                            <h2 class="component-detail-section-title">
+                                Configuration used in this project
+                            </h2>
+
+                        </div>
+
+                    </header>
+
+
+                    <div class="component-detail-section-content">
+
+                        <p>
+                            The exact capabilities and exposed pins can vary
+                            between development-board manufacturers. The board
+                            schematic, silkscreen, and product documentation
+                            should always be checked before final wiring.
+                        </p>
+
+
+                        <dl class="component-detail-spec-grid">
+
+                            <div>
+
+                                <dt>MCU Platform</dt>
+
+                                <dd>
+                                    ESP32-S3
+                                </dd>
+
+                            </div>
+
+                            <div>
+
+                                <dt>Board Configuration</dt>
+
+                                <dd>
+                                    N16R8 label
+                                </dd>
+
+                            </div>
+
+                            <div>
+
+                                <dt>GPIO Logic</dt>
+
+                                <dd>
+                                    3.3 V
+                                </dd>
+
+                            </div>
+
+                            <div>
+
+                                <dt>Power Entry</dt>
+
+                                <dd>
+                                    USB or supported board input
+                                </dd>
+
+                            </div>
+
+                            <div>
+
+                                <dt>Wireless</dt>
+
+                                <dd>
+                                    Wi-Fi and Bluetooth support
+                                </dd>
+
+                            </div>
+
+                            <div>
+
+                                <dt>Development Use</dt>
+
+                                <dd>
+                                    Control, UI, communication, and testing
+                                </dd>
+
+                            </div>
+
+                        </dl>
+
+                    </div>
+
+                </section>
+
+
+                <!-- 03 Electrical Safety -->
+
+                <section
+                    class="component-detail-section"
+                    id="electrical-safety"
+                >
+
+                    <header class="component-detail-section-head">
+
+                        <span
+                            class="component-detail-section-number"
+                            aria-hidden="true"
+                        >
+                            03
+                        </span>
+
+                        <div>
+
+                            <p class="component-detail-section-label">
+                                Electrical Safety
+                            </p>
+
+                            <h2 class="component-detail-section-title">
+                                Logic-level and power precautions
+                            </h2>
+
+                        </div>
+
+                    </header>
+
+
+                    <div class="component-detail-section-content">
+
+                        <div class="component-detail-warning">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path d="M12 3l9 17H3z"></path>
+                                <path d="M12 9v5"></path>
+                                <path d="M12 17h.01"></path>
+                            </svg>
+
+                            <div>
+
+                                <h3>
+                                    Treat the GPIO as 3.3 V logic
+                                </h3>
+
+                                <p>
+                                    Do not connect an unknown or 5 V signal
+                                    directly to an ESP32-S3 GPIO pin. Use a
+                                    suitable divider, level shifter, or interface
+                                    circuit when necessary.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <ul class="component-detail-check-list">
+
+                            <li>
+                                Connect all communicating circuits to a common
+                                ground.
+                            </li>
+
+                            <li>
+                                Confirm the voltage of every external signal
+                                before connecting it to a GPIO pin.
+                            </li>
+
+                            <li>
+                                Do not assume every pin is suitable for ADC,
+                                USB, boot control, or high-speed operation.
+                            </li>
+
+                            <li>
+                                Verify the board documentation before powering
+                                through a 5 V, VIN, or external-power pin.
+                            </li>
+
+                            <li>
+                                Avoid changing several wiring and firmware
+                                variables at the same time during debugging.
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </section>
+
+
+                <!-- 04 Interfaces -->
+
+                <section
+                    class="component-detail-section"
+                    id="interfaces"
+                >
+
+                    <header class="component-detail-section-head">
+
+                        <span
+                            class="component-detail-section-number"
+                            aria-hidden="true"
+                        >
+                            04
+                        </span>
+
+                        <div>
+
+                            <p class="component-detail-section-label">
+                                Interfaces
+                            </p>
+
+                            <h2 class="component-detail-section-title">
+                                Communication and control capabilities
+                            </h2>
+
+                        </div>
+
+                    </header>
+
+
+                    <div class="component-detail-section-content">
+
+                        <p>
+                            The project assigns interfaces according to the
+                            connected hardware and the board pins that remain
+                            available. Pin capability must be checked before
+                            finalizing the design.
+                        </p>
+
+
+                        <div class="component-detail-interface-grid">
+
+                            <article>
+
+                                <h3>I²C</h3>
+
+                                <p>
+                                    Shared bus for OLED displays, NFC modules,
+                                    sensors, and future expansion devices.
+                                </p>
+
+                            </article>
+
+                            <article>
+
+                                <h3>SPI</h3>
+
+                                <p>
+                                    Suitable for faster displays, storage,
+                                    converters, and digital peripherals.
+                                </p>
+
+                            </article>
+
+                            <article>
+
+                                <h3>UART</h3>
+
+                                <p>
+                                    Useful for serial debugging, modules,
+                                    communication, and device testing.
+                                </p>
+
+                            </article>
+
+                            <article>
+
+                                <h3>PWM</h3>
+
+                                <p>
+                                    Used for signal output, brightness control,
+                                    buzzers, and timing-based output.
+                                </p>
+
+                            </article>
+
+                            <article>
+
+                                <h3>ADC</h3>
+
+                                <p>
+                                    Used for analog measurement, subject to the
+                                    selected pin and input-conditioning circuit.
+                                </p>
+
+                            </article>
+
+                            <article>
+
+                                <h3>USB and Wireless</h3>
+
+                                <p>
+                                    Supports development, communication, remote
+                                    control, and future desktop or mobile tools.
+                                </p>
+
+                            </article>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- 05 Pin Assignment -->
+
+                <section
+                    class="component-detail-section"
+                    id="pin-assignment"
+                >
+
+                    <header class="component-detail-section-head">
+
+                        <span
+                            class="component-detail-section-number"
+                            aria-hidden="true"
+                        >
+                            05
+                        </span>
+
+                        <div>
+
+                            <p class="component-detail-section-label">
+                                Current Pin Assignment
+                            </p>
+
+                            <h2 class="component-detail-section-title">
+                                Portable lab-station configuration
+                            </h2>
+
+                        </div>
+
+                    </header>
+
+
+                    <div class="component-detail-section-content">
+
+                        <p>
+                            These assignments represent the current project
+                            plan. Signal-generation and oscilloscope pins remain
+                            undecided until the analog and protection circuits
+                            are finalized.
+                        </p>
+
+
+                        <dl class="component-detail-pin-grid">
+
+                            <div>
+
+                                <dt>I²C SDA</dt>
+
+                                <dd>
+                                    <code>GPIO 8</code>
+                                </dd>
+
+                            </div>
+
+                            <div>
+
+                                <dt>I²C SCL</dt>
+
+                                <dd>
+                                    <code>GPIO 9</code>
+                                </dd>
+
+                            </div>
+
+                            <div>
+
+                                <dt>Up / Left Button</dt>
+
+                                <dd>
+                                    <code>GPIO 48</code>
+                                </dd>
+
+                            </div>
+
+                            <div>
+
+                                <dt>Down / Right Button</dt>
+
+                                <dd>
+                                    <code>GPIO 39</code>
+                                </dd>
+
+                            </div>
+
+                            <div>
+
+                                <dt>Confirm Button</dt>
+
+                                <dd>
+                                    <code>GPIO 40</code>
+                                </dd>
+
+                            </div>
+
+                            <div>
+
+                                <dt>Signal Output</dt>
+
+                                <dd>
+                                    <span class="component-detail-tbd">
+                                        To be determined
+                                    </span>
+                                </dd>
+
+                            </div>
+
+                            <div>
+
+                                <dt>Oscilloscope Input</dt>
+
+                                <dd>
+                                    <span class="component-detail-tbd">
+                                        To be determined
+                                    </span>
+                                </dd>
+
+                            </div>
+
+                        </dl>
+
+                    </div>
+
+                </section>
+
+
+                <!-- 06 Project Integration -->
+
+                <section
+                    class="component-detail-section"
+                    id="project-integration"
+                >
+
+                    <header class="component-detail-section-head">
+
+                        <span
+                            class="component-detail-section-number"
+                            aria-hidden="true"
+                        >
+                            06
+                        </span>
+
+                        <div>
+
+                            <p class="component-detail-section-label">
+                                Project Integration
+                            </p>
+
+                            <h2 class="component-detail-section-title">
+                                Portable lab-station responsibilities
+                            </h2>
+
+                        </div>
+
+                    </header>
+
+
+                    <div class="component-detail-section-content">
+
+                        <div class="component-detail-project-panel">
+
+                            <div>
+
+                                <p class="component-detail-project-label">
+                                    Related Project
+                                </p>
+
+                                <h3>
+                                    ESP32-S3 Portable Lab Station
+                                </h3>
+
+                                <p>
+                                    A handheld embedded system combining a menu
+                                    interface, signal generation, measurement
+                                    tools, wireless communication, and future
+                                    hardware expansion.
+                                </p>
+
+                            </div>
+
+
+                            <a
+                                href="../projects/esp32-lab-station.html"
+                                class="button button-secondary"
+                            >
+                                View Project
+
+                                <svg
+                                    class="icon"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M5 12h14"></path>
+                                    <path d="M13 6l6 6-6 6"></path>
+                                </svg>
+
+                            </a>
+
+                        </div>
+
+
+                        <ul class="component-detail-check-list">
+
+                            <li>
+                                Runs the OLED menu and user-interface logic.
+                            </li>
+
+                            <li>
+                                Reads the navigation and confirmation buttons.
+                            </li>
+
+                            <li>
+                                Controls prototype signal-generation output.
+                            </li>
+
+                            <li>
+                                Collects future analog or digital measurements.
+                            </li>
+
+                            <li>
+                                Provides wireless and USB expansion options.
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </section>
+
+
+                <!-- 07 Practical Notes -->
+
+                <section
+                    class="component-detail-section"
+                    id="practical-notes"
+                >
+
+                    <header class="component-detail-section-head">
+
+                        <span
+                            class="component-detail-section-number"
+                            aria-hidden="true"
+                        >
+                            07
+                        </span>
+
+                        <div>
+
+                            <p class="component-detail-section-label">
+                                Practical Notes
+                            </p>
+
+                            <h2 class="component-detail-section-title">
+                                Lessons from prototyping
+                            </h2>
+
+                        </div>
+
+                    </header>
+
+
+                    <div class="component-detail-section-content">
+
+                        <div class="component-detail-notes-grid">
+
+                            <article>
+
+                                <span>01</span>
+
+                                <div>
+
+                                    <h3>
+                                        Confirm the exact board variant
+                                    </h3>
+
+                                    <p>
+                                        Development boards can expose different
+                                        pins and include different supporting
+                                        circuits.
+                                    </p>
+
+                                </div>
+
+                            </article>
+
+                            <article>
+
+                                <span>02</span>
+
+                                <div>
+
+                                    <h3>
+                                        Reserve pins before soldering
+                                    </h3>
+
+                                    <p>
+                                        Plan I²C, buttons, analog inputs, signal
+                                        outputs, and future expansion together.
+                                    </p>
+
+                                </div>
+
+                            </article>
+
+                            <article>
+
+                                <span>03</span>
+
+                                <div>
+
+                                    <h3>
+                                        Test one subsystem at a time
+                                    </h3>
+
+                                    <p>
+                                        Verify the display, buttons, output,
+                                        and measurement features independently
+                                        before integration.
+                                    </p>
+
+                                </div>
+
+                            </article>
+
+                            <article>
+
+                                <span>04</span>
+
+                                <div>
+
+                                    <h3>
+                                        Add input protection
+                                    </h3>
+
+                                    <p>
+                                        Measurement inputs require suitable
+                                        scaling, current limiting, and voltage
+                                        protection.
+                                    </p>
+
+                                </div>
+
+                            </article>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- 08 Visual Reference -->
+
+                <section
+                    class="component-detail-section"
+                    id="visual-reference"
+                >
+
+                    <header class="component-detail-section-head">
+
+                        <span
+                            class="component-detail-section-number"
+                            aria-hidden="true"
+                        >
+                            08
+                        </span>
+
+                        <div>
+
+                            <p class="component-detail-section-label">
+                                Visual Reference
+                            </p>
+
+                            <h2 class="component-detail-section-title">
+                                Board image and pinout documentation
+                            </h2>
+
+                        </div>
+
+                    </header>
+
+
+                    <div class="component-detail-section-content">
+
+                        <p>
+                            Real images will be added after the board and pinout
+                            references are prepared.
+                        </p>
+
+
+                        <div class="component-detail-media-grid">
+
+                            <div class="component-detail-media-placeholder">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <rect
+                                        x="4"
+                                        y="3"
+                                        width="16"
+                                        height="18"
+                                        rx="2"
+                                    ></rect>
+
+                                    <path d="M8 7h8"></path>
+                                    <path d="M8 11h8"></path>
+                                    <path d="M8 15h5"></path>
+                                </svg>
+
+                                <div>
+
+                                    <h3>
+                                        Board photograph
+                                    </h3>
+
+                                    <p>
+                                        Front and back images of the exact
+                                        development board.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="component-detail-media-placeholder">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <rect
+                                        x="5"
+                                        y="5"
+                                        width="14"
+                                        height="14"
+                                        rx="2"
+                                    ></rect>
+
+                                    <path d="M2 9h3"></path>
+                                    <path d="M2 15h3"></path>
+                                    <path d="M19 9h3"></path>
+                                    <path d="M19 15h3"></path>
+                                    <path d="M9 2v3"></path>
+                                    <path d="M15 2v3"></path>
+                                    <path d="M9 19v3"></path>
+                                    <path d="M15 19v3"></path>
+                                </svg>
+
+                                <div>
+
+                                    <h3>
+                                        Verified pinout
+                                    </h3>
+
+                                    <p>
+                                        Pin labels and project assignments for
+                                        the exact board variant.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- 09 References -->
+
+                <section
+                    class="component-detail-section"
+                    id="references"
+                >
+
+                    <header class="component-detail-section-head">
+
+                        <span
+                            class="component-detail-section-number"
+                            aria-hidden="true"
+                        >
+                            09
+                        </span>
+
+                        <div>
+
+                            <p class="component-detail-section-label">
+                                References
+                            </p>
+
+                            <h2 class="component-detail-section-title">
+                                Documentation to verify
+                            </h2>
+
+                        </div>
+
+                    </header>
+
+
+                    <div class="component-detail-section-content">
+
+                        <ol class="component-detail-reference-list">
+
+                            <li>
+                                Official ESP32-S3 device datasheet.
+                            </li>
+
+                            <li>
+                                Official ESP32-S3 technical reference manual.
+                            </li>
+
+                            <li>
+                                Development-board schematic and pinout.
+                            </li>
+
+                            <li>
+                                Documentation for the exact N16R8 board variant.
+                            </li>
+
+                        </ol>
+
+                        <p class="component-detail-reference-note">
+                            Verified external links will be added before this
+                            page is treated as a complete technical reference.
+                        </p>
+
+                    </div>
+
+                </section>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         Component CTA
+    ========================== -->
+
+    <section class="component-detail-cta">
+
+        <div class="container component-detail-shell">
+
+            <div class="component-detail-cta-content">
+
+                <div>
+
+                    <p class="section-label">
+                        Engineering Reference Library
+                    </p>
+
+                    <h2>
+                        Continue exploring components used in my projects.
+                    </h2>
+
+                </div>
+
+
+                <a
+                    href="../components.html"
+                    class="button button-secondary"
+                >
+                    View All Components
+
+                    <svg
+                        class="icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="M5 12h14"></path>
+                        <path d="M13 6l6 6-6 6"></path>
+                    </svg>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+
+    <footer class="site-footer">
+
+        <div class="container">
+
+            <div class="footer-grid">
+
+                <div class="footer-brand">
+
+                    <a href="index.html" class="footer-logo">
+                        EE Portfolio
+                    </a>
+
+                    <p class="footer-description">
+                        Documenting embedded systems, digital design,
+                        PCB development, and hands-on electrical engineering.
+                    </p>
+
+                </div>
+
+
+                <nav
+                    class="footer-navigation"
+                    aria-label="Footer navigation"
+                >
+
+                    <h2 class="footer-heading">
+                        Explore
+                    </h2>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a href="../index.html">
+                                Home
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../about.html">
+                                About
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../projects.html">
+                                Projects
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../lab-notes.html">
+                                Lab Notes
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../components.html">
+                                Components
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a href="../resources.html">
+                                Resources
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+
+                <div class="footer-contact">
+
+                    <h2 class="footer-heading">
+                        Connect
+                    </h2>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a
+                                href="https://github.com/YOUR-USERNAME"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                GitHub
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="https://www.linkedin.com/in/YOUR-USERNAME/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                LinkedIn
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="mailto:YOUR-EMAIL@example.com">
+                                Email
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p>
+                    © <span id="current-year"></span>
+                    Junlong He. Built with HTML, CSS, and JavaScript.
+                </p>
+
+                <a href="#top" class="back-to-top">
+
+                    Back to top
+
+                    <svg
+                        class="icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="M12 19V5"></path>
+                        <path d="M6 11l6-6 6 6"></path>
+                    </svg>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <script src="../js/theme.js"></script>
+    <script src="../js/main.js"></script>
+
+</body>
+
+</html>

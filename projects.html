@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Projects | Junlong</title>
+
+    <meta
+        name="theme-color"
+        content="#0f1115"
+    >
+
+    <script src="js/theme-init.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body id="top">
+
+    <a href="#main-content" class="skip-link">
+        Skip to main content
+    </a>
+
+    <header class="site-header">
+
+        <div class="container">
+
+            <nav class="navbar" aria-label="Primary navigation">
+
+                <a href="index.html" class="logo">
+                    EE Portfolio
+                </a>
+
+                <button
+                    class="nav-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="primary-navigation"
+                    aria-label="Open navigation"
+                >
+                    <span class="nav-toggle-line"></span>
+                    <span class="nav-toggle-line"></span>
+                </button>
+
+                <ul class="nav-menu" id="primary-navigation">
+
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+
+                    <li>
+                        <a href="about.html">
+                            About
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="projects.html" aria-current="page">
+                            Projects
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="lab-notes.html">
+                            Lab Notes
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="components.html">
+                            Components
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a href="resources.html">Resources</a>
+                    </li>
+
+                    <li class="nav-theme-item">
+
+                        <button
+                            class="theme-toggle"
+                            type="button"
+                            data-theme-toggle
+                            aria-label="Switch theme"
+                            title="Switch theme"
+                        >
+
+                            <svg
+                                class="
+                                    theme-toggle-icon
+                                    theme-toggle-icon-sun
+                                "
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="4"
+                                ></circle>
+
+                                <path d="M12 2v2"></path>
+                                <path d="M12 20v2"></path>
+                                <path d="M4.93 4.93l1.42 1.42"></path>
+                                <path d="M17.65 17.65l1.42 1.42"></path>
+                                <path d="M2 12h2"></path>
+                                <path d="M20 12h2"></path>
+                                <path d="M4.93 19.07l1.42-1.42"></path>
+                                <path d="M17.65 6.35l1.42-1.42"></path>
+                            </svg>
+
+
+                            <svg
+                                class="
+                                    theme-toggle-icon
+                                    theme-toggle-icon-moon
+                                "
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="
+                                        M20.5 14.2
+                                        A8 8 0 0 1
+                                        9.8 3.5
+                                        A8.5 8.5 0 1 0
+                                        20.5 14.2
+                                    "
+                                ></path>
+                            </svg>
+
+
+                            <span class="theme-toggle-label">
+                                Theme
+                            </span>
+
+                        </button>
+
+                    </li>
+
+                </ul>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <main id="main-content">
+
+        <section class="page-hero">
+
+            <div class="container">
+
+                <div class="page-hero-content">
+
+                    <p class="page-eyebrow">
+                        Engineering Work
+                    </p>
+
+                    <h1 class="page-title">
+                        Projects
+                    </h1>
+
+                    <p class="page-description">
+                        A growing collection of embedded systems, digital logic,
+                        instrumentation, PCB development, and engineering experiments.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="projects-section">
+
+            <div class="container">
+
+                <div class="project-toolbar">
+
+                    <div
+                        class="project-filters"
+                        role="group"
+                        aria-label="Filter projects by technology"
+                    >
+
+                        <button
+                            class="filter-button is-active"
+                            type="button"
+                            data-filter="all"
+                            aria-pressed="true"
+                        >
+                            All
+                        </button>
+
+                        <button
+                            class="filter-button"
+                            type="button"
+                            data-filter="esp32"
+                            aria-pressed="false"
+                        >
+                            ESP32
+                        </button>
+
+                        <button
+                            class="filter-button"
+                            type="button"
+                            data-filter="stm32"
+                            aria-pressed="false"
+                        >
+                            STM32
+                        </button>
+
+                        <button
+                            class="filter-button"
+                            type="button"
+                            data-filter="fpga"
+                            aria-pressed="false"
+                        >
+                            FPGA
+                        </button>
+
+                        <button
+                            class="filter-button"
+                            type="button"
+                            data-filter="pcb"
+                            aria-pressed="false"
+                        >
+                            PCB
+                        </button>
+
+                    </div>
+
+                    <p
+                        class="filter-status"
+                        id="filter-status"
+                        role="status"
+                        aria-live="polite"
+                    ></p>
+
+                </div>
+
+
+                <div class="project-grid">
+
+                    <article
+                        class="project-card"
+                        data-category="esp32"
+                    >
+
+                        <div class="project-card-content">
+
+                            <p class="project-category">
+                                Embedded Systems
+                            </p>
+
+                            <h2 class="project-title">
+                                ESP32-S3 Portable Lab Station
+                            </h2>
+
+                            <p class="project-description">
+                                A portable engineering toolkit combining an OLED
+                                interface, oscilloscope, signal generator, logic
+                                analyzer, and expandable sensor support.
+                            </p>
+
+                            <ul
+                                class="project-tags"
+                                aria-label="Technologies used"
+                            >
+                                <li>ESP32-S3</li>
+                                <li>C++</li>
+                                <li>OLED</li>
+                                <li>I2C</li>
+                            </ul>
+
+                            <a
+                                href="projects/esp32-lab-station.html"
+                                class="project-link"
+                            >
+                                View Case Study
+
+                                <svg
+                                    class="icon"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M5 12h14"></path>
+                                    <path d="M13 6l6 6-6 6"></path>
+                                </svg>
+                            </a>
+
+                        </div>
+
+                    </article>
+
+
+                    <article
+                        class="project-card"
+                        data-category="esp32"
+                    >
+
+                        <div class="project-card-content">
+
+                            <p class="project-category">
+                                NFC Systems
+                            </p>
+
+                            <h2 class="project-title">
+                                NFC Payment Prototype
+                            </h2>
+
+                            <p class="project-description">
+                                A stored-value NFC prototype using an ESP32-S3 and
+                                PN532 for card reading, balance management, and
+                                access-control experiments.
+                            </p>
+
+                            <ul
+                                class="project-tags"
+                                aria-label="Technologies used"
+                            >
+                                <li>ESP32-S3</li>
+                                <li>PN532</li>
+                                <li>NFC</li>
+                                <li>I2C</li>
+                            </ul>
+
+                            <span class="project-link project-link-muted">
+                                Case study coming soon
+                            </span>
+
+                        </div>
+
+                    </article>
+
+
+                    <article
+                        class="project-card"
+                        data-category="fpga"
+                    >
+
+                        <div class="project-card-content">
+
+                            <p class="project-category">
+                                Digital Design
+                            </p>
+
+                            <h2 class="project-title">
+                                FPGA Digital Logic Playground
+                            </h2>
+
+                            <p class="project-description">
+                                A collection of modular digital logic experiments
+                                involving finite-state machines, timing, simulation,
+                                and hardware verification.
+                            </p>
+
+                            <ul
+                                class="project-tags"
+                                aria-label="Technologies used"
+                            >
+                                <li>Basys 3</li>
+                                <li>Verilog</li>
+                                <li>Vivado</li>
+                                <li>FSM</li>
+                            </ul>
+
+                            <span class="project-link project-link-muted">
+                                Case study coming soon
+                            </span>
+
+                        </div>
+
+                    </article>
+
+
+                    <article
+                        class="project-card"
+                        data-category="stm32"
+                    >
+
+                        <div class="project-card-content">
+
+                            <p class="project-category">
+                                Embedded Systems
+                            </p>
+
+                            <h2 class="project-title">
+                                STM32 Sensor Data Logger
+                            </h2>
+
+                            <p class="project-description">
+                                A planned data-acquisition platform for learning
+                                STM32 peripherals, interrupt-driven programming,
+                                sensor communication, and structured data storage.
+                            </p>
+
+                            <ul
+                                class="project-tags"
+                                aria-label="Technologies used"
+                            >
+                                <li>STM32</li>
+                                <li>HAL</li>
+                                <li>UART</li>
+                                <li>SPI</li>
+                            </ul>
+
+                            <span class="project-link project-link-muted">
+                                Planned project
+                            </span>
+
+                        </div>
+
+                    </article>
+
+
+                    <article
+                        class="project-card"
+                        data-category="pcb"
+                    >
+
+                        <div class="project-card-content">
+
+                            <p class="project-category">
+                                PCB Design
+                            </p>
+
+                            <h2 class="project-title">
+                                Sensor Interface PCB
+                            </h2>
+
+                            <p class="project-description">
+                                A planned custom circuit board for organized sensor
+                                connections, power regulation, protection, and
+                                communication with embedded development boards.
+                            </p>
+
+                            <ul
+                                class="project-tags"
+                                aria-label="Technologies used"
+                            >
+                                <li>KiCad</li>
+                                <li>Schematic</li>
+                                <li>PCB Layout</li>
+                                <li>Power</li>
+                            </ul>
+
+                            <span class="project-link project-link-muted">
+                                Planned project
+                            </span>
+
+                        </div>
+
+                    </article>
+
+                </div>
+                <div
+                    class="empty-state"
+                    id="empty-state"
+                    hidden
+                >
+                    <svg
+                        class="empty-state-icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="M16.5 16.5L21 21"></path>
+                    </svg>
+
+                    <h2 class="empty-state-title">
+                        No projects found
+                    </h2>
+
+                    <p class="empty-state-description">
+                        There are currently no projects in this category.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer class="site-footer">
+
+        <div class="container">
+
+            <div class="footer-grid">
+
+                <div class="footer-brand">
+
+                    <a href="index.html" class="footer-logo">
+                        EE Portfolio
+                    </a>
+
+                    <p class="footer-description">
+                        Documenting embedded systems, digital design,
+                        PCB development, and hands-on electrical engineering.
+                    </p>
+
+                </div>
+
+
+                <nav
+                    class="footer-navigation"
+                    aria-label="Footer navigation"
+                >
+
+                    <h2 class="footer-heading">
+                        Explore
+                    </h2>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a href="index.html">
+                                Home
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="about.html">
+                                About
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#featured-projects">
+                                Projects
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="lab-notes.html">
+                                Lab Notes
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="components.html">
+                                Components
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a href="resources.html">
+                                Resources
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+
+                <div class="footer-contact">
+
+                    <h2 class="footer-heading">
+                        Connect
+                    </h2>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a
+                                href="https://github.com/YOUR-USERNAME"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                GitHub
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="https://www.linkedin.com/in/YOUR-USERNAME/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                LinkedIn
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="mailto:YOUR-EMAIL@example.com">
+                                Email
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p>
+                    © <span id="current-year"></span>
+                    Junlong He. Built with HTML, CSS, and JavaScript.
+                </p>
+
+                <a href="#top" class="back-to-top">
+
+                    Back to top
+
+                    <svg
+                        class="icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="M12 19V5"></path>
+                        <path d="M6 11l6-6 6 6"></path>
+                    </svg>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <script src="js/theme.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>

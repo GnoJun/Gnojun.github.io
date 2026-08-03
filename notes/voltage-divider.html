@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Voltage Divider | Lab Notes</title>
+
+    <meta
+        name="description"
+        content="A lab note on the resistive voltage divider, including the formula, variable definitions, design example, and practical engineering cautions."
+    >
+
+    <meta
+        name="theme-color"
+        content="#0f1115"
+    >
+
+    <script src="../js/theme-init.js"></script>
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css"
+        integrity="sha384-1vdNCNel6Tx/NQa8IR1mGOGKsbGreCkOPfbtPPnUURJ5Tu2PRVfQ/7KLZC+Pi1p1"
+        crossorigin="anonymous"
+    >
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body id="top">
+
+    <a href="#main-content" class="skip-link">
+        Skip to main content
+    </a>
+
+    <header class="site-header">
+
+        <div class="container">
+
+            <nav class="navbar" aria-label="Primary navigation">
+
+                <a href="index.html" class="logo">
+                    EE Portfolio
+                </a>
+
+                <button
+                    class="nav-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="primary-navigation"
+                    aria-label="Open navigation"
+                >
+                    <span class="nav-toggle-line"></span>
+                    <span class="nav-toggle-line"></span>
+                </button>
+
+                <ul class="nav-menu" id="primary-navigation">
+
+                    <li>
+                        <a href="../index.html">Home</a>
+                    </li>
+
+                    <li>
+                        <a href="../about.html">
+                            About
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="../projects.html">Projects</a>
+                    </li>
+
+                    <li>
+                        <a href="../lab-notes.html" aria-current="page">
+                            Lab Notes
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="../components.html">
+                            Components
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a href="../resources.html">Resources</a>
+                    </li>
+
+                    <li class="nav-theme-item">
+
+                        <button
+                            class="theme-toggle"
+                            type="button"
+                            data-theme-toggle
+                            aria-label="Switch theme"
+                            title="Switch theme"
+                        >
+
+                            <svg
+                                class="
+                                    theme-toggle-icon
+                                    theme-toggle-icon-sun
+                                "
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="4"
+                                ></circle>
+
+                                <path d="M12 2v2"></path>
+                                <path d="M12 20v2"></path>
+                                <path d="M4.93 4.93l1.42 1.42"></path>
+                                <path d="M17.65 17.65l1.42 1.42"></path>
+                                <path d="M2 12h2"></path>
+                                <path d="M20 12h2"></path>
+                                <path d="M4.93 19.07l1.42-1.42"></path>
+                                <path d="M17.65 6.35l1.42-1.42"></path>
+                            </svg>
+
+
+                            <svg
+                                class="
+                                    theme-toggle-icon
+                                    theme-toggle-icon-moon
+                                "
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="
+                                        M20.5 14.2
+                                        A8 8 0 0 1
+                                        9.8 3.5
+                                        A8.5 8.5 0 1 0
+                                        20.5 14.2
+                                    "
+                                ></path>
+                            </svg>
+
+
+                            <span class="theme-toggle-label">
+                                Theme
+                            </span>
+
+                        </button>
+
+                    </li>
+
+                </ul>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+    <main id="main-content">
+
+        <!-- =========================
+            Note Hero
+        ========================== -->
+
+        <section class="tech-note-hero">
+
+            <div class="container tech-note-shell">
+
+                <nav
+                    class="breadcrumb"
+                    aria-label="Breadcrumb"
+                >
+                    <ol>
+
+                        <li>
+                            <a href="../index.html">
+                                Home
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../lab-notes.html">
+                                Lab Notes
+                            </a>
+                        </li>
+
+                        <li>
+                            <span aria-current="page">
+                                Voltage Divider
+                            </span>
+                        </li>
+
+                    </ol>
+                </nav>
+
+
+                <div class="tech-note-heading">
+
+                    <p class="tech-note-eyebrow">
+                        Circuit Note · Analog Circuits
+                    </p>
+
+                    <h1 class="tech-note-title">
+                        Resistive Voltage Divider
+                    </h1>
+
+                    <p class="tech-note-lead">
+                        A two-resistor circuit used to create a lower output
+                        voltage from a higher input voltage. This note covers
+                        the circuit structure, equation, design example,
+                        practical uses, and important limitations.
+                    </p>
+
+                </div>
+
+
+                <dl class="tech-note-summary">
+
+                    <div>
+                        <dt>Purpose</dt>
+                        <dd>Voltage scaling</dd>
+                    </div>
+
+                    <div>
+                        <dt>Key Equation</dt>
+                        <dd
+                            class="tech-note-summary-math"
+                            data-math="V_{\text{out}} = V_{\text{in}}\frac{R_2}{R_1 + R_2}"
+                            data-math-display="false"
+                        ></dd>
+                    </div>
+
+                    <div>
+                        <dt>Main Caution</dt>
+                        <dd>Output loading</dd>
+                    </div>
+
+                </dl>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+            Note Content
+        ========================== -->
+
+        <section class="tech-note-body">
+
+            <div class="container tech-note-shell">
+
+                <article class="tech-note-article">
+
+
+                    <!-- 01 Overview -->
+
+                    <section
+                        class="tech-note-section"
+                        id="overview"
+                    >
+
+                        <header class="tech-note-section-head">
+
+                            <span
+                                class="tech-note-section-number"
+                                aria-hidden="true"
+                            >
+                                01
+                            </span>
+
+                            <div>
+
+                                <p class="tech-note-section-label">
+                                    Overview
+                                </p>
+
+                                <h2 class="tech-note-section-title">
+                                    What the circuit does
+                                </h2>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="tech-note-section-content">
+
+                            <p>
+                                A resistive voltage divider uses two resistors
+                                connected in series. The output voltage is measured
+                                at the node between the two resistors.
+                            </p>
+
+                            <p>
+                                The circuit produces an output voltage that is a
+                                fraction of the input voltage. That fraction is
+                                determined by the ratio of the resistor values.
+                            </p>
+
+                            <div class="tech-note-highlight-grid">
+
+                                <div class="tech-note-highlight">
+
+                                    <span>Input</span>
+
+                                    <strong>
+                                        Higher voltage
+                                    </strong>
+
+                                </div>
+
+                                <div class="tech-note-highlight">
+
+                                    <span>Output</span>
+
+                                    <strong>
+                                        Scaled voltage
+                                    </strong>
+
+                                </div>
+
+                                <div class="tech-note-highlight">
+
+                                    <span>Best Use</span>
+
+                                    <strong>
+                                        Signal measurement
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- 02 Circuit Structure -->
+
+                    <section
+                        class="tech-note-section"
+                        id="circuit"
+                    >
+
+                        <header class="tech-note-section-head">
+
+                            <span
+                                class="tech-note-section-number"
+                                aria-hidden="true"
+                            >
+                                02
+                            </span>
+
+                            <div>
+
+                                <p class="tech-note-section-label">
+                                    Circuit Structure
+                                </p>
+
+                                <h2 class="tech-note-section-title">
+                                    How the resistors are connected
+                                </h2>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="tech-note-section-content">
+
+                            <p>
+                                R1 connects the input voltage to the output node.
+                                R2 connects the output node to ground.
+                            </p>
+
+                            <p>
+                                The output voltage is measured between the midpoint
+                                and ground.
+                            </p>
+
+
+                            <div class="tech-note-media-placeholder">
+
+                                <svg
+                                    class="tech-note-media-icon"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M3 12h3"></path>
+                                    <path d="M6 12l2-3 3 6 3-6 2 3"></path>
+                                    <path d="M16 12h5"></path>
+                                    <path d="M18 12v5"></path>
+                                    <path d="M15 17h6"></path>
+                                    <path d="M16 20h4"></path>
+                                </svg>
+
+                                <div>
+
+                                    <h3>
+                                        Circuit diagram
+                                    </h3>
+
+                                    <p>
+                                        A schematic or animated circuit example
+                                        will be added here.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- 03 Equation and Variables -->
+
+                    <section
+                        class="tech-note-section"
+                        id="equation"
+                    >
+
+                        <header class="tech-note-section-head">
+
+                            <span
+                                class="tech-note-section-number"
+                                aria-hidden="true"
+                            >
+                                03
+                            </span>
+
+                            <div>
+
+                                <p class="tech-note-section-label">
+                                    Equation and Variables
+                                </p>
+
+                                <h2 class="tech-note-section-title">
+                                    The voltage-divider relationship
+                                </h2>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="tech-note-section-content">
+
+                            <p>
+                                The output voltage depends on the input voltage
+                                and the ratio between R1 and R2.
+                            </p>
+
+
+                            <div
+                                class="tech-note-equation"
+                                data-math="V_{\text{out}} = V_{\text{in}}\frac{R_2}{R_1 + R_2}"
+                                data-math-display="true"
+                                aria-label="Voltage divider equation"
+                            ></div>
+
+
+                            <dl class="tech-note-variable-grid">
+
+                                <div>
+
+                                    <dt>
+                                        V<sub>in</sub>
+                                    </dt>
+
+                                    <dd>
+                                        Input voltage across the complete divider.
+                                    </dd>
+
+                                </div>
+
+                                <div>
+
+                                    <dt>
+                                        V<sub>out</sub>
+                                    </dt>
+
+                                    <dd>
+                                        Voltage measured at the midpoint.
+                                    </dd>
+
+                                </div>
+
+                                <div>
+
+                                    <dt>
+                                        R<sub>1</sub>
+                                    </dt>
+
+                                    <dd>
+                                        Resistor between the input and output node.
+                                    </dd>
+
+                                </div>
+
+                                <div>
+
+                                    <dt>
+                                        R<sub>2</sub>
+                                    </dt>
+
+                                    <dd>
+                                        Resistor between the output node and ground.
+                                    </dd>
+
+                                </div>
+
+                            </dl>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- 04 Worked Example -->
+
+                    <section
+                        class="tech-note-section"
+                        id="example"
+                    >
+
+                        <header class="tech-note-section-head">
+
+                            <span
+                                class="tech-note-section-number"
+                                aria-hidden="true"
+                            >
+                                04
+                            </span>
+
+                            <div>
+
+                                <p class="tech-note-section-label">
+                                    Worked Example
+                                </p>
+
+                                <h2 class="tech-note-section-title">
+                                    Reducing 5 V to 2.5 V
+                                </h2>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="tech-note-section-content">
+
+                            <p>
+                                Suppose both resistors have the same value:
+                            </p>
+
+
+                            <div class="tech-note-given-values">
+
+                                <div>
+                                    <span>Input voltage</span>
+                                    <strong>5 V</strong>
+                                </div>
+
+                                <div>
+                                    <span>R1</span>
+                                    <strong>1 kΩ</strong>
+                                </div>
+
+                                <div>
+                                    <span>R2</span>
+                                    <strong>1 kΩ</strong>
+                                </div>
+
+                            </div>
+
+
+                            <ol class="tech-note-steps">
+
+                                <li>
+
+                                    <span class="tech-note-step-number">
+                                        1
+                                    </span>
+
+                                    <div>
+
+                                        <h3>
+                                            Substitute the known values
+                                        </h3>
+
+                                        <p>
+                                            Insert the input voltage and resistor
+                                            values into the divider equation.
+                                        </p>
+
+                                    </div>
+
+                                </li>
+
+                                <li>
+
+                                    <span class="tech-note-step-number">
+                                        2
+                                    </span>
+
+                                    <div>
+
+                                        <h3>
+                                            Calculate the resistor ratio
+                                        </h3>
+
+                                        <p>
+                                            Because R1 and R2 are equal, the ratio
+                                            is one-half.
+                                        </p>
+
+                                    </div>
+
+                                </li>
+
+                                <li>
+
+                                    <span class="tech-note-step-number">
+                                        3
+                                    </span>
+
+                                    <div>
+
+                                        <h3>
+                                            Calculate the output voltage
+                                        </h3>
+
+                                        <p>
+                                            One-half of 5 V is 2.5 V.
+                                        </p>
+
+                                    </div>
+
+                                </li>
+
+                            </ol>
+
+
+                            <div class="tech-note-result">
+
+                                <span>
+                                    Calculated result
+                                </span>
+
+                                <strong
+                                    data-math="V_{\text{out}} = 2.5\,\text{V}"
+                                    data-math-display="false"
+                                ></strong>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- 05 Practical Use -->
+
+                    <section
+                        class="tech-note-section"
+                        id="practical-use"
+                    >
+
+                        <header class="tech-note-section-head">
+
+                            <span
+                                class="tech-note-section-number"
+                                aria-hidden="true"
+                            >
+                                05
+                            </span>
+
+                            <div>
+
+                                <p class="tech-note-section-label">
+                                    Practical Use
+                                </p>
+
+                                <h2 class="tech-note-section-title">
+                                    Applications and limitations
+                                </h2>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="tech-note-section-content">
+
+                            <div class="tech-note-callout-grid">
+
+                                <div class="tech-note-callout">
+
+                                    <p class="tech-note-callout-label">
+                                        Useful For
+                                    </p>
+
+                                    <ul>
+                                        <li>Scaling an ADC input voltage</li>
+                                        <li>Creating a reference voltage</li>
+                                        <li>Biasing an analog signal</li>
+                                        <li>Measuring battery voltage</li>
+                                    </ul>
+
+                                </div>
+
+
+                                <div class="tech-note-callout tech-note-callout-warning">
+
+                                    <p class="tech-note-callout-label">
+                                        Common Mistakes
+                                    </p>
+
+                                    <ul>
+                                        <li>Using the divider to power a load</li>
+                                        <li>Ignoring the loading effect</li>
+                                        <li>Choosing resistor values that are too low</li>
+                                        <li>Choosing resistor values that are too high</li>
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+
+                            <p>
+                                A voltage divider is primarily a signal-level
+                                circuit. It is generally not suitable for delivering
+                                power to motors, LEDs, modules, or other significant
+                                loads.
+                            </p>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- 06 Visual Documentation -->
+
+                    <section
+                        class="tech-note-section"
+                        id="visual-documentation"
+                    >
+
+                        <header class="tech-note-section-head">
+
+                            <span
+                                class="tech-note-section-number"
+                                aria-hidden="true"
+                            >
+                                06
+                            </span>
+
+                            <div>
+
+                                <p class="tech-note-section-label">
+                                    Visual Documentation
+                                </p>
+
+                                <h2 class="tech-note-section-title">
+                                    Prototype and circuit operation
+                                </h2>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="tech-note-section-content">
+
+                            <p>
+                                This section will contain real project media such
+                                as a breadboard photo, circuit diagram, GIF,
+                                simulation, or measurement video.
+                            </p>
+
+
+                            <div class="tech-note-media-grid">
+
+                                <div class="tech-note-media-placeholder">
+
+                                    <svg
+                                        class="tech-note-media-icon"
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                    >
+                                        <rect
+                                            x="3"
+                                            y="5"
+                                            width="18"
+                                            height="14"
+                                            rx="2"
+                                        ></rect>
+
+                                        <circle
+                                            cx="9"
+                                            cy="10"
+                                            r="1.5"
+                                        ></circle>
+
+                                        <path d="M4 17l5-5 4 4 2-2 5 5"></path>
+                                    </svg>
+
+                                    <div>
+
+                                        <h3>
+                                            Prototype photo
+                                        </h3>
+
+                                        <p>
+                                            Breadboard circuit and measurement setup.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="tech-note-media-placeholder">
+
+                                    <svg
+                                        class="tech-note-media-icon"
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                    >
+                                        <rect
+                                            x="3"
+                                            y="5"
+                                            width="18"
+                                            height="14"
+                                            rx="2"
+                                        ></rect>
+
+                                        <path d="M10 9l5 3-5 3z"></path>
+                                    </svg>
+
+                                    <div>
+
+                                        <h3>
+                                            GIF or video demonstration
+                                        </h3>
+
+                                        <p>
+                                            Animated voltage or measurement change.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+            Note CTA
+        ========================== -->
+
+        <section class="tech-note-cta">
+
+            <div class="container tech-note-shell">
+
+                <div class="tech-note-cta-content">
+
+                    <div>
+
+                        <p class="section-label">
+                            Engineering Knowledge Base
+                        </p>
+
+                        <h2>
+                            Continue exploring circuit and formula notes.
+                        </h2>
+
+                    </div>
+
+                    <a
+                        href="../lab-notes.html"
+                        class="button button-secondary"
+                    >
+                        View All Notes
+
+                        <svg
+                            class="icon"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path d="M5 12h14"></path>
+                            <path d="M13 6l6 6-6 6"></path>
+                        </svg>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <footer class="site-footer">
+
+        <div class="container">
+
+            <div class="footer-grid">
+
+                <div class="footer-brand">
+
+                    <a href="index.html" class="footer-logo">
+                        EE Portfolio
+                    </a>
+
+                    <p class="footer-description">
+                        Documenting embedded systems, digital design,
+                        PCB development, and hands-on electrical engineering.
+                    </p>
+
+                </div>
+
+
+                <nav
+                    class="footer-navigation"
+                    aria-label="Footer navigation"
+                >
+
+                    <h2 class="footer-heading">
+                        Explore
+                    </h2>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a href="../index.html">Home</a>
+                        </li>
+
+                        <li>
+                            <a href="../about.html">
+                                About
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a href="../projects.html">Projects</a>
+                        </li>
+
+                        <li>
+                            <a href="../lab-notes.html">
+                                Lab Notes
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../components.html">
+                                Components
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a href="../resources.html">Resources</a>
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+
+                <div class="footer-contact">
+
+                    <h2 class="footer-heading">
+                        Connect
+                    </h2>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a
+                                href="https://github.com/YOUR-USERNAME"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                GitHub
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="https://www.linkedin.com/in/YOUR-USERNAME/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                LinkedIn
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="mailto:YOUR-EMAIL@example.com">
+                                Email
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p>
+                    © <span id="current-year"></span>
+                    Junlong He. Built with HTML, CSS, and JavaScript.
+                </p>
+
+                <a href="#top" class="back-to-top">
+
+                    Back to top
+
+                    <svg
+                        class="icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="M12 19V5"></path>
+                        <path d="M6 11l6-6 6 6"></path>
+                    </svg>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.js"
+        integrity="sha384-ycJ6GAwiS15LoUPipwJOrWTvkUHl/YqELValBwI5I4awP1EeEQJYarj+w85ntcz7"
+        crossorigin="anonymous"
+    ></script>
+    
+    <script src="../js/theme.js"></script>
+    <script src="../js/main.js"></script>
+
+</body>
+
+</html>
