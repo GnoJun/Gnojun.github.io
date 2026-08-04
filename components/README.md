@@ -2,6 +2,17 @@
 
 This folder contains the detail pages for the Components Database.
 
+## Update Process
+
+
+1. git status
+
+2. git add .
+
+3. git commit -m "描述本次修改"
+
+4. git push
+
 ## Create a New Component Page
 
 1. Copy `_component-template.html`.
@@ -42,3 +53,4 @@ The corresponding object in `components-data.js` should use:
 ```javascript
 detailsUrl:
     "components/component-slug.html",
+
