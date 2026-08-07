@@ -20,7 +20,7 @@
                         ".home-preview-grid",
 
                     maxWidth:
-                        1024,
+                        768,
 
                     expectedColumns:
                         1
@@ -74,7 +74,7 @@
                         ".components-grid",
 
                     maxWidth:
-                        1024,
+                        768,
 
                     expectedColumns:
                         1
@@ -93,7 +93,7 @@
                         ".resources-grid",
 
                     maxWidth:
-                        1024,
+                        768,
 
                     expectedColumns:
                         1
