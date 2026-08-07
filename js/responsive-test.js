@@ -424,7 +424,7 @@
                             function () {
                                 setTimeout(
                                     resolve,
-                                    40
+                                    80
                                 );
                             }
                         );
@@ -679,16 +679,24 @@
 
 
     function checkPageOverflow(
-        documentObject,
-        viewportWidth
+        documentObject
     ) {
         const root =
             documentObject
                 .documentElement;
 
-
         const body =
             documentObject.body;
+
+        const frameWindow =
+            previewFrame
+                .contentWindow;
+
+
+        const viewportWidth =
+            frameWindow
+                ? frameWindow.innerWidth
+                : root.clientWidth;
 
 
         const pageScrollWidth =
@@ -710,7 +718,8 @@
                 passed: true,
 
                 message:
-                    "No horizontal page overflow detected.",
+                    `No horizontal page overflow detected. ` +
+                    `Actual viewport: ${viewportWidth}px.`,
 
                 details: []
             };
@@ -733,7 +742,8 @@
             passed: false,
 
             message:
-                `Page is ${overflowAmount}px wider than the viewport.`,
+                `Page is ${overflowAmount}px wider than ` +
+                `the actual ${viewportWidth}px viewport.`,
 
             details:
                 candidates.map(
@@ -752,7 +762,6 @@
                 )
         };
     }
-
 
     function checkLayoutRules(
         documentObject,
@@ -880,8 +889,7 @@
 
         checks.push(
             checkPageOverflow(
-                documentObject,
-                currentWidth
+                documentObject
             )
         );
 
@@ -1139,8 +1147,7 @@
 
         const checks = [
             checkPageOverflow(
-                documentObject,
-                width
+                documentObject
             ),
 
             ...checkLayoutRules(

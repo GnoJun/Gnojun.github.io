@@ -7317,6 +7317,8 @@ html[data-theme="light"]
 }
 
 .responsive-device-frame {
+    box-sizing: content-box;
+    
     width: 390px;
     height: 720px;
 
@@ -7337,9 +7339,6 @@ html[data-theme="light"]
         0 20px 60px
         var(--color-shadow);
 
-    transition:
-        width
-        var(--transition-normal);
 }
 
 .responsive-device-frame iframe {
