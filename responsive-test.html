@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="robots"
+        content="noindex, nofollow"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0f1115"
+    >
+
+    <meta
+        name="description"
+        content="Internal responsive layout testing utility for the engineering portfolio."
+    >
+
+    <title>
+        Responsive Test Lab | Engineering Portfolio
+    </title>
+
+
+    <script src="js/theme-init.js"></script>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+    <main
+        class="responsive-test-page"
+        id="main-content"
+    >
+
+        <div class="container">
+
+            <!-- =========================
+                 Header
+            ========================== -->
+
+            <header class="responsive-test-header">
+
+                <div>
+
+                    <p class="section-label">
+                        Development Utility
+                    </p>
+
+                    <h1>
+                        Responsive Test Lab
+                    </h1>
+
+                    <p>
+                        Preview portfolio pages at controlled viewport
+                        widths and automatically detect horizontal
+                        overflow and incorrect multi-column layouts.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="button button-primary"
+                    id="run-responsive-audit"
+                    type="button"
+                >
+                    Run Responsive Audit
+                </button>
+
+            </header>
+
+
+            <!-- =========================
+                 Controls
+            ========================== -->
+
+            <section
+                class="responsive-test-controls"
+                aria-labelledby="responsive-controls-heading"
+            >
+
+                <h2
+                    class="visually-hidden"
+                    id="responsive-controls-heading"
+                >
+                    Responsive Preview Controls
+                </h2>
+
+
+                <div class="responsive-page-control">
+
+                    <label for="responsive-page-select">
+                        Preview page
+                    </label>
+
+                    <select id="responsive-page-select">
+
+                        <option value="index.html">
+                            Home
+                        </option>
+
+                        <option value="about.html">
+                            About
+                        </option>
+
+                        <option value="projects.html">
+                            Projects
+                        </option>
+
+                        <option value="lab-notes.html">
+                            Lab Notes
+                        </option>
+
+                        <option value="components.html">
+                            Components
+                        </option>
+
+                        <option value="resources.html">
+                            Resources
+                        </option>
+
+                        <option value="projects/esp32-lab-station.html">
+                            ESP32 Lab Station
+                        </option>
+
+                        <option value="notes/voltage-divider.html">
+                            Voltage Divider
+                        </option>
+
+                        <option value="components/esp32-s3-n16r8.html">
+                            ESP32-S3 Component
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div
+                    class="responsive-width-controls"
+                    role="group"
+                    aria-label="Preview viewport width"
+                >
+
+                    <button
+                        class="responsive-width-button"
+                        type="button"
+                        data-responsive-width="320"
+                    >
+                        320
+                    </button>
+
+                    <button
+                        class="responsive-width-button is-active"
+                        type="button"
+                        data-responsive-width="390"
+                        aria-pressed="true"
+                    >
+                        390
+                    </button>
+
+                    <button
+                        class="responsive-width-button"
+                        type="button"
+                        data-responsive-width="430"
+                    >
+                        430
+                    </button>
+
+                    <button
+                        class="responsive-width-button"
+                        type="button"
+                        data-responsive-width="768"
+                    >
+                        768
+                    </button>
+
+                    <button
+                        class="responsive-width-button"
+                        type="button"
+                        data-responsive-width="1024"
+                    >
+                        1024
+                    </button>
+
+                    <button
+                        class="responsive-width-button"
+                        type="button"
+                        data-responsive-width="1440"
+                    >
+                        Desktop
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 Current Preview Info
+            ========================== -->
+
+            <div class="responsive-preview-info">
+
+                <div>
+
+                    <span>
+                        Current viewport
+                    </span>
+
+                    <strong id="responsive-current-width">
+                        390 px
+                    </strong>
+
+                </div>
+
+                <p
+                    id="responsive-preview-status"
+                    role="status"
+                    aria-live="polite"
+                >
+                    Loading preview...
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 Preview
+            ========================== -->
+
+            <section
+                class="responsive-preview-section"
+                aria-labelledby="responsive-preview-heading"
+            >
+
+                <h2
+                    class="visually-hidden"
+                    id="responsive-preview-heading"
+                >
+                    Responsive Page Preview
+                </h2>
+
+
+                <div class="responsive-preview-stage">
+
+                    <div
+                        class="responsive-device-frame"
+                        id="responsive-device-frame"
+                    >
+
+                        <iframe
+                            id="responsive-preview-frame"
+                            title="Responsive page preview"
+                            src="index.html"
+                        ></iframe>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 Current Page Diagnostics
+            ========================== -->
+
+            <section class="responsive-diagnostics">
+
+                <header>
+
+                    <div>
+
+                        <p class="section-label">
+                            Live Diagnostics
+                        </p>
+
+                        <h2>
+                            Current Preview
+                        </h2>
+
+                    </div>
+
+
+                    <button
+                        class="responsive-check-button"
+                        id="check-current-responsive"
+                        type="button"
+                    >
+                        Check Current View
+                    </button>
+
+                </header>
+
+
+                <div
+                    class="responsive-current-results"
+                    id="responsive-current-results"
+                >
+
+                    <p>
+                        Select a page and viewport width, then run
+                        the current-view check.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 Automated Results
+            ========================== -->
+
+            <section class="responsive-audit-results">
+
+                <header>
+
+                    <div>
+
+                        <p class="section-label">
+                            Automated Audit
+                        </p>
+
+                        <h2>
+                            Responsive Reports
+                        </h2>
+
+                    </div>
+
+                </header>
+
+
+                <p
+                    class="responsive-audit-status"
+                    id="responsive-audit-status"
+                    role="status"
+                    aria-live="polite"
+                >
+                    Ready to run the responsive audit.
+                </p>
+
+
+                <div
+                    class="responsive-report-list"
+                    id="responsive-report-list"
+                >
+
+                    <div class="responsive-empty-state">
+
+                        <h3>
+                            No responsive audit yet.
+                        </h3>
+
+                        <p>
+                            Run the audit to test the portfolio at
+                            multiple mobile and tablet widths.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <script src="js/responsive-test.js"></script>
+
+</body>
+
+</html>
