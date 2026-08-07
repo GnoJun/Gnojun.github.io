@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="robots"
+        content="noindex, nofollow"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0f1115"
+    >
+
+    <meta
+        name="description"
+        content="Internal site health audit tool for the engineering portfolio."
+    >
+
+    <title>
+        Site Health Audit | Engineering Portfolio
+    </title>
+
+
+    <script src="js/theme-init.js"></script>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+    <main
+        class="site-audit-page"
+        id="main-content"
+    >
+
+        <div class="container">
+
+            <!-- =========================
+                 Audit Header
+            ========================== -->
+
+            <header class="site-audit-header">
+
+                <div>
+
+                    <p class="section-label">
+                        Development Utility
+                    </p>
+
+                    <h1>
+                        Site Health Audit
+                    </h1>
+
+                    <p>
+                        Scan portfolio pages for broken internal
+                        resources, accessibility problems, invalid
+                        links, duplicate IDs, and structural issues.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="button button-primary"
+                    id="run-site-audit"
+                    type="button"
+                >
+                    Run Audit
+                </button>
+
+            </header>
+
+
+            <!-- =========================
+                 Audit Notice
+            ========================== -->
+
+            <div class="site-audit-notice">
+
+                <strong>
+                    Run this page through a web server.
+                </strong>
+
+                <p>
+                    Use Live Server locally or open the deployed
+                    GitHub Pages version. Browser security normally
+                    prevents this tool from scanning files opened
+                    directly with file://.
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 Summary
+            ========================== -->
+
+            <section
+                class="site-audit-summary"
+                aria-labelledby="audit-summary-heading"
+            >
+
+                <h2
+                    class="visually-hidden"
+                    id="audit-summary-heading"
+                >
+                    Audit Summary
+                </h2>
+
+
+                <div class="site-audit-summary-card">
+
+                    <span>
+                        Pages
+                    </span>
+
+                    <strong id="audit-pages-count">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="site-audit-summary-card">
+
+                    <span>
+                        Resources
+                    </span>
+
+                    <strong id="audit-resources-count">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="site-audit-summary-card">
+
+                    <span>
+                        Passed
+                    </span>
+
+                    <strong id="audit-passed-count">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="site-audit-summary-card">
+
+                    <span>
+                        Issues
+                    </span>
+
+                    <strong id="audit-issues-count">
+                        0
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 Status
+            ========================== -->
+
+            <p
+                class="site-audit-status"
+                id="site-audit-status"
+                role="status"
+                aria-live="polite"
+            >
+                Ready to scan the portfolio.
+            </p>
+
+
+            <!-- =========================
+                 Results
+            ========================== -->
+
+            <section
+                class="site-audit-results"
+                aria-labelledby="audit-results-heading"
+            >
+
+                <div class="site-audit-results-header">
+
+                    <div>
+
+                        <p class="section-label">
+                            Results
+                        </p>
+
+                        <h2 id="audit-results-heading">
+                            Page Reports
+                        </h2>
+
+                    </div>
+
+
+                    <button
+                        class="
+                            site-audit-filter
+                            is-active
+                        "
+                        id="audit-toggle-issues"
+                        type="button"
+                        aria-pressed="false"
+                        disabled
+                    >
+                        Show Issues Only
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="site-audit-report-list"
+                    id="site-audit-report-list"
+                >
+
+                    <div class="site-audit-empty">
+
+                        <h3>
+                            No audit has been run yet.
+                        </h3>
+
+                        <p>
+                            Select Run Audit to inspect the current
+                            portfolio files.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <script src="js/theme.js"></script>
+    <script src="js/site-audit.js"></script>
+
+</body>
+
+</html>
