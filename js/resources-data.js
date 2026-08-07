@@ -306,7 +306,7 @@ const resourceLibrary = [
     },
 
     {
-        id: "Site-Health-Audit",
+        id: "site-health-audit",
 
         category: "tools",
 
@@ -324,6 +324,38 @@ const resourceLibrary = [
             "Scan portfolio pages for broken internal resources, accessibility problems, invalid links, duplicate IDs, and structural issues.",
 
         url: "dev-audit.html",
+
+        external: false,
+
+        linkLabel:
+            "View Page",
+
+        tags: [
+            "HTML",
+            "CSS",
+            "JavaScript"
+        ]
+    },
+
+    {
+        id: "responsive-test-lab",
+
+        category: "tools",
+
+        categoryLabel: "Tools",
+
+        title: "Responsive Test Lab",
+
+        provider:
+            "Junlong Engineering Portfolio",
+
+        resourceType:
+            "Development Utility",
+
+        description:
+            "Preview portfolio pages at controlled viewport widths and automatically detect horizontal overflow and incorrect multi-column layouts.",
+
+        url: "responsive-test.html",
 
         external: false,
 
