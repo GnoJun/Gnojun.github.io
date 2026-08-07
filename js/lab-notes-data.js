@@ -12,8 +12,7 @@ const labNotes = [
         formulaSearch:
             "V I R voltage current resistance",
         date: "2026-08-01",
-        status: "Reference",
-        url: "notes/voltage-divider.html",
+        status: "Reference",        
         tags: [
             "Voltage",
             "Current",
@@ -59,6 +58,7 @@ const labNotes = [
             "Vout Vin R1 R2 voltage divider",
         date: "2026-08-01",
         status: "Documented",
+        url: "notes/voltage-divider.html",
         tags: [
             "Resistors",
             "Voltage",
