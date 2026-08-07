@@ -9,7 +9,7 @@ const resourceLibrary = [
         title: "ESP32-S3 N16R8 Component Reference",
 
         provider:
-            "Junlong He Engineering Portfolio",
+            "Junlong Engineering Portfolio",
 
         resourceType:
             "Internal Reference",
@@ -44,7 +44,7 @@ const resourceLibrary = [
         title: "Resistive Voltage Divider",
 
         provider:
-            "Junlong He Engineering Portfolio",
+            "Junlong Engineering Portfolio",
 
         resourceType:
             "Technical Note",
@@ -302,6 +302,38 @@ const resourceLibrary = [
             "Version Control",
             "GitHub Pages",
             "Deployment"
+        ]
+    },
+
+    {
+        id: "Site-Health-Audit",
+
+        category: "tools",
+
+        categoryLabel: "Tools",
+
+        title: "Site Health Audit",
+
+        provider:
+            "Junlong Engineering Portfolio",
+
+        resourceType:
+            "Development Utility",
+
+        description:
+            "Scan portfolio pages for broken internal resources, accessibility problems, invalid links, duplicate IDs, and structural issues.",
+
+        url: "dev-audit.html",
+
+        external: false,
+
+        linkLabel:
+            "View Page",
+
+        tags: [
+            "HTML",
+            "CSS",
+            "JavaScript"
         ]
     }
 ];
