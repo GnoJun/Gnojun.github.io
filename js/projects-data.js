@@ -12,33 +12,20 @@ const projectLibrary = [
         title:
             "ESP32-S3 Portable Lab Station",
 
-        summary:
-            "A handheld engineering platform built around the ESP32-S3, combining an OLED interface, signal generation, measurement tools, and expandable embedded hardware.",
-
-        status:
-            "active",
-
-        statusLabel:
-            "Active Development",
+        description:
+            "A portable engineering toolkit combining an OLED interface, oscilloscope, signal generator, logic analyzer, and expandable sensor support.",
 
         technologies: [
             "ESP32-S3",
             "C++",
-            "Arduino",
-            "I2C",
-            "OLED"
+            "OLED",
+            "I2C"
         ],
 
         detailsUrl:
-            "projects/esp32-lab-station.html",
-
-        repositoryUrl:
-            "",
-
-        featured:
-            true,
-
-        priority:
-            1
+            "projects/esp32-lab-station.html"
     }
+
+
 ];
+

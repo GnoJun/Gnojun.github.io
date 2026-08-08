@@ -211,10 +211,10 @@
                         <button
                             class="filter-button"
                             type="button"
-                            data-filter="esp32"
+                            data-filter="embedded"
                             aria-pressed="false"
                         >
-                            ESP32
+                            Embedded
                         </button>
 
                         <button
@@ -256,58 +256,12 @@
                 </div>
 
 
-                <div class="project-grid">
+                <div 
+                    class="project-grid"
+                    id="project-grid"
+                >
 
-                    <article
-                        class="project-card"
-                        data-category="esp32"
-                    >
-
-                        <div class="project-card-content">
-
-                            <p class="project-category">
-                                Embedded Systems
-                            </p>
-
-                            <h2 class="project-title">
-                                ESP32-S3 Portable Lab Station
-                            </h2>
-
-                            <p class="project-description">
-                                A portable engineering toolkit combining an OLED
-                                interface, oscilloscope, signal generator, logic
-                                analyzer, and expandable sensor support.
-                            </p>
-
-                            <ul
-                                class="project-tags"
-                                aria-label="Technologies used"
-                            >
-                                <li>ESP32-S3</li>
-                                <li>C++</li>
-                                <li>OLED</li>
-                                <li>I2C</li>
-                            </ul>
-
-                            <a
-                                href="projects/esp32-lab-station.html"
-                                class="project-link"
-                            >
-                                View Case Study
-
-                                <svg
-                                    class="icon"
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                >
-                                    <path d="M5 12h14"></path>
-                                    <path d="M13 6l6 6-6 6"></path>
-                                </svg>
-                            </a>
-
-                        </div>
-
-                    </article>
+                    
 
 
                     <article
@@ -642,6 +596,8 @@
     </footer>
 
     <script src="js/projects-data.js"></script>
+    <script src="js/projects.js"></script>
+
     <script src="js/theme.js"></script>
     <script src="js/main.js"></script>
 
