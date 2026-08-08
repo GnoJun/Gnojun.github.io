@@ -62,7 +62,7 @@ Variables
         rgba(15, 17, 21, 0.86);
 
     --color-surface-soft:
-        var(--color-surface-soft);
+        rgba(255, 255, 255, 0.04);
 
     --color-surface-soft-strong:
         rgba(255, 255, 255, 0.06);
