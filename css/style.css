@@ -1417,6 +1417,225 @@ html[data-theme="light"]
 
 
 /* =========================
+   Markdown Documents
+========================= */
+
+.markdown-document {
+    min-width: 0;
+}
+
+.markdown-document > * + * {
+    margin-top: var(--space-md);
+}
+
+.markdown-document h2 {
+    margin-top: var(--space-xl);
+
+    padding-top: var(--space-md);
+
+    color:
+        var(--color-text-primary);
+
+    font-size:
+        clamp(
+            1.6rem,
+            4vw,
+            2.2rem
+        );
+
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+
+    border-top:
+        1px solid
+        var(--color-border);
+}
+
+.markdown-document h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+
+    border-top: 0;
+}
+
+.markdown-document h3 {
+    margin-top: var(--space-lg);
+
+    color:
+        var(--color-text-primary);
+
+    font-size: 1.15rem;
+    line-height: 1.35;
+}
+
+.markdown-document p {
+    max-width: 74ch;
+
+    color:
+        var(--color-text-secondary);
+
+    line-height: 1.8;
+}
+
+.markdown-document ul,
+.markdown-document ol {
+    display: grid;
+
+    gap: 0.65rem;
+
+    margin-left: 1.25rem;
+
+    color:
+        var(--color-text-secondary);
+}
+
+.markdown-document li {
+    padding-left: 0.25rem;
+
+    line-height: 1.7;
+}
+
+.markdown-document strong {
+    color:
+        var(--color-text-primary);
+}
+
+.markdown-document a {
+    color:
+        var(--color-accent);
+
+    text-underline-offset: 0.18em;
+}
+
+.markdown-document a:hover {
+    color:
+        var(--color-accent-hover);
+}
+
+.markdown-document :not(pre) > code {
+    padding:
+        0.15rem
+        0.4rem;
+
+    background:
+        var(--color-code-background);
+
+    color:
+        var(--color-text-primary);
+
+    border:
+        1px solid
+        var(--color-border);
+
+    border-radius:
+        var(--radius-sm);
+
+    font-family:
+        "SFMono-Regular",
+        Consolas,
+        monospace;
+
+    font-size: 0.88em;
+}
+
+.markdown-document pre {
+    max-width: 100%;
+
+    overflow-x: auto;
+
+    padding: var(--space-md);
+
+    background:
+        var(--color-code-background);
+
+    border:
+        1px solid
+        var(--color-border);
+
+    border-radius:
+        var(--radius-md);
+}
+
+.markdown-document pre code {
+    font-family:
+        "SFMono-Regular",
+        Consolas,
+        monospace;
+
+    font-size: 0.84rem;
+    line-height: 1.65;
+
+    white-space: pre;
+}
+
+.markdown-document blockquote {
+    padding:
+        var(--space-sm)
+        var(--space-md);
+
+    background:
+        var(--color-surface-soft);
+
+    border-left:
+        3px solid
+        var(--color-accent);
+
+    border-radius:
+        0
+        var(--radius-sm)
+        var(--radius-sm)
+        0;
+}
+
+.markdown-document blockquote p {
+    margin: 0;
+
+    color:
+        var(--color-text-secondary);
+}
+
+.markdown-equation {
+    max-width: 100%;
+
+    overflow-x: auto;
+
+    padding:
+        var(--space-md);
+
+    background:
+        var(--color-surface);
+
+    border:
+        1px solid
+        var(--color-border);
+
+    border-radius:
+        var(--radius-md);
+
+    text-align: center;
+}
+
+.markdown-loading,
+.markdown-load-error {
+    padding:
+        var(--space-lg);
+
+    background:
+        var(--color-surface);
+
+    border:
+        1px solid
+        var(--color-border);
+
+    border-radius:
+        var(--radius-md);
+
+    color:
+        var(--color-text-secondary);
+}
+
+
+/* =========================
    Project Hero
 ========================= */
 
