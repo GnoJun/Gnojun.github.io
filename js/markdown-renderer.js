@@ -19,6 +19,40 @@
             .replaceAll("'", "&#039;");
     }
 
+    function resolveMarkdownUrl(
+        rawUrl,
+        markdownSource
+    ) {
+        try {
+            const markdownUrl =
+                new URL(
+                    markdownSource,
+                    window.location.href
+                );
+
+
+            const resolvedUrl =
+                new URL(
+                    rawUrl,
+                    markdownUrl
+                );
+
+
+            if (
+                resolvedUrl.protocol !== "http:" &&
+                resolvedUrl.protocol !== "https:"
+            ) {
+                return "";
+            }
+
+
+            return resolvedUrl.href;
+
+        } catch (error) {
+            return "";
+        }
+    }
+
 
     function renderInlineMarkdown(text) {
         let output =
@@ -85,7 +119,10 @@
     }
 
 
-    function parseMarkdown(markdown) {
+    function parseMarkdown(
+        markdown,
+        markdownSource
+    ) {
         const lines =
             markdown
                 .replace(/\r\n/g, "\n")
@@ -265,6 +302,92 @@
                 return;
             }
 
+            /* Image */
+
+            const imageMatch =
+                trimmed.match(
+                    /^!\[([^\]]*)\]\((\S+?)(?:\s+"([^"]*)")?\)$/
+                );
+
+
+            if (imageMatch) {
+                flushParagraph();
+                closeList();
+
+
+                const altText =
+                    imageMatch[1];
+
+                const imagePath =
+                    imageMatch[2];
+
+                const caption =
+                    imageMatch[3] || "";
+
+
+                const imageUrl =
+                    resolveMarkdownUrl(
+                        imagePath,
+                        markdownSource
+                    );
+
+                const isThemeAwareDiagram =
+                    imagePath
+                        .toLowerCase()
+                        .endsWith(
+                            ".diagram.svg"
+                        );
+
+
+                if (!imageUrl) {
+                    output.push(`
+                        <p class="markdown-image-error">
+                            Image could not be loaded:
+                            ${escapeHtml(imagePath)}
+                        </p>
+                    `);
+
+                    return;
+                }
+
+
+                output.push(`
+                    <figure class="markdown-figure">
+
+                        <img
+                            class="${
+                                isThemeAwareDiagram
+                                    ? "markdown-image markdown-image-diagram"
+                                    : "markdown-image"
+                            }"
+                            src="${escapeHtml(
+                                imageUrl
+                            )}"
+                            alt="${escapeHtml(
+                                altText
+                            )}"
+                            loading="lazy"
+                            decoding="async"
+                        >
+
+                        ${
+                            caption
+                                ? `
+                                    <figcaption>
+                                        ${escapeHtml(
+                                            caption
+                                        )}
+                                    </figcaption>
+                                `
+                                : ""
+                        }
+
+                    </figure>
+                `);
+
+
+                return;
+            }
 
             /* H2 */
 
@@ -484,7 +607,8 @@
 
             container.innerHTML =
                 parseMarkdown(
-                    markdown
+                    markdown,
+                    source
                 );
 
 

@@ -19,6 +19,7 @@ R2 connects the output node to ground.
 
 The output voltage is measured between the midpoint and ground.
 
+![Voltage divider circuit schematic](../../images/lab-notes/voltage-divider/circuit-diagram.diagram.svg "Basic two-resistor voltage divider")
 
 ## Equation and Variables
 

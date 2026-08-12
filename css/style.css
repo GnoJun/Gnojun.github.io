@@ -109,6 +109,7 @@ Variables
 }
 
 html[data-theme="light"] {
+    
     color-scheme: light;
 
     --color-background: #f5f7fb;
@@ -151,6 +152,22 @@ html[data-theme="light"] {
 
     --color-selection:
         rgba(37, 99, 235, 0.2);
+}
+
+html[data-theme="light"]
+.markdown-image-diagram {
+    filter: none;
+
+    opacity: 1;
+}
+
+html[data-theme="dark"]
+.markdown-image-diagram {
+    filter:
+        invert(1)
+        brightness(1.15);
+
+    opacity: 0.92;
 }
 
 /* =========================
@@ -1419,6 +1436,89 @@ html[data-theme="light"]
 /* =========================
    Markdown Documents
 ========================= */
+
+.markdown-image {
+    display: block;
+
+    max-width: 50%;
+    height: auto;
+
+    margin-inline: auto;
+}
+
+
+/* Engineering diagrams */
+
+.markdown-image-diagram {
+    transition:
+        filter var(--transition-normal),
+        opacity var(--transition-normal);
+}
+
+.markdown-figure {
+    margin:
+        var(--space-lg)
+        0;
+
+    padding:
+        var(--space-sm);
+
+    background:
+        var(--color-surface);
+
+    border:
+        1px solid
+        var(--color-border);
+
+    border-radius:
+        var(--radius-md);
+
+    overflow: hidden;
+}
+
+.markdown-figure img {
+    display: block;
+
+    max-width: 50%;
+    height: auto;
+
+    margin-inline: auto;
+
+    border-radius:
+        var(--radius-sm);
+}
+
+.markdown-figure figcaption {
+    max-width: 70ch;
+
+    margin:
+        var(--space-sm)
+        auto
+        0;
+
+    color:
+        var(--color-text-muted);
+
+    font-size: 0.82rem;
+    line-height: 1.6;
+
+    text-align: center;
+}
+
+.markdown-image-error {
+    padding:
+        var(--space-sm);
+
+    color:
+        var(--color-text-secondary);
+
+    border:
+        1px dashed
+        var(--color-border);
+
+    border-radius:
+        var(--radius-sm);
+}
 
 .markdown-document {
     min-width: 0;
