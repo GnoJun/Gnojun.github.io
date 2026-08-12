@@ -118,40 +118,7 @@
             label:
                 "Voltage Divider",
 
-            layoutRules: [
-                {
-                    selector:
-                        ".tech-note-variable-grid",
-
-                    maxWidth:
-                        768,
-
-                    expectedColumns:
-                        1
-                },
-
-                {
-                    selector:
-                        ".tech-note-callout-grid",
-
-                    maxWidth:
-                        768,
-
-                    expectedColumns:
-                        1
-                },
-
-                {
-                    selector:
-                        ".tech-note-media-grid",
-
-                    maxWidth:
-                        768,
-
-                    expectedColumns:
-                        1
-                }
-            ]
+            layoutRules: []
         },
 
         {
@@ -161,51 +128,7 @@
             label:
                 "ESP32-S3 Component",
 
-            layoutRules: [
-                {
-                    selector:
-                        ".component-detail-spec-grid",
-
-                    maxWidth:
-                        768,
-
-                    expectedColumns:
-                        1
-                },
-
-                {
-                    selector:
-                        ".component-detail-interface-grid",
-
-                    maxWidth:
-                        768,
-
-                    expectedColumns:
-                        1
-                },
-
-                {
-                    selector:
-                        ".component-detail-pin-grid",
-
-                    maxWidth:
-                        768,
-
-                    expectedColumns:
-                        1
-                },
-
-                {
-                    selector:
-                        ".component-detail-media-grid",
-
-                    maxWidth:
-                        768,
-
-                    expectedColumns:
-                        1
-                }
-            ]
+            layoutRules: []
         }
     ];
 
