@@ -846,7 +846,8 @@ html[data-theme="light"]
     border-color: rgba(79, 140, 255, 0.3);
 }
 
-.case-study-section[id] {
+.case-study-section[id],
+.markdown-document h2[id] {
     scroll-margin-top:
         calc(
             var(--header-height) +
@@ -1439,7 +1440,6 @@ html[data-theme="light"]
 
 .markdown-image {
     display: block;
-
     max-width: 50%;
     height: auto;
 
@@ -6790,11 +6790,13 @@ html[data-theme="light"]
    Reading Progress
 ========================= */
 
-.project-toc > .container {
+.project-toc > .container,
+.reading-progress-anchor {
     position: relative;
 }
 
-.reading-progress {
+.reading-progress,
+.markdown-reading-progress {
     position: absolute;
 
     left: var(--space-lg);
@@ -6812,7 +6814,8 @@ html[data-theme="light"]
     pointer-events: none;
 }
 
-.reading-progress-bar {
+.reading-progress-bar,
+.markdown-reading-progress-bar {
     display: block;
 
     width: 100%;

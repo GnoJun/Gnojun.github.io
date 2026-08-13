@@ -490,6 +490,11 @@ if (readingProgress && readingProgressBar) {
     );
 
 
+    document.addEventListener(
+        "markdown:rendered",
+        requestReadingUpdate
+    );
+
     updateReadingInterface();
 }
 

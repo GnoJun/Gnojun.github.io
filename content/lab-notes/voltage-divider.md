@@ -83,3 +83,4 @@ $$
 > A voltage divider is best treated as a signal-scaling circuit rather than a power supply.
 
 When connecting the divider to an ADC or another circuit, always consider the input impedance of the connected load.
+
