@@ -287,14 +287,16 @@ const resourceLibrary = [
             "Workflow Reference",
 
         description:
-            "A future reference for commits, branches, repositories, GitHub Pages deployment, project history, and collaborative development practices.",
+            "A practical reference for commits, repository synchronization, GitHub workflows, project history, and safe multi-device development.",
 
-        url: "",
+        url:
+            "resources/git-workflow.html",
 
-        external: true,
+        external:
+            false,
 
         linkLabel:
-            "Open Resource",
+            "View Guide",
 
         tags: [
             "Git",
