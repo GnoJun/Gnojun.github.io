@@ -6,6 +6,9 @@ const componentLibrary = [
 
         categoryLabel: "Controller",
 
+        date:
+            "2026-08-11",
+
         name: "ESP32-S3 N16R8",
 
         model: "ESP32-S3 development board",
@@ -44,6 +47,9 @@ const componentLibrary = [
 
         categoryLabel: "Controller",
 
+        date:
+            "2026-08-11",
+
         name: "Arduino UNO R3",
 
         model: "ATmega328P development board",
@@ -77,6 +83,9 @@ const componentLibrary = [
         category: "communication",
 
         categoryLabel: "Communication",
+
+        date:
+            "2026-08-11",
 
         name: "PN532 NFC Module",
 
@@ -112,6 +121,9 @@ const componentLibrary = [
         category: "display",
 
         categoryLabel: "Display",
+
+        date:
+            "2026-08-11",
 
         name: "SH1106 OLED Display",
 
@@ -149,6 +161,9 @@ const componentLibrary = [
 
         categoryLabel: "Display",
 
+        date:
+            "2026-08-11",
+
         name: "SSD1306 OLED Display",
 
         model: "Monochrome OLED module",
@@ -183,6 +198,9 @@ const componentLibrary = [
         category: "digital-logic",
 
         categoryLabel: "Digital Logic",
+
+        date:
+            "2026-08-11",
 
         name: "Basys 3 FPGA Board",
 

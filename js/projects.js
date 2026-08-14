@@ -96,6 +96,41 @@
             .replaceAll("'", "&#039;");
     }
 
+    function formatProjectDate(
+        dateString
+    ) {
+        const date =
+            new Date(
+                `${dateString}T00:00:00`
+            );
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+            return dateString;
+        }
+
+
+        return new Intl.DateTimeFormat(
+            "en-US",
+            {
+                year:
+                    "numeric",
+
+                month:
+                    "short",
+
+                day:
+                    "numeric"
+            }
+        ).format(
+            date
+        );
+    }
+
 
     function createProjectTags(
         technologies
@@ -153,6 +188,7 @@
                 class="
                     project-link
                     project-link-muted
+                    content-card-link-muted
                 "
             >
                 ${escapeProjectHtml(
@@ -166,7 +202,10 @@
     function createProjectCard(project) {
         return `
             <article
-                class="project-card"
+                class="
+                    project-card
+                    content-card
+                "
                 data-category="${escapeProjectHtml(
                     project.category
                 )}"
@@ -174,11 +213,34 @@
 
                 <div class="project-card-content">
 
-                    <p class="project-category">
-                        ${escapeProjectHtml(
-                            project.categoryLabel
-                        )}
-                    </p>
+                   <div
+                        class="
+                            project-card-header
+                            content-card-header
+                        "
+                    >
+
+                        <p class="project-category">
+                            ${escapeProjectHtml(
+                                project.categoryLabel
+                            )}
+                        </p>
+
+
+                        <time
+                            class="content-card-date"
+                            datetime="${escapeProjectHtml(
+                                project.date
+                            )}"
+                        >
+                            ${escapeProjectHtml(
+                                formatProjectDate(
+                                    project.date
+                                )
+                            )}
+                        </time>
+
+                    </div>
 
 
                     <h2 class="project-title">
@@ -205,7 +267,18 @@
                     </ul>
 
 
-                    ${createProjectAction(project)}
+                    <div
+                        class="
+                            project-card-footer
+                            content-card-footer
+                        "
+                    >
+
+                        ${createProjectAction(
+                            project
+                        )}
+
+                    </div>
 
                 </div>
 

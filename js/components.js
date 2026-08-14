@@ -64,6 +64,41 @@
             .replaceAll("'", "&#039;");
     }
 
+    function formatComponentDate(
+        dateString
+    ) {
+        const date =
+            new Date(
+                `${dateString}T00:00:00`
+            );
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+            return dateString;
+        }
+
+
+        return new Intl.DateTimeFormat(
+            "en-US",
+            {
+                year:
+                    "numeric",
+
+                month:
+                    "short",
+
+                day:
+                    "numeric"
+            }
+        ).format(
+            date
+        );
+    }
+
 
     function createComponentTags(tags) {
         if (
@@ -157,7 +192,11 @@ function createComponentActions(
 
     if (actionLinks.length === 0) {
         return `
-            <span class="component-reference-status">
+            <span class="
+                component-reference-status
+                content-card-link-muted
+                "
+            >
                 Reference page planned
             </span>
         `;
@@ -175,7 +214,11 @@ function createComponentActions(
     function createComponentCard(component) {
         return `
             <article
-                class="component-card"
+                class="
+                    component-card
+                    content-card
+                "
+
                 data-component-category="
                     ${escapeComponentHtml(
                         component.category
@@ -183,7 +226,11 @@ function createComponentActions(
                 "
             >
 
-                <div class="component-card-header">
+                <div class="
+                        component-card-header
+                        content-card-header
+                    "
+                >
 
                     <span
                         class="
@@ -198,11 +245,21 @@ function createComponentActions(
                         )}
                     </span>
 
-                    <span class="component-card-status">
+                    <time
+                        class="
+                            component-card-date
+                            content-card-date
+                        "
+                        datetime="${escapeComponentHtml(
+                            component.date
+                        )}"
+                    >
                         ${escapeComponentHtml(
-                            component.status
+                            formatComponentDate(
+                                component.date
+                            )
                         )}
-                    </span>
+                    </time>
 
                 </div>
 
@@ -264,7 +321,19 @@ function createComponentActions(
                 )}
 
 
-                <div class="component-card-footer">
+                <div
+                    class="
+                        component-card-footer
+                        content-card-footer
+                    "
+                >
+
+                    <span class="component-card-status">
+                        ${escapeComponentHtml(
+                            component.status
+                        )}
+                    </span>
+
 
                     ${createComponentActions(
                         component

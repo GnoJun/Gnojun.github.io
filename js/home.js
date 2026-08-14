@@ -277,14 +277,23 @@
                     </a>
                 `
                 : `
-                    <span class="home-preview-pending">
+                    <span class="
+                            home-preview-pending
+                            content-card-link-muted
+                        "
+                    >
                         Detail page planned
                     </span>
                 `;
 
 
         return `
-            <article class="home-preview-card">
+            <article
+                class="
+                    home-preview-card
+                    content-card
+                "
+            >
 
                 <div class="home-preview-card-meta">
 
@@ -440,14 +449,23 @@
                     </a>
                 `
                 : `
-                    <span class="home-preview-pending">
+                    <span class="
+                            home-preview-pending
+                            content-card-link-muted
+                        "
+                    >
                         Reference planned
                     </span>
                 `;
 
 
         return `
-            <article class="home-preview-card">
+            <article
+                class="
+                    home-preview-card
+                    content-card
+                "
+            >
 
                 <div class="home-preview-card-meta">
 
@@ -457,11 +475,18 @@
                         )}
                     </span>
 
-                    <span>
+                    <time
+                        class="content-card-date"
+                        datetime="${escapeHomeHtml(
+                            component.date
+                        )}"
+                    >
                         ${escapeHomeHtml(
-                            component.status
+                            formatHomeDate(
+                                component.date
+                            )
                         )}
-                    </span>
+                    </time>
 
                 </div>
 
@@ -489,7 +514,7 @@
 
                     <span class="home-preview-state">
                         ${escapeHomeHtml(
-                            component.interfaces
+                            component.status
                         )}
                     </span>
 
@@ -595,14 +620,23 @@
                     </a>
                 `
                 : `
-                    <span class="home-preview-pending">
+                    <span class="
+                            home-preview-pending
+                            content-card-link-muted
+                        "
+                    >
                         Link pending verification
                     </span>
                 `;
 
 
         return `
-            <article class="home-preview-card">
+            <article
+                class="
+                    home-preview-card
+                    content-card
+                "
+            >
 
                 <div class="home-preview-card-meta">
 
@@ -612,11 +646,18 @@
                         )}
                     </span>
 
-                    <span>
+                    <time
+                        class="content-card-date"
+                        datetime="${escapeHomeHtml(
+                            resource.date
+                        )}"
+                    >
                         ${escapeHomeHtml(
-                            resource.resourceType
+                            formatHomeDate(
+                                resource.date
+                            )
                         )}
-                    </span>
+                    </time>
 
                 </div>
 

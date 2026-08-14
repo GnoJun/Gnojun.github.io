@@ -9,6 +9,9 @@ const projectLibrary = [
         categoryLabel:
             "Embedded Systems",
 
+        date:
+            "2026-08-11",
+
         title:
             "ESP32-S3 Portable Lab Station",
 
@@ -39,6 +42,9 @@ const projectLibrary = [
 
         categoryLabel:
             "NFC Systems",
+
+        date:
+            "2026-08-11",
 
         title:
             "NFC Payment Prototype",
@@ -71,6 +77,9 @@ const projectLibrary = [
         categoryLabel:
             "Digital Design",
 
+        date:
+            "2026-08-11",
+
         title:
             "FPGA Digital Logic Playground",
 
@@ -102,6 +111,9 @@ const projectLibrary = [
         categoryLabel:
             "Embedded Systems",
 
+        date:
+            "2026-08-11",
+
         title:
             "STM32 Sensor Data Logger",
 
@@ -132,6 +144,9 @@ const projectLibrary = [
 
         categoryLabel:
             "PCB Design",
+
+        date:
+            "2026-08-11",
 
         title:
             "Sensor Interface PCB",

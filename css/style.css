@@ -769,6 +769,11 @@ html[data-theme="light"]
     cursor: default;
 }
 
+.project-card-header
+.project-category {
+    margin-bottom: 0;
+}
+
 /* =========================
    Project Table of Contents
 ========================= */
@@ -4337,6 +4342,21 @@ html[data-theme="light"]
         var(--space-2xl);
 }
 
+.component-card-footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    gap:
+        var(--space-sm);
+}
+
+
+.component-card-actions {
+    justify-content:
+        flex-end;
+}
 
 /* =========================
    Component Search
@@ -5738,6 +5758,21 @@ html[data-theme="light"]
         var(--space-2xl);
 }
 
+.resource-card-footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    gap:
+        var(--space-sm);
+}
+
+
+.resource-card-footer
+.resource-type {
+    text-align: left;
+}
 
 /* =========================
    Resource Search
@@ -6760,6 +6795,123 @@ html[data-theme="light"]
         1px solid var(--color-border);
 
     border-radius: var(--radius-md);
+}
+
+/* =========================
+   Shared Content Card System
+========================= */
+
+.content-card {
+    min-width: 0;
+
+    background:
+        var(--color-surface);
+
+    border:
+        1px solid var(--color-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    transition:
+        background-color
+            var(--transition-normal),
+        border-color
+            var(--transition-normal),
+        transform
+            var(--transition-normal);
+}
+
+
+.content-card:hover {
+    background:
+        var(--color-surface-hover);
+
+    border-color:
+        rgba(79, 140, 255, 0.35);
+
+    transform:
+        translateY(-5px);
+}
+
+
+/* Shared card header */
+
+.content-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap:
+        var(--space-sm);
+
+    margin-bottom:
+        var(--space-md);
+}
+
+
+/* Shared date */
+
+.content-card-date {
+    flex-shrink: 0;
+
+    color:
+        var(--color-text-muted);
+
+    font-size:
+        0.8rem;
+
+    font-weight:
+        500;
+
+    line-height:
+        1.4;
+
+    white-space:
+        nowrap;
+}
+
+
+/* Shared footer */
+
+.content-card-footer {
+    margin-top:
+        auto;
+
+    padding-top:
+        var(--space-md);
+
+    border-top:
+        1px solid var(--color-border);
+}
+
+
+/* Unavailable action */
+
+.content-card-link-muted {
+    color:
+        var(--color-text-muted);
+
+    cursor:
+        default;
+
+    pointer-events:
+        none;
+
+    text-decoration:
+        none;
+
+    transition:
+        none;
+}
+
+
+.content-card-link-muted:hover {
+    color:
+        var(--color-text-muted);
+
+    transform:
+        none;
 }
 
 /* =========================

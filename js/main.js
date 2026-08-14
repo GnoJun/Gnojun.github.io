@@ -824,18 +824,30 @@ if (
                     </a>
                 `
                 : `
-                    <span class="note-link">
+                    <span
+                        class="
+                            note-link
+                            content-card-link-muted
+                        "
+                    >
                         Details coming soon
                     </span>
                 `;
 
         return `
             <article
-                class="note-card"
+                class="
+                    note-card
+                    content-card
+                "
                 data-note-type="${note.type}"
             >
 
-                <div class="note-card-header">
+                <div class="
+                        note-card-header
+                        content-card-header
+                    "
+                >
 
                     <span
                         class="
@@ -847,7 +859,10 @@ if (
                     </span>
 
                     <time
-                        class="note-date"
+                        class="
+                            note-date
+                            content-card-date
+                        "
                         datetime="${note.date}"
                     >
                         ${formatNoteDate(note.date)}
@@ -874,7 +889,11 @@ if (
                 ${createNoteTags(note.tags)}
 
 
-                <div class="note-card-footer">
+                <div class="
+                        note-card-footer
+                        content-card-footer
+                    "
+                >
 
                     <span class="note-status">
                         ${note.status}

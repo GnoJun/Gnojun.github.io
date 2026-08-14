@@ -6,6 +6,9 @@ const resourceLibrary = [
 
         categoryLabel: "Embedded",
 
+        date:
+            "2026-08-14",
+
         title: "ESP32-S3 N16R8 Component Reference",
 
         provider:
@@ -41,6 +44,9 @@ const resourceLibrary = [
 
         categoryLabel: "Circuits",
 
+        date:
+            "2026-08-14",
+
         title: "Resistive Voltage Divider",
 
         provider:
@@ -74,6 +80,9 @@ const resourceLibrary = [
         category: "official-docs",
 
         categoryLabel: "Official Docs",
+
+        date:
+            "2026-08-14",
 
         title: "ESP32-S3 Programming Documentation",
 
@@ -109,6 +118,9 @@ const resourceLibrary = [
 
         categoryLabel: "FPGA & Digital",
 
+        date:
+            "2026-08-14",
+
         title: "Basys 3 Board Documentation",
 
         provider:
@@ -142,6 +154,9 @@ const resourceLibrary = [
         category: "fpga",
 
         categoryLabel: "FPGA & Digital",
+
+        date:
+            "2026-08-14",
 
         title: "HDL and Digital Design Reference",
 
@@ -177,6 +192,9 @@ const resourceLibrary = [
 
         categoryLabel: "Circuits",
 
+        date:
+            "2026-08-14",
+
         title: "Circuit Simulation Reference",
 
         provider:
@@ -209,6 +227,9 @@ const resourceLibrary = [
         category: "pcb",
 
         categoryLabel: "PCB",
+
+        date:
+            "2026-08-14",
 
         title: "KiCad Documentation",
 
@@ -244,6 +265,9 @@ const resourceLibrary = [
 
         categoryLabel: "Tools",
 
+        date:
+            "2026-08-14",
+
         title: "Web Platform Documentation",
 
         provider:
@@ -277,6 +301,9 @@ const resourceLibrary = [
         category: "tools",
 
         categoryLabel: "Tools",
+
+        date:
+            "2026-08-14",
 
         title: "Git and GitHub Workflow Reference",
 
@@ -314,6 +341,9 @@ const resourceLibrary = [
 
         categoryLabel: "Tools",
 
+        date:
+            "2026-08-14",
+
         title: "Site Health Audit",
 
         provider:
@@ -345,6 +375,9 @@ const resourceLibrary = [
         category: "tools",
 
         categoryLabel: "Tools",
+
+        date:
+            "2026-08-14",
 
         title: "Responsive Test Lab",
 

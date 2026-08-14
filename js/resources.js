@@ -70,6 +70,41 @@
             .replaceAll("'", "&#039;");
     }
 
+    function formatResourceDate(
+        dateString
+    ) {
+        const date =
+            new Date(
+                `${dateString}T00:00:00`
+            );
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+            return dateString;
+        }
+
+
+        return new Intl.DateTimeFormat(
+            "en-US",
+            {
+                year:
+                    "numeric",
+
+                month:
+                    "short",
+
+                day:
+                    "numeric"
+            }
+        ).format(
+            date
+        );
+    }
+
 
     function createResourceTags(tags) {
         if (
@@ -105,7 +140,12 @@
     function createResourceAction(resource) {
         if (!resource.url) {
             return `
-                <span class="resource-link-pending">
+                <span
+                    class="
+                        resource-link-pending
+                        content-card-link-muted
+                    "
+                >
                     Link pending verification
                 </span>
             `;
@@ -174,13 +214,20 @@
     function createResourceCard(resource) {
         return `
             <article
-                class="resource-card"
+                class="
+                    resource-card
+                    content-card
+                "
                 data-resource-category="${escapeResourceHtml(
                     resource.category
                 )}"
             >
 
-                <div class="resource-card-header">
+                <div class="
+                    resource-card-header
+                    content-card-header
+                    "
+                >
 
                     <span
                         class="
@@ -195,11 +242,21 @@
                         )}
                     </span>
 
-                    <span class="resource-type">
+                    <time
+                        class="
+                            resource-date
+                            content-card-date
+                        "
+                        datetime="${escapeResourceHtml(
+                            resource.date
+                        )}"
+                    >
                         ${escapeResourceHtml(
-                            resource.resourceType
+                            formatResourceDate(
+                                resource.date
+                            )
                         )}
-                    </span>
+                    </time>
 
                 </div>
 
@@ -228,7 +285,19 @@
                 )}
 
 
-                <div class="resource-card-footer">
+                <div
+                    class="
+                        resource-card-footer
+                        content-card-footer
+                    "
+                >
+
+                    <span class="resource-type">
+                        ${escapeResourceHtml(
+                            resource.resourceType
+                        )}
+                    </span>
+
 
                     ${createResourceAction(
                         resource
