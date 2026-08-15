@@ -7,7 +7,7 @@ const resourceLibrary = [
         categoryLabel: "Embedded",
 
         date:
-            "2026-08-14",
+            "2026-08-04",
 
         title: "ESP32-S3 N16R8 Component Reference",
 
@@ -95,7 +95,7 @@ const resourceLibrary = [
         description:
             "The primary documentation collection to consult when verifying ESP32-S3 peripherals, GPIO behavior, development workflows, and hardware capabilities.",
 
-        url: "",
+        url: "https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/index.html",
 
         external: true,
 
@@ -132,7 +132,7 @@ const resourceLibrary = [
         description:
             "Reference material for the Basys 3 development board, onboard I/O, FPGA interfaces, constraints, and digital-design experiments.",
 
-        url: "",
+        url: "https://digilent.com/reference/programmable-logic/basys-3/reference-manual?srsltid=AfmBOooB36XsQT08y6lmVcQIBrJ1Oik4MMuhSRfBj--tTuyGNHtuGmFF",
 
         external: true,
 
@@ -342,7 +342,7 @@ const resourceLibrary = [
         categoryLabel: "Tools",
 
         date:
-            "2026-08-14",
+            "2026-08-01",
 
         title: "Site Health Audit",
 
@@ -377,7 +377,7 @@ const resourceLibrary = [
         categoryLabel: "Tools",
 
         date:
-            "2026-08-14",
+            "2026-08-01",
 
         title: "Responsive Test Lab",
 

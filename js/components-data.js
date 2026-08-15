@@ -27,7 +27,7 @@ const componentLibrary = [
         detailsUrl:
             "components/esp32-s3-n16r8.html",
         projectUrl:
-            "projects/esp32-lab-station.html",
+            "",
 
         datasheetUrl: "",
 

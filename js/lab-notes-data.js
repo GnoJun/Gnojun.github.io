@@ -32,7 +32,7 @@ const labNotes = [
         `,
         formulaSearch:
             "tau R C time constant resistor capacitor",
-        date: "2026-08-01",
+        date: "2026-08-02",
         status: "Reference",
         tags: [
             "RC Circuit",
@@ -56,7 +56,7 @@ const labNotes = [
         `,
         formulaSearch:
             "Vout Vin R1 R2 voltage divider",
-        date: "2026-08-01",
+        date: "2026-08-03",
         status: "Documented",
         url: "notes/voltage-divider.html",
         tags: [
