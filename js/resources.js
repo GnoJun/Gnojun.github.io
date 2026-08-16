@@ -26,6 +26,11 @@
             "#resource-status"
         );
 
+    const resourceSortButton =
+        document.querySelector(
+            "#resource-sort"
+        );
+
     const resourcesEmptyState =
         document.querySelector(
             "#resources-empty-state"
@@ -47,10 +52,16 @@
     }
 
 
-    let activeResourceFilter = "all";
-    let resourceSearchQuery = "";
-    let resourceSearchTimer;
+    let activeResourceFilter =
+        "all";
 
+    let resourceSearchQuery =
+        "";
+
+    let activeResourceSort =
+        "newest";
+
+    let resourceSearchTimer;
 
     function normalizeResourceText(value) {
         return String(value ?? "")
@@ -349,19 +360,64 @@
         ).includes(resourceSearchQuery);
     }
 
+    function sortResourcesByDate(
+        resources
+    ) {
+        return resources
+            .slice()
+            .sort(
+                function (
+                    firstResource,
+                    secondResource
+                ) {
+                    const firstDate =
+                        Date.parse(
+                            firstResource.date
+                        ) || 0;
+
+                    const secondDate =
+                        Date.parse(
+                            secondResource.date
+                        ) || 0;
+
+
+                    if (
+                        activeResourceSort ===
+                        "oldest"
+                    ) {
+                        return (
+                            firstDate -
+                            secondDate
+                        );
+                    }
+
+
+                    return (
+                        secondDate -
+                        firstDate
+                    );
+                }
+            );
+    }
 
     function getVisibleResources() {
-        return resourceLibrary.filter(
-            function (resource) {
-                return (
-                    resourceMatchesFilter(
-                        resource
-                    ) &&
-                    resourceMatchesSearch(
-                        resource
-                    )
-                );
-            }
+        const visibleResources =
+            resourceLibrary.filter(
+                function (resource) {
+                    return (
+                        resourceMatchesFilter(
+                            resource
+                        ) &&
+                        resourceMatchesSearch(
+                            resource
+                        )
+                    );
+                }
+            );
+
+
+        return sortResourcesByDate(
+            visibleResources
         );
     }
 
@@ -642,6 +698,39 @@
             "click",
             clearResourceSearch
         );
+    }
+
+    if (resourceSortButton) {
+        resourceSortButton
+            .addEventListener(
+                "click",
+                function () {
+                    activeResourceSort =
+                        activeResourceSort ===
+                        "newest"
+                            ? "oldest"
+                            : "newest";
+
+
+                    resourceSortButton
+                        .dataset
+                        .sortOrder =
+                        activeResourceSort;
+
+
+                    resourceSortButton
+                        .setAttribute(
+                            "aria-label",
+                            activeResourceSort ===
+                            "newest"
+                                ? "Sorted by date, newest first. Activate to sort oldest first."
+                                : "Sorted by date, oldest first. Activate to sort newest first."
+                        );
+
+
+                    updateResourceInterface();
+                }
+            );
     }
 
 

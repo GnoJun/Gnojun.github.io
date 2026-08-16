@@ -21,6 +21,11 @@
             "#component-status"
         );
 
+    const componentSortButton =
+        document.querySelector(
+            "#component-sort"
+        );
+
     const componentsEmptyState =
         document.querySelector(
             "#components-empty-state"
@@ -41,8 +46,15 @@
     }
 
 
-    let activeComponentFilter = "all";
-    let componentSearchQuery = "";
+    let activeComponentFilter =
+        "all";
+
+    let componentSearchQuery =
+        "";
+
+    let activeComponentSort =
+        "newest";
+
     let componentSearchTimer;
 
 
@@ -391,19 +403,64 @@ function createComponentActions(
         ).includes(componentSearchQuery);
     }
 
+    function sortComponentsByDate(
+        components
+    ) {
+        return components
+            .slice()
+            .sort(
+                function (
+                    firstComponent,
+                    secondComponent
+                ) {
+                    const firstDate =
+                        Date.parse(
+                            firstComponent.date
+                        ) || 0;
+
+                    const secondDate =
+                        Date.parse(
+                            secondComponent.date
+                        ) || 0;
+
+
+                    if (
+                        activeComponentSort ===
+                        "oldest"
+                    ) {
+                        return (
+                            firstDate -
+                            secondDate
+                        );
+                    }
+
+
+                    return (
+                        secondDate -
+                        firstDate
+                    );
+                }
+            );
+    }
 
     function getVisibleComponents() {
-        return componentLibrary.filter(
-            function (component) {
-                return (
-                    componentMatchesFilter(
-                        component
-                    ) &&
-                    componentMatchesSearch(
-                        component
-                    )
-                );
-            }
+        const visibleComponents =
+            componentLibrary.filter(
+                function (component) {
+                    return (
+                        componentMatchesFilter(
+                            component
+                        ) &&
+                        componentMatchesSearch(
+                            component
+                        )
+                    );
+                }
+            );
+
+
+        return sortComponentsByDate(
+            visibleComponents
         );
     }
 
@@ -640,6 +697,39 @@ function createComponentActions(
                 }
             }
         );
+    }
+
+    if (componentSortButton) {
+        componentSortButton
+            .addEventListener(
+                "click",
+                function () {
+                    activeComponentSort =
+                        activeComponentSort ===
+                        "newest"
+                            ? "oldest"
+                            : "newest";
+
+
+                    componentSortButton
+                        .dataset
+                        .sortOrder =
+                        activeComponentSort;
+
+
+                    componentSortButton
+                        .setAttribute(
+                            "aria-label",
+                            activeComponentSort ===
+                            "newest"
+                                ? "Sorted by date, newest first. Activate to sort oldest first."
+                                : "Sorted by date, oldest first. Activate to sort newest first."
+                        );
+
+
+                    updateComponentInterface();
+                }
+            );
     }
 
 

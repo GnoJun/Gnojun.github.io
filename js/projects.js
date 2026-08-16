@@ -4,6 +4,10 @@
             "#project-grid"
         );
 
+    const projectSortButton =
+        document.querySelector(
+            "#project-sort"
+        );
 
     if (
         !projectsGrid ||
@@ -209,6 +213,10 @@
                 data-category="${escapeProjectHtml(
                     project.category
                 )}"
+
+                data-project-date="${escapeProjectHtml(
+                    project.date
+                )}"
             >
 
                 <div class="project-card-content">
@@ -286,6 +294,77 @@
         `;
     }
 
+    function getProjectCardDate(
+        card
+    ) {
+        const dateValue =
+            Date.parse(
+                card.dataset
+                    .projectDate || ""
+            );
+
+
+        return Number.isNaN(
+            dateValue
+        )
+            ? 0
+            : dateValue;
+    }
+
+
+    function sortProjectCards(
+        order
+    ) {
+        const cards =
+            Array.from(
+                projectsGrid
+                    .querySelectorAll(
+                        ".project-card"
+                    )
+            );
+
+
+        cards.sort(
+            function (
+                firstCard,
+                secondCard
+            ) {
+                const firstDate =
+                    getProjectCardDate(
+                        firstCard
+                    );
+
+                const secondDate =
+                    getProjectCardDate(
+                        secondCard
+                    );
+
+
+                if (order === "oldest") {
+                    return (
+                        firstDate -
+                        secondDate
+                    );
+                }
+
+
+                return (
+                    secondDate -
+                    firstDate
+                );
+            }
+        );
+
+
+        cards.forEach(
+            function (card) {
+                projectsGrid
+                    .appendChild(
+                        card
+                    );
+            }
+        );
+    }
 
     function renderProjects() {
         projectsGrid.innerHTML =
@@ -296,4 +375,51 @@
 
 
     renderProjects();
+
+
+    if (projectSortButton) {
+        sortProjectCards(
+            "newest"
+        );
+
+
+        projectSortButton
+            .addEventListener(
+                "click",
+                function () {
+                    const currentOrder =
+                        projectSortButton
+                            .dataset
+                            .sortOrder;
+
+
+                    const nextOrder =
+                        currentOrder ===
+                        "newest"
+                            ? "oldest"
+                            : "newest";
+
+
+                    projectSortButton
+                        .dataset
+                        .sortOrder =
+                        nextOrder;
+
+
+                    projectSortButton
+                        .setAttribute(
+                            "aria-label",
+                            nextOrder ===
+                            "newest"
+                                ? "Sorted by date, newest first. Activate to sort oldest first."
+                                : "Sorted by date, oldest first. Activate to sort newest first."
+                        );
+
+
+                    sortProjectCards(
+                        nextOrder
+                    );
+                }
+            );
+    }
 })();

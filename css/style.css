@@ -6798,6 +6798,120 @@ html[data-theme="light"]
 }
 
 /* =========================
+   Shared Date Sort Control
+========================= */
+
+.content-toolbar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+
+    gap: var(--space-sm);
+
+    margin-left: auto;
+}
+
+.content-sort-button {
+    min-height: 40px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.55rem;
+
+    padding:
+        0.55rem
+        0.9rem;
+
+    background:
+        var(--color-surface);
+
+    color:
+        var(--color-text-secondary);
+
+    border:
+        1px solid
+        var(--color-border);
+
+    border-radius:
+        var(--radius-pill);
+
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background-color
+            var(--transition-fast),
+        border-color
+            var(--transition-fast),
+        color
+            var(--transition-fast),
+        transform
+            var(--transition-fast);
+}
+
+
+.content-sort-button:hover {
+    background:
+        var(--color-surface-hover);
+
+    color:
+        var(--color-text-primary);
+
+    border-color:
+        rgba(
+            79,
+            140,
+            255,
+            0.35
+        );
+
+    transform:
+        translateY(-1px);
+}
+
+
+.content-sort-button:focus-visible {
+    outline:
+        2px solid
+        var(--color-accent);
+
+    outline-offset:
+        3px;
+}
+
+
+.content-sort-icon {
+    width: 17px;
+    height: 17px;
+
+    fill: none;
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    transition:
+        transform
+            var(--transition-fast);
+}
+
+.content-sort-button[
+    data-sort-order="oldest"
+]
+.content-sort-icon {
+    transform:
+        rotate(180deg);
+}
+
+
+/* =========================
    Shared Content Card System
 ========================= */
 
@@ -8102,6 +8216,34 @@ header strong {
 ========================= */
 
 @media (max-width: 768px) {
+
+    .content-toolbar-actions {
+        width: 100%;
+
+        justify-content:
+            space-between;
+
+        flex-wrap: wrap;
+
+        margin-left: 0;
+    }
+
+
+    .content-toolbar-actions
+    .filter-status,
+
+    .content-toolbar-actions
+    .notes-status,
+
+    .content-toolbar-actions
+    .component-status,
+
+    .content-toolbar-actions
+    .resource-status {
+        width: auto;
+
+        white-space: normal;
+    }
 
     .responsive-test-page {
         padding:

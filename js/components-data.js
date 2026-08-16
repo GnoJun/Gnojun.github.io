@@ -48,7 +48,7 @@ const componentLibrary = [
         categoryLabel: "Controller",
 
         date:
-            "2026-08-11",
+            "2026-08-12",
 
         name: "Arduino UNO R3",
 

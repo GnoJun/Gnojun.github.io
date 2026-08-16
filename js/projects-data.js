@@ -112,7 +112,7 @@ const projectLibrary = [
             "Embedded Systems",
 
         date:
-            "2026-08-11",
+            "2026-08-13",
 
         title:
             "STM32 Sensor Data Logger",

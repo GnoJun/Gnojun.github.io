@@ -569,6 +569,11 @@ const noteSearchClear =
 const notesStatus =
     document.querySelector("#notes-status");
 
+const noteSortButton =
+    document.querySelector(
+        "#note-sort"
+    );
+
 const notesEmptyState =
     document.querySelector(
         "#notes-empty-state"
@@ -711,8 +716,15 @@ if (
     validateLabNotesData(labNotes);
 
 
-    let activeNoteFilter = "all";
-    let noteSearchQuery = "";
+    let activeNoteFilter =
+        "all";
+
+    let noteSearchQuery =
+        "";
+
+    let activeNoteSort =
+        "newest";
+
     let noteSearchTimer;
 
 
@@ -946,15 +958,64 @@ if (
             .includes(noteSearchQuery);
     }
 
+    function sortNotesByDate(
+        notes
+    ) {
+        return notes
+            .slice()
+            .sort(
+                function (
+                    firstNote,
+                    secondNote
+                ) {
+                    const firstDate =
+                        Date.parse(
+                            firstNote.date
+                        ) || 0;
+
+                    const secondDate =
+                        Date.parse(
+                            secondNote.date
+                        ) || 0;
+
+
+                    if (
+                        activeNoteSort ===
+                        "oldest"
+                    ) {
+                        return (
+                            firstDate -
+                            secondDate
+                        );
+                    }
+
+
+                    return (
+                        secondDate -
+                        firstDate
+                    );
+                }
+            );
+    }
 
     function getVisibleNotes() {
-        return labNotes.filter(
-            function (note) {
-                return (
-                    noteMatchesActiveFilter(note) &&
-                    noteMatchesSearch(note)
-                );
-            }
+        const visibleNotes =
+            labNotes.filter(
+                function (note) {
+                    return (
+                        noteMatchesActiveFilter(
+                            note
+                        ) &&
+                        noteMatchesSearch(
+                            note
+                        )
+                    );
+                }
+            );
+
+
+        return sortNotesByDate(
+            visibleNotes
         );
     }
 
@@ -1232,6 +1293,39 @@ if (
             "click",
             clearNoteSearch
         );
+    }
+
+    if (noteSortButton) {
+        noteSortButton
+            .addEventListener(
+                "click",
+                function () {
+                    activeNoteSort =
+                        activeNoteSort ===
+                        "newest"
+                            ? "oldest"
+                            : "newest";
+
+
+                    noteSortButton
+                        .dataset
+                        .sortOrder =
+                        activeNoteSort;
+
+
+                    noteSortButton
+                        .setAttribute(
+                            "aria-label",
+                            activeNoteSort ===
+                            "newest"
+                                ? "Sorted by date, newest first. Activate to sort oldest first."
+                                : "Sorted by date, oldest first. Activate to sort newest first."
+                        );
+
+
+                    updateLabNotesInterface();
+                }
+            );
     }
 
 

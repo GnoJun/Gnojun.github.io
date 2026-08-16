@@ -345,12 +345,38 @@
                     </div>
 
 
-                    <p
-                        class="resource-status"
-                        id="resource-status"
-                        role="status"
-                        aria-live="polite"
-                    ></p>
+                    <div class="content-toolbar-actions">
+
+                        <button
+                            class="content-sort-button"
+                            id="resource-sort"
+                            type="button"
+                            data-sort-order="newest"
+                            aria-label="Sorted by date, newest first. Activate to sort oldest first."
+                        >
+                            <span>
+                                Date
+                            </span>
+
+                            <svg
+                                class="content-sort-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path d="M12 5v14"></path>
+                                <path d="M7 14l5 5 5-5"></path>
+                            </svg>
+                        </button>
+
+
+                        <p
+                            class="resource-status"
+                            id="resource-status"
+                            role="status"
+                            aria-live="polite"
+                        ></p>
+
+                    </div>
 
                 </div>
 
