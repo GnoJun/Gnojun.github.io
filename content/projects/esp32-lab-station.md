@@ -23,30 +23,17 @@ The goal is not to replace professional laboratory equipment. The goal is to cre
 
 The project is being developed incrementally so that each subsystem can be tested independently before integration.
 
-### OLED Menu System
+> [!IMPLEMENTED] OLED Menu System
+> A multi-level user interface controlled by physical buttons and designed for future tool expansion.
 
-**Status:** Implemented
+> [!PROTOTYPE] Signal Generator
+> Configurable PWM waveform generation with adjustable frequency and duty cycle.
 
-A multi-level user interface controlled by physical buttons and designed for future tool expansion.
+> [!PROTOTYPE] Oscilloscope
+> ADC-based waveform sampling with basic voltage measurement and OLED visualization.
 
-### Signal Generator
-
-**Status:** Prototype
-
-Configurable PWM waveform generation with adjustable frequency and duty cycle.
-
-### Oscilloscope
-
-**Status:** Prototype
-
-ADC-based waveform sampling with basic voltage measurement and OLED visualization.
-
-### Logic Analyzer
-
-**Status:** Planned
-
-Multi-channel digital capture for observing timing, communication protocols, and embedded signals.
-
+> [!PLANNED] Logic Analyzer
+> Multi-channel digital capture for observing timing, communication protocols, and embedded signals.
 
 ## Architecture
 
@@ -126,3 +113,30 @@ Move from a prototype board to an organized, protected, and expandable hardware 
 | Expression | Meaning |
 | --- | --- |
 | `A | B` | Logical example |
+
+## Callout Test
+
+> [!NOTE] Engineering Decision
+> This is a normal engineering note with `GPIO 8` and **important text**.
+
+> [!WARNING] Input Protection
+> External signals must remain within the safe measurement range.
+
+> [!IMPLEMENTED] OLED Menu
+> Multi-level navigation is operational.
+
+> [!PROTOTYPE] Signal Generator
+> PWM frequency and duty-cycle controls are implemented as a prototype.
+
+> [!TESTING] Oscilloscope
+> Sampling stability is currently being evaluated.
+
+> [!PLANNED] Logic Analyzer
+> Multi-channel digital capture has not been implemented yet.
+>
+
+> This should remain a normal blockquote.
+
+
+> [!WARNING] GPIO Voltage
+> Verify the logic level before connecting an external device directly to an ESP32-S3 GPIO.

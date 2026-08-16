@@ -435,6 +435,155 @@
         `;
     }
 
+    const markdownCalloutTypes = {
+        note: {
+            label:
+                "Engineering Note"
+        },
+
+        warning: {
+            label:
+                "Warning"
+        },
+
+        implemented: {
+            label:
+                "Implemented"
+        },
+
+        prototype: {
+            label:
+                "Prototype"
+        },
+
+        testing: {
+            label:
+                "Testing"
+        },
+
+        planned: {
+            label:
+                "Planned"
+        }
+    };
+
+    function parseMarkdownCalloutStart(
+        line
+    ) {
+        const match =
+            String(line ?? "")
+                .trim()
+                .match(
+                    /^>\s*\[!([a-z-]+)\](?:\s+(.+))?$/i
+                );
+
+
+        if (!match) {
+            return null;
+        }
+
+
+        const type =
+            match[1]
+                .toLowerCase();
+
+
+        const configuration =
+            markdownCalloutTypes[
+                type
+            ];
+
+
+        if (!configuration) {
+            return null;
+        }
+
+
+        return {
+            type,
+
+            label:
+                configuration.label,
+
+            title:
+                (
+                    match[2] || ""
+                ).trim()
+        };
+    }
+
+    function createMarkdownCallout(
+        callout,
+        bodyLines
+    ) {
+        const bodyText =
+            bodyLines
+                .join(" ")
+                .trim();
+
+
+        const titleMarkup =
+            callout.title
+                ? `
+                    <h3
+                        class="markdown-callout-title"
+                    >
+                        ${renderInlineMarkdown(
+                            callout.title
+                        )}
+                    </h3>
+                `
+                : "";
+
+
+        const bodyMarkup =
+            bodyText
+                ? `
+                    <p
+                        class="markdown-callout-body"
+                    >
+                        ${renderInlineMarkdown(
+                            bodyText
+                        )}
+                    </p>
+                `
+                : "";
+
+
+        return `
+            <aside
+                class="
+                    markdown-callout
+                    markdown-callout-${callout.type}
+                "
+                aria-label="${escapeHtml(
+                    callout.label
+                )}"
+            >
+
+                <div
+                    class="markdown-callout-heading"
+                >
+
+                    <span
+                        class="markdown-callout-label"
+                    >
+                        ${escapeHtml(
+                            callout.label
+                        )}
+                    </span>
+
+                    ${titleMarkup}
+
+                </div>
+
+
+                ${bodyMarkup}
+
+            </aside>
+        `;
+    }
+
     function parseMarkdown(
         markdown,
         markdownSource
@@ -446,7 +595,11 @@
 
 
         const output = [];
+
         const consumedTableLines =
+            new Set();
+
+        const consumedCalloutLines =
             new Set();
 
         let paragraphLines = [];
@@ -548,6 +701,9 @@
 
             if (
                 consumedTableLines.has(
+                    index
+                ) ||
+                consumedCalloutLines.has(
                     index
                 )
             ) {
@@ -944,6 +1100,94 @@
                 return;
             }
 
+            /* Callout */
+
+            const callout =
+                parseMarkdownCalloutStart(
+                    line
+                );
+
+
+            if (callout) {
+                flushParagraph();
+
+                closeList();
+
+
+                const bodyLines =
+                    [];
+
+
+                let bodyIndex =
+                    index + 1;
+
+
+                while (
+                    bodyIndex <
+                    lines.length
+                ) {
+                    const bodyLine =
+                        lines[
+                            bodyIndex
+                        ];
+
+                    const bodyTrimmed =
+                        bodyLine.trim();
+
+
+                    if (
+                        parseMarkdownCalloutStart(
+                            bodyLine
+                        )
+                    ) {
+                        break;
+                    }
+
+
+                    if (
+                        !bodyTrimmed.startsWith(
+                            ">"
+                        )
+                    ) {
+                        break;
+                    }
+
+
+                    const bodyContent =
+                        bodyTrimmed === ">"
+                            ? ""
+                            : bodyTrimmed
+                                .replace(
+                                    /^>\s?/,
+                                    ""
+                                );
+
+
+                    bodyLines.push(
+                        bodyContent
+                    );
+
+
+                    consumedCalloutLines
+                        .add(
+                            bodyIndex
+                        );
+
+
+                    bodyIndex += 1;
+                }
+
+
+                output.push(
+                    createMarkdownCallout(
+                        callout,
+                        bodyLines
+                    )
+                );
+
+
+                return;
+            }
 
             /* Blockquote */
 

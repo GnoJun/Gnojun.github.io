@@ -1452,6 +1452,204 @@ html[data-theme="light"]
 }
 
 /* =========================
+   Markdown Callouts
+========================= */
+
+.markdown-callout {
+    --markdown-callout-accent:
+        var(--color-accent);
+
+    --markdown-callout-tint:
+        rgba(
+            79,
+            140,
+            255,
+            0.08
+        );
+
+
+    width: 100%;
+    min-width: 0;
+
+    padding:
+        var(--space-md);
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--markdown-callout-tint),
+            var(--color-surface)
+        );
+
+    border:
+        1px solid
+        var(--color-border);
+
+    border-left:
+        4px solid
+        var(--markdown-callout-accent);
+
+    border-radius:
+        var(--radius-md);
+}
+
+
+.markdown-callout-heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap:
+        0.65rem;
+}
+
+
+.markdown-callout-label {
+    display: inline-flex;
+    align-items: center;
+
+    flex-shrink: 0;
+
+    padding:
+        0.3rem
+        0.65rem;
+
+    background:
+        var(--markdown-callout-tint);
+
+    color:
+        var(--color-text-primary);
+
+    border:
+        1px solid
+        var(--markdown-callout-accent);
+
+    border-radius:
+        var(--radius-pill);
+
+    font-size:
+        0.72rem;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.2;
+
+    letter-spacing:
+        0.06em;
+
+    text-transform:
+        uppercase;
+
+    white-space:
+        nowrap;
+}
+
+
+.markdown-document
+.markdown-callout-title {
+    min-width: 0;
+
+    margin: 0;
+
+    color:
+        var(--color-text-primary);
+
+    font-size:
+        1.05rem;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.4;
+
+    letter-spacing:
+        -0.015em;
+}
+
+
+.markdown-document
+.markdown-callout-body {
+    max-width: none;
+
+    margin-top:
+        var(--space-sm);
+
+    color:
+        var(--color-text-secondary);
+
+    line-height:
+        1.7;
+}
+
+.markdown-callout-note {
+    --markdown-callout-accent:
+        var(--color-accent);
+
+    --markdown-callout-tint:
+        rgba(
+            79,
+            140,
+            255,
+            0.08
+        );
+}
+
+
+.markdown-callout-implemented {
+    --markdown-callout-accent:
+        #6ee7b7;
+
+    --markdown-callout-tint:
+        rgba(
+            54,
+            211,
+            153,
+            0.08
+        );
+}
+
+
+.markdown-callout-prototype {
+    --markdown-callout-accent:
+        #8bb4ff;
+
+    --markdown-callout-tint:
+        rgba(
+            79,
+            140,
+            255,
+            0.08
+        );
+}
+
+
+.markdown-callout-testing,
+.markdown-callout-warning {
+    --markdown-callout-accent:
+        #f7cb70;
+
+    --markdown-callout-tint:
+        rgba(
+            247,
+            203,
+            112,
+            0.08
+        );
+}
+
+
+.markdown-callout-planned {
+    --markdown-callout-accent:
+        var(--color-text-muted);
+
+    --markdown-callout-tint:
+        var(--color-surface-soft);
+}
+
+/* =========================
    Markdown Tables
 ========================= */
 
