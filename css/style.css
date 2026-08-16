@@ -2265,6 +2265,25 @@ html[data-theme="light"]
     line-height: 1.7;
 }
 
+/* =========================
+   Project Markdown Case Study
+========================= */
+
+.project-markdown-section {
+    padding:
+        var(--space-2xl)
+        0;
+}
+
+
+.project-markdown-article {
+    width: 100%;
+    max-width: 900px;
+
+    margin-inline: auto;
+
+    min-width: 0;
+}
 
 /* =========================
    Project CTA
