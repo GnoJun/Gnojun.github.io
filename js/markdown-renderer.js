@@ -118,6 +118,322 @@
             .replace(/\s+/g, "-");
     }
 
+    function splitMarkdownTableRow(
+        line
+    ) {
+        let content =
+            String(line ?? "")
+                .trim();
+
+
+        if (
+            content.startsWith("|")
+        ) {
+            content =
+                content.slice(1);
+        }
+
+
+        if (
+            content.endsWith("|") &&
+            !content.endsWith("\\|")
+        ) {
+            content =
+                content.slice(
+                    0,
+                    -1
+                );
+        }
+
+
+        const cells = [];
+
+        let currentCell = "";
+
+        let inInlineCode = false;
+
+
+        for (
+            let index = 0;
+            index < content.length;
+            index += 1
+        ) {
+            const character =
+                content[index];
+
+
+            if (
+                character === "\\" &&
+                content[index + 1] === "|"
+            ) {
+                currentCell += "|";
+
+                index += 1;
+
+                continue;
+            }
+
+
+            if (
+                character === "`"
+            ) {
+                inInlineCode =
+                    !inInlineCode;
+
+                currentCell +=
+                    character;
+
+                continue;
+            }
+
+
+            if (
+                character === "|" &&
+                !inInlineCode
+            ) {
+                cells.push(
+                    currentCell.trim()
+                );
+
+                currentCell = "";
+
+                continue;
+            }
+
+
+            currentCell +=
+                character;
+        }
+
+
+        cells.push(
+            currentCell.trim()
+        );
+
+
+        return cells;
+    }
+
+    function parseMarkdownTableSeparator(
+        line
+    ) {
+        if (
+            !String(line ?? "")
+                .includes("|")
+        ) {
+            return null;
+        }
+
+
+        const cells =
+            splitMarkdownTableRow(
+                line
+            );
+
+
+        if (
+            cells.length === 0
+        ) {
+            return null;
+        }
+
+
+        const alignments = [];
+
+
+        for (
+            const cell
+            of cells
+        ) {
+            const marker =
+                cell
+                    .replace(
+                        /\s+/g,
+                        ""
+                    );
+
+
+            if (
+                !/^:?-{3,}:?$/.test(
+                    marker
+                )
+            ) {
+                return null;
+            }
+
+
+            const startsWithColon =
+                marker.startsWith(":");
+
+            const endsWithColon =
+                marker.endsWith(":");
+
+
+            if (
+                startsWithColon &&
+                endsWithColon
+            ) {
+                alignments.push(
+                    "center"
+                );
+
+                continue;
+            }
+
+
+            if (endsWithColon) {
+                alignments.push(
+                    "right"
+                );
+
+                continue;
+            }
+
+
+            alignments.push(
+                "left"
+            );
+        }
+
+
+        return alignments;
+    }
+
+    function normalizeMarkdownTableRow(
+        cells,
+        columnCount
+    ) {
+        const normalizedCells =
+            cells.slice(
+                0,
+                columnCount
+            );
+
+
+        while (
+            normalizedCells.length <
+            columnCount
+        ) {
+            normalizedCells.push("");
+        }
+
+
+        return normalizedCells;
+    }
+
+    function createMarkdownTable(
+        headerCells,
+        alignments,
+        bodyRows
+    ) {
+        const columnCount =
+            headerCells.length;
+
+
+        const normalizedHeader =
+            normalizeMarkdownTableRow(
+                headerCells,
+                columnCount
+            );
+
+
+        const headerMarkup =
+            normalizedHeader
+                .map(
+                    function (
+                        cell,
+                        index
+                    ) {
+                        const alignment =
+                            alignments[index] ||
+                            "left";
+
+
+                        return `
+                            <th
+                                scope="col"
+                                class="markdown-table-align-${alignment}"
+                            >
+                                ${renderInlineMarkdown(
+                                    cell
+                                )}
+                            </th>
+                        `;
+                    }
+                )
+                .join("");
+
+
+        const bodyMarkup =
+            bodyRows
+                .map(
+                    function (row) {
+                        const cells =
+                            normalizeMarkdownTableRow(
+                                row,
+                                columnCount
+                            );
+
+
+                        const cellMarkup =
+                            cells
+                                .map(
+                                    function (
+                                        cell,
+                                        index
+                                    ) {
+                                        const alignment =
+                                            alignments[index] ||
+                                            "left";
+
+
+                                        return `
+                                            <td
+                                                class="markdown-table-align-${alignment}"
+                                            >
+                                                ${renderInlineMarkdown(
+                                                    cell
+                                                )}
+                                            </td>
+                                        `;
+                                    }
+                                )
+                                .join("");
+
+
+                        return `
+                            <tr>
+                                ${cellMarkup}
+                            </tr>
+                        `;
+                    }
+                )
+                .join("");
+
+
+        return `
+            <div
+                class="markdown-table-wrapper"
+                role="region"
+                aria-label="Scrollable data table"
+                tabindex="0"
+            >
+                <table class="markdown-table">
+
+                    <thead>
+                        <tr>
+                            ${headerMarkup}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        ${bodyMarkup}
+                    </tbody>
+
+                </table>
+            </div>
+        `;
+    }
 
     function parseMarkdown(
         markdown,
@@ -130,6 +446,8 @@
 
 
         const output = [];
+        const consumedTableLines =
+            new Set();
 
         let paragraphLines = [];
 
@@ -226,7 +544,16 @@
         }
 
 
-        lines.forEach(function (line) {
+        lines.forEach(function (line,index) {
+
+            if (
+                consumedTableLines.has(
+                    index
+                )
+            ) {
+                return;
+            }
+
             const trimmed =
                 line.trim();
 
@@ -300,6 +627,107 @@
                 closeList();
 
                 return;
+            }
+
+            /* Table */
+
+            const nextLine =
+                lines[index + 1] || "";
+
+
+            const tableAlignments =
+                parseMarkdownTableSeparator(
+                    nextLine
+                );
+
+
+            if (
+                trimmed.includes("|") &&
+                tableAlignments
+            ) {
+                const headerCells =
+                    splitMarkdownTableRow(
+                        line
+                    );
+
+
+                if (
+                    headerCells.length ===
+                    tableAlignments.length
+                ) {
+                    flushParagraph();
+
+                    closeList();
+
+
+                    const bodyRows = [];
+
+
+                    consumedTableLines.add(
+                        index + 1
+                    );
+
+
+                    let bodyIndex =
+                        index + 2;
+
+
+                    while (
+                        bodyIndex <
+                        lines.length
+                    ) {
+                        const bodyLine =
+                            lines[bodyIndex];
+
+                        const bodyTrimmed =
+                            bodyLine.trim();
+
+
+                        if (
+                            !bodyTrimmed ||
+                            !bodyTrimmed.includes("|")
+                        ) {
+                            break;
+                        }
+
+
+                        if (
+                            bodyTrimmed.startsWith("## ") ||
+                            bodyTrimmed.startsWith("### ") ||
+                            bodyTrimmed.startsWith("```") ||
+                            bodyTrimmed === "$$"
+                        ) {
+                            break;
+                        }
+
+
+                        bodyRows.push(
+                            splitMarkdownTableRow(
+                                bodyLine
+                            )
+                        );
+
+
+                        consumedTableLines.add(
+                            bodyIndex
+                        );
+
+
+                        bodyIndex += 1;
+                    }
+
+
+                    output.push(
+                        createMarkdownTable(
+                            headerCells,
+                            tableAlignments,
+                            bodyRows
+                        )
+                    );
+
+
+                    return;
+                }
             }
 
             /* Image */

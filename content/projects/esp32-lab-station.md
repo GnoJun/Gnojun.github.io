@@ -95,48 +95,15 @@ An oscilloscope capture or test screenshot showing the generated frequency and d
 
 Confirmed interface pins are documented first. Measurement and signal pins will be finalized after the protection and analog front-end design is complete.
 
-### I²C SDA
-
-- **GPIO:** `GPIO 8`
-- **Status:** Confirmed
-- **Notes:** Shared OLED and peripheral data line
-
-### I²C SCL
-
-- **GPIO:** `GPIO 9`
-- **Status:** Confirmed
-- **Notes:** Shared OLED and peripheral clock line
-
-### Up / Left Button
-
-- **GPIO:** `GPIO 48`
-- **Status:** Confirmed
-- **Notes:** Configured with internal pull-up
-
-### Down / Right Button
-
-- **GPIO:** `GPIO 39`
-- **Status:** Confirmed
-- **Notes:** Configured with internal pull-up
-
-### Confirm Button
-
-- **GPIO:** `GPIO 40`
-- **Status:** Confirmed
-- **Notes:** Menu selection input
-
-### Signal Output
-
-- **GPIO:** `TBD`
-- **Status:** Under Review
-- **Notes:** Final PWM-capable pin not yet assigned
-
-### Oscilloscope Input
-
-- **GPIO:** `TBD`
-- **Status:** Under Review
-- **Notes:** Requires an ADC pin and protected front end
-
+| Function | GPIO | Status | Notes |
+| :--- | :---: | :--- | :--- |
+| I²C SDA | `GPIO 8` | Confirmed | Shared OLED and peripheral data line |
+| I²C SCL | `GPIO 9` | Confirmed | Shared OLED and peripheral clock line |
+| Up / Left Button | `GPIO 48` | Confirmed | Configured with internal pull-up |
+| Down / Right Button | `GPIO 39` | Confirmed | Configured with internal pull-up |
+| Confirm Button | `GPIO 40` | Confirmed | Menu selection input |
+| Signal Output | `TBD` | Under Review | Final PWM-capable pin not yet assigned |
+| Oscilloscope Input | `TBD` | Under Review | Requires an ADC pin and protected front end |
 
 ## Roadmap
 
@@ -155,3 +122,7 @@ Develop buffered multi-channel sampling for the logic analyzer subsystem.
 ### 04 — Design a custom carrier PCB
 
 Move from a prototype board to an organized, protected, and expandable hardware platform.
+
+| Expression | Meaning |
+| --- | --- |
+| `A | B` | Logical example |
