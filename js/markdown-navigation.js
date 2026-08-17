@@ -33,11 +33,23 @@
             ".markdown-reading-progress-bar"
         );
 
+    const navigationContent =
+        navigation.querySelector(
+            "[data-markdown-navigation-content]"
+        );
+
+    const navigationToggle =
+        navigation.querySelector(
+            "[data-markdown-navigation-toggle]"
+        );
+
 
     if (
         !tocList ||
         !progressElement ||
-        !progressBar
+        !progressBar ||
+        !navigationContent ||
+        !navigationToggle
     ) {
         return;
     }
@@ -50,6 +62,9 @@
     let updateRequested = false;
 
     let contentResizeObserver = null;
+
+    let navigationCollapsed =
+        false;
 
 
     function createHeadingId(text) {
@@ -209,6 +224,60 @@
         );
     }
 
+    function updateNavigationToggle() {
+        navigation.classList.toggle(
+            "is-collapsed",
+            navigationCollapsed
+        );
+
+
+        navigationToggle.setAttribute(
+            "aria-expanded",
+            String(
+                !navigationCollapsed
+            )
+        );
+
+
+        navigationToggle.setAttribute(
+            "aria-label",
+            navigationCollapsed
+                ? "Show section navigation"
+                : "Hide section navigation"
+        );
+
+
+        navigationToggle.setAttribute(
+            "title",
+            navigationCollapsed
+                ? "Show section navigation"
+                : "Hide section navigation"
+        );
+
+
+        const label =
+            navigationToggle.querySelector(
+                ".markdown-navigation-toggle-label"
+            );
+
+
+        if (label) {
+            label.textContent =
+                navigationCollapsed
+                    ? "Sections"
+                    : "Hide";
+        }
+
+
+        document.documentElement
+            .style
+            .setProperty(
+                "--markdown-toc-offset",
+                navigationCollapsed
+                    ? "0px"
+                    : "var(--toc-height)"
+            );
+    }
 
     function getStickyOffset() {
         const siteHeader =
@@ -217,13 +286,18 @@
             );
 
 
+        const navigationHeight =
+            navigationCollapsed
+                ? 0
+                : navigation.offsetHeight;
+
+
         return (
             (siteHeader?.offsetHeight || 0) +
-            navigation.offsetHeight +
+            navigationHeight +
             16
         );
     }
-
 
     function setActiveHeading(
         headingId
@@ -469,6 +543,16 @@
         );
     }
 
+    function toggleNavigation() {
+        navigationCollapsed =
+            !navigationCollapsed;
+
+
+        updateNavigationToggle();
+
+
+        requestNavigationUpdate();
+    }
 
     function initializeNavigation() {
         headings =
@@ -487,6 +571,8 @@
 
         navigation.hidden =
             false;
+
+        updateNavigationToggle();
 
 
         prepareHeadingIds(
@@ -543,6 +629,12 @@
         "resize",
         requestNavigationUpdate
     );
+
+    navigationToggle
+        .addEventListener(
+            "click",
+            toggleNavigation
+        );
 
 
     document.addEventListener(

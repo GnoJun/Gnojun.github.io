@@ -218,33 +218,59 @@
         </section>
 
         <nav
-            class="
-                project-toc
-                markdown-toc
-            "
+            class="project-toc markdown-toc"
             data-markdown-navigation
-            aria-label="On this page"
+            aria-label="Case study sections"
+            hidden
         >
-            <div class="container">
-
-                <ul
-                    class="project-toc-list"
-                    data-markdown-toc-list
-                ></ul>
+            <div class="container markdown-navigation-layout">
 
                 <div
-                    class="markdown-reading-progress"
-                    role="progressbar"
-                    aria-label="Reading progress"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    aria-valuenow="0"
+                    class="markdown-navigation-content"
+                    data-markdown-navigation-content
                 >
-                    <span
-                        class="markdown-reading-progress-bar"
-                        aria-hidden="true"
-                    ></span>
+                    <ul
+                        class="project-toc-list"
+                        data-markdown-toc-list
+                    ></ul>
+
+
+                    <div
+                        class="markdown-reading-progress"
+                        role="progressbar"
+                        aria-label="Case study reading progress"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        aria-valuenow="0"
+                    >
+                        <span
+                            class="markdown-reading-progress-bar"
+                            aria-hidden="true"
+                        ></span>
+                    </div>
                 </div>
+
+
+                <button
+                    class="markdown-navigation-toggle"
+                    type="button"
+                    data-markdown-navigation-toggle
+                    aria-expanded="true"
+                    aria-label="Hide section navigation"
+                    title="Hide section navigation"
+                >
+                    <span class="markdown-navigation-toggle-label">
+                        Hide
+                    </span>
+
+                    <svg
+                        class="markdown-navigation-toggle-icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="M6 15l6-6 6 6"></path>
+                    </svg>
+                </button>
 
             </div>
         </nav>

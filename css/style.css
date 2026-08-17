@@ -775,6 +775,168 @@ html[data-theme="light"]
 }
 
 /* =========================
+   Markdown Navigation Toggle
+========================= */
+
+.markdown-navigation-layout {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: var(--space-sm);
+}
+
+
+.markdown-navigation-content {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.markdown-navigation-toggle {
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.4rem;
+
+    min-height: 36px;
+
+    padding:
+        0.45rem
+        0.75rem;
+
+    background:
+        var(--color-surface);
+
+    color:
+        var(--color-text-secondary);
+
+    border:
+        1px solid
+        var(--color-border);
+
+    border-radius:
+        var(--radius-pill);
+
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background-color
+            var(--transition-fast),
+        border-color
+            var(--transition-fast),
+        color
+            var(--transition-fast);
+}
+
+
+.markdown-navigation-toggle:hover {
+    background:
+        var(--color-surface-hover);
+
+    color:
+        var(--color-text-primary);
+
+    border-color:
+        rgba(
+            79,
+            140,
+            255,
+            0.35
+        );
+}
+
+
+.markdown-navigation-toggle-icon {
+    width: 16px;
+    height: 16px;
+
+    fill: none;
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    transition:
+        transform
+            var(--transition-fast);
+}
+
+.project-toc.is-collapsed {
+    min-height: 0;
+
+    background:
+        transparent;
+
+    border-bottom:
+        0;
+
+    backdrop-filter:
+        none;
+
+    -webkit-backdrop-filter:
+        none;
+
+    pointer-events:
+        none;
+}
+
+
+.project-toc.is-collapsed
+.markdown-navigation-layout {
+    min-height: 0;
+
+    justify-content:
+        flex-end;
+}
+
+
+.project-toc.is-collapsed
+.markdown-navigation-content {
+    display: none;
+}
+
+
+.project-toc.is-collapsed
+.markdown-navigation-toggle {
+    pointer-events:
+        auto;
+
+    margin-top:
+        0.45rem;
+}
+
+
+.project-toc.is-collapsed
+.markdown-navigation-toggle-icon {
+    transform:
+        rotate(180deg);
+}
+
+.project-toc.is-collapsed
+.markdown-navigation-toggle {
+    opacity: 0.72;
+}
+
+
+.project-toc.is-collapsed
+.markdown-navigation-toggle:hover,
+.project-toc.is-collapsed
+.markdown-navigation-toggle:focus-visible {
+    opacity: 1;
+}
+
+/* =========================
    Project Table of Contents
 ========================= */
 
@@ -856,7 +1018,10 @@ html[data-theme="light"]
     scroll-margin-top:
         calc(
             var(--header-height) +
-            var(--toc-height) +
+            var(
+                --markdown-toc-offset,
+                var(--toc-height)
+            ) +
             var(--space-sm)
         );
 }
@@ -7448,6 +7613,7 @@ tr:hover {
     .project-grid {
         grid-template-columns: 1fr;
     }
+    
 }
 
 /* =========================
