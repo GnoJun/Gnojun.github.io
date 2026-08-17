@@ -916,6 +916,10 @@ html[data-theme="light"]
         0.45rem;
 }
 
+.project-toc.is-collapsed
+.markdown-navigation-toggle-label {
+    display: none;
+}
 
 .project-toc.is-collapsed
 .markdown-navigation-toggle-icon {
