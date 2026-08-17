@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Voltage Divider | Lab Notes</title>
+
+    <meta
+        name="description"
+        content="A lab note on the resistive voltage divider, including the formula, variable definitions, design example, and practical engineering cautions."
+    >
+
+    <meta
+        name="robots"
+        content="noindex, nofollow"
+    >
+    
+    <meta
+        name="theme-color"
+        content="#0f1115"
+    >
+
+    <script src="../js/theme-init.js"></script>
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css"
+        integrity="sha384-1vdNCNel6Tx/NQa8IR1mGOGKsbGreCkOPfbtPPnUURJ5Tu2PRVfQ/7KLZC+Pi1p1"
+        crossorigin="anonymous"
+    >
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body id="top">
+
+    <a href="#main-content" class="skip-link">
+        Skip to main content
+    </a>
+
+    <header class="site-header">
+
+        <div
+            class="
+                container
+                
+            "
+        >
+
+            <nav class="navbar" aria-label="Primary navigation">
+
+                <a href="../index.html" class="logo">
+                    EE Portfolio
+                </a>
+
+                <button
+                    class="nav-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="primary-navigation"
+                    aria-label="Open navigation"
+                >
+                    <span class="nav-toggle-line"></span>
+                    <span class="nav-toggle-line"></span>
+                </button>
+
+                <ul class="nav-menu" id="primary-navigation">
+
+                    <li>
+                        <a href="../index.html">Home</a>
+                    </li>
+
+                    <li>
+                        <a href="../about.html">
+                            About
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="../projects.html">Projects</a>
+                    </li>
+
+                    <li>
+                        <a href="../lab-notes.html" aria-current="page">
+                            Lab Notes
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="../components.html">
+                            Components
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a href="../resources.html">Resources</a>
+                    </li>
+
+                    <li class="nav-theme-item">
+
+                        <button
+                            class="theme-toggle"
+                            type="button"
+                            data-theme-toggle
+                            aria-label="Switch theme"
+                            title="Switch theme"
+                        >
+
+                            <svg
+                                class="
+                                    theme-toggle-icon
+                                    theme-toggle-icon-sun
+                                "
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="4"
+                                ></circle>
+
+                                <path d="M12 2v2"></path>
+                                <path d="M12 20v2"></path>
+                                <path d="M4.93 4.93l1.42 1.42"></path>
+                                <path d="M17.65 17.65l1.42 1.42"></path>
+                                <path d="M2 12h2"></path>
+                                <path d="M20 12h2"></path>
+                                <path d="M4.93 19.07l1.42-1.42"></path>
+                                <path d="M17.65 6.35l1.42-1.42"></path>
+                            </svg>
+
+
+                            <svg
+                                class="
+                                    theme-toggle-icon
+                                    theme-toggle-icon-moon
+                                "
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="
+                                        M20.5 14.2
+                                        A8 8 0 0 1
+                                        9.8 3.5
+                                        A8.5 8.5 0 1 0
+                                        20.5 14.2
+                                    "
+                                ></path>
+                            </svg>
+
+
+                            <span class="theme-toggle-label">
+                                Theme
+                            </span>
+
+                        </button>
+
+                    </li>
+
+                </ul>
+
+            </nav>
+
+            
+
+        </div>
+
+    </header>
+
+    <main id="main-content">
+
+        <!-- =========================
+            Note Hero
+        ========================== -->
+
+        <section class="page-hero">
+
+            <div class="container">
+
+                <div class="page-hero-content">
+
+                    <nav
+                        class="breadcrumb"
+                        aria-label="Breadcrumb"
+                    >
+                        <ol>
+
+                            <li>
+                                <a href="../index.html">
+                                    Home
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="../resources.html">
+                                    Resources
+                                </a>
+                            </li>
+
+                            <li>
+                                <span aria-current="page">
+                                    Markdown Reference
+                                </span>
+                            </li>
+
+                        </ol>
+                    </nav>
+
+                    <p class="page-eyebrow">
+                        Development Reference
+                    </p>
+
+                    <h1 class="page-title">
+                        Markdown Reference
+                    </h1>
+
+                    <p class="page-description">
+                        A practical reference for the Markdown syntax,
+                        rendered elements, and CSS selectors used across
+                        the engineering portfolio.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <nav
+            class="project-toc markdown-toc"
+            data-markdown-navigation
+            aria-label="Case study sections"
+            hidden
+        >
+            <div class="container markdown-navigation-layout">
+
+                <div
+                    class="markdown-navigation-content"
+                    data-markdown-navigation-content
+                >
+                    <ul
+                        class="project-toc-list"
+                        data-markdown-toc-list
+                    ></ul>
+
+
+                    <div
+                        class="markdown-reading-progress"
+                        role="progressbar"
+                        aria-label="Case study reading progress"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        aria-valuenow="0"
+                    >
+                        <span
+                            class="markdown-reading-progress-bar"
+                            aria-hidden="true"
+                        ></span>
+                    </div>
+                </div>
+
+
+                <button
+                    class="markdown-navigation-toggle"
+                    type="button"
+                    data-markdown-navigation-toggle
+                    aria-expanded="true"
+                    aria-label="Hide section navigation"
+                    title="Hide section navigation"
+                >
+                    <span class="markdown-navigation-toggle-label">
+                        Hide
+                    </span>
+
+                    <svg
+                        class="markdown-navigation-toggle-icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="M6 15l6-6 6 6"></path>
+                    </svg>
+                </button>
+
+            </div>
+        </nav>
+
+
+        <!-- =========================
+            Note Content
+        ========================== -->
+
+        <section class="tech-note-body">
+
+            <div class="container tech-note-shell">
+
+                <article
+                    class="
+                        tech-note-article
+                        markdown-document
+                    "
+                    data-markdown-src="../content/resources/markdown-reference.md"
+                >
+
+                    <div
+                        class="markdown-loading"
+                        role="status"
+                    >
+                        Loading technical note...
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+            Note CTA
+        ========================== -->
+
+        <section class="tech-note-cta">
+
+            <div class="container tech-note-shell">
+
+                <div class="tech-note-cta-content">
+
+                    <div>
+
+                        <p class="section-label">
+                            Engineering Knowledge Base
+                        </p>
+
+                        <h2>
+                            Continue exploring circuit and formula notes.
+                        </h2>
+
+                    </div>
+
+                    <a
+                        href="../lab-notes.html"
+                        class="button button-secondary"
+                    >
+                        View All Notes
+
+                        <svg
+                            class="icon"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path d="M5 12h14"></path>
+                            <path d="M13 6l6 6-6 6"></path>
+                        </svg>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <footer class="site-footer">
+
+        <div class="container">
+
+            <div class="footer-grid">
+
+                <div class="footer-brand">
+
+                    <a href="../index.html" class="footer-logo">
+                        EE Portfolio
+                    </a>
+
+                    <p class="footer-description">
+                        Documenting embedded systems, digital design,
+                        PCB development, and hands-on electrical engineering.
+                    </p>
+
+                </div>
+
+
+                <nav
+                    class="footer-navigation"
+                    aria-label="Footer navigation"
+                >
+
+                    <h2 class="footer-heading">
+                        Explore
+                    </h2>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a href="../index.html">Home</a>
+                        </li>
+
+                        <li>
+                            <a href="../about.html">
+                                About
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a href="../projects.html">Projects</a>
+                        </li>
+
+                        <li>
+                            <a href="../lab-notes.html">
+                                Lab Notes
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../components.html">
+                                Components
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a href="../resources.html">Resources</a>
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+
+                <div class="footer-contact">
+
+                    <h2 class="footer-heading">
+                        Connect
+                    </h2>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a
+                                href="https://github.com/gnojun"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                GitHub
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="https://www.linkedin.com/in/junlong-he-2904b2428/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                LinkedIn
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="mailto:junlong5737@gmail.com">
+                                Email
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p>
+                    © <span id="current-year"></span>
+                    Junlong He. Built with HTML, CSS, and JavaScript.
+                </p>
+
+                <a href="#top" class="back-to-top">
+
+                    Back to top
+
+                    <svg
+                        class="icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="M12 19V5"></path>
+                        <path d="M6 11l6-6 6 6"></path>
+                    </svg>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.js"
+        integrity="sha384-ycJ6GAwiS15LoUPipwJOrWTvkUHl/YqELValBwI5I4awP1EeEQJYarj+w85ntcz7"
+        crossorigin="anonymous"
+    ></script>
+    
+    <script src="../js/theme.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/markdown-renderer.js"></script>
+    <script src="../js/markdown-navigation.js"></script>
+    
+</body>
+
+</html>

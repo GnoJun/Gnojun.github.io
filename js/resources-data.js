@@ -402,5 +402,42 @@ const resourceLibrary = [
             "CSS",
             "JavaScript"
         ]
+    },
+
+    {
+        id: "markdown-reference",
+
+        category: "tools",
+
+        categoryLabel: "Tools",
+
+        date:
+            "2026-08-17",
+
+        title: "Markdown Reference",
+
+        provider:
+            "Junlong Engineering Portfolio",
+
+        resourceType:
+            "Development Utility",
+
+        description:
+            "A practical reference for the Markdown syntax, rendered elements, and CSS selectors used across the engineering portfolio.",
+
+        url: "resources/markdown-ref.html",
+
+        external: false,
+
+        linkLabel:
+            "View Page",
+
+        tags: [
+            "HTML",
+            "CSS",
+            "JavaScript",
+            "Markdown"
+        ]
     }
+
 ];
