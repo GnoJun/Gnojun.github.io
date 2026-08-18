@@ -386,8 +386,47 @@ select {
 
     text-decoration: none;
     letter-spacing: -0.03em;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 0.65rem;
 }
 
+.site-logo-mark {
+    width: 31px;
+    height: 31px;
+
+    flex-shrink: 0;
+}
+
+.site-logo-primary {
+    fill: #ffffff;
+}
+
+
+.site-logo-accent {
+    fill: #4f8cff;
+}
+
+.logo .site-logo-mark {
+    transition:
+        transform
+        var(--transition-slow);
+}
+
+
+.logo:hover {
+    transform:
+        translateY(-0.7px);
+        opacity: 0.8;
+}
+
+
+html[data-theme="light"]
+.site-logo-primary {
+    fill: #000000;
+}
 .nav-menu {
     display: flex;
     align-items: center;
