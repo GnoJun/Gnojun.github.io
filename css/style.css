@@ -1981,8 +1981,10 @@ tr:hover {
 .markdown-figure img {
     display: block;
 
-    max-width: 45%;
+    max-width: 70%;
     height: auto;
+
+    max-height: 400px;
 
     margin-inline: auto;
 

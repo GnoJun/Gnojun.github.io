@@ -1,5 +1,6 @@
 ## Overview
 
+![esp32-lab image](../../images/projects/esp32-lab/esp32-lab.webp "ESP32-S3 Portable Lab Station")
 ### Why I am building it
 
 Electrical engineering projects often require several separate tools: an oscilloscope, signal generator, logic analyzer, development board, and computer.
@@ -60,6 +61,13 @@ The platform separates user input, signal processing, and output functions into 
 - USB communication
 - Wi-Fi connectivity
 
+## Circuit Structure
+
+![Oscilloscope circuit schematic](../../images/projects/esp32-lab/os.diagram.svg "Oscilloscope protection circuit")
+
+![signal-gen circuit schematic](../../images/projects/esp32-lab/signal.diagram.svg "Signal Generator protection circuit")
+
+![buzzer circuit schematic](../../images/projects/esp32-lab/buzzer.diagram.svg "Buzzer transistor driver circuit")
 
 ## Media
 
