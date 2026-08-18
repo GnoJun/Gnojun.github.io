@@ -110,33 +110,3 @@ Develop buffered multi-channel sampling for the logic analyzer subsystem.
 
 Move from a prototype board to an organized, protected, and expandable hardware platform.
 
-| Expression | Meaning |
-| --- | --- |
-| `A | B` | Logical example |
-
-## Callout Test
-
-> [!NOTE] Engineering Decision
-> This is a normal engineering note with `GPIO 8` and **important text**.
-
-> [!WARNING] Input Protection
-> External signals must remain within the safe measurement range.
-
-> [!IMPLEMENTED] OLED Menu
-> Multi-level navigation is operational.
-
-> [!PROTOTYPE] Signal Generator
-> PWM frequency and duty-cycle controls are implemented as a prototype.
-
-> [!TESTING] Oscilloscope
-> Sampling stability is currently being evaluated.
-
-> [!PLANNED] Logic Analyzer
-> Multi-channel digital capture has not been implemented yet.
->
-
-> This should remain a normal blockquote.
-
-
-> [!WARNING] GPIO Voltage
-> Verify the logic level before connecting an external device directly to an ESP32-S3 GPIO.

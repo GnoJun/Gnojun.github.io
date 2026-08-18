@@ -469,6 +469,27 @@ Typical CSS hooks for the callout extension are:
 .markdown-callout-warning
 ```
 
+> [!NOTE] Engineering Decision
+> This is a normal engineering note with `GPIO 8` and **important text**.
+
+> [!WARNING] Input Protection
+> External signals must remain within the safe measurement range.
+
+> [!IMPLEMENTED] OLED Menu
+> Multi-level navigation is operational.
+
+> [!PROTOTYPE] Signal Generator
+> PWM frequency and duty-cycle controls are implemented as a prototype.
+
+> [!TESTING] Oscilloscope
+> Sampling stability is currently being evaluated.
+
+> [!PLANNED] Logic Analyzer
+> Multi-channel digital capture has not been implemented yet.
+>
+
+> This should remain a normal blockquote.
+
 Keep the status word meaningful in text so the design does not depend on color alone.
 
 

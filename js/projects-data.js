@@ -10,13 +10,13 @@ const projectLibrary = [
             "Embedded Systems",
 
         date:
-            "2026-08-11",
+            "2026-08-17",
 
         title:
             "ESP32-S3 Portable Lab Station",
 
         description:
-            "A portable engineering toolkit combining an OLED interface, oscilloscope, signal generator, logic analyzer, and expandable sensor support.",
+            "A portable engineering toolkit combining an OLED interface, oscilloscope, signal generator, passive buzzer, and expandable sensor support.",
 
         technologies: [
             "ESP32-S3",
@@ -29,43 +29,11 @@ const projectLibrary = [
             "projects/esp32-lab-station.html",
 
         actionLabel:
-            "View Case Study"
+            "Link to Project"
     },
 
 
-    {
-        id:
-            "nfc-payment-prototype",
-
-        category:
-            "embedded",
-
-        categoryLabel:
-            "NFC Systems",
-
-        date:
-            "2026-08-11",
-
-        title:
-            "NFC Payment Prototype",
-
-        description:
-            "A stored-value NFC prototype using an ESP32-S3 and PN532 for card reading, balance management, and access-control experiments.",
-
-        technologies: [
-            "ESP32-S3",
-            "PN532",
-            "NFC",
-            "I2C"
-        ],
-
-        detailsUrl:
-            "",
-
-        actionLabel:
-            "Case study coming soon"
-    },
-
+    
 
     {
         id:
@@ -81,10 +49,10 @@ const projectLibrary = [
             "2026-08-11",
 
         title:
-            "FPGA Digital Logic Playground",
+            "Dual-Player Pong game on Basys 3",
 
         description:
-            "A collection of modular digital logic experiments involving finite-state machines, timing, simulation, and hardware verification.",
+            "Develop a two-player Pong game on the Basys 3 FPGA board using Verilog and Vivado, implementing a finite state machine (FSM) for game logic. Outputs 640x480 VGA graphics and uses rotary encoders for player controls.",
 
         technologies: [
             "Basys 3",
@@ -97,74 +65,11 @@ const projectLibrary = [
             "",
 
         actionLabel:
-            "Case study coming soon"
-    },
-
-
-    {
-        id:
-            "stm32-sensor-data-logger",
-
-        category:
-            "stm32",
-
-        categoryLabel:
-            "Embedded Systems",
-
-        date:
-            "2026-08-13",
-
-        title:
-            "STM32 Sensor Data Logger",
-
-        description:
-            "A planned data-acquisition platform for learning STM32 peripherals, interrupt-driven programming, sensor communication, and structured data storage.",
-
-        technologies: [
-            "STM32",
-            "HAL",
-            "UART",
-            "SPI"
-        ],
-
-        detailsUrl:
-            "",
-
-        actionLabel:
-            "Planned project"
-    },
-
-
-    {
-        id:
-            "sensor-interface-pcb",
-
-        category:
-            "pcb",
-
-        categoryLabel:
-            "PCB Design",
-
-        date:
-            "2026-08-11",
-
-        title:
-            "Sensor Interface PCB",
-
-        description:
-            "A planned custom circuit board for organized sensor connections, power regulation, protection, and communication with embedded development boards.",
-
-        technologies: [
-            "KiCad",
-            "Schematic",
-            "PCB Layout",
-            "Power"
-        ],
-
-        detailsUrl:
-            "",
-
-        actionLabel:
-            "Planned project"
+            "Planned Project"
     }
+
+
+
+
+    
 ];

@@ -42,7 +42,15 @@ const homeDashboard = {
 
             {
                 label:
-                    "Logic analyzer",
+                    "Passive buzzer",
+
+                status:
+                    "prototype"
+            },
+
+            {
+                label:
+                    "Wireless communication",
 
                 status:
                     "planned"
@@ -50,12 +58,6 @@ const homeDashboard = {
         ]
     },
 
-
-    featuredComponentIds: [
-        "esp32-s3-n16r8",
-        "pn532-nfc-module",
-        "sh1106-oled"
-    ],
 
 
     featuredResourceIds: [
