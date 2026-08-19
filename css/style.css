@@ -651,7 +651,7 @@ html[data-theme="light"]
     font-size: clamp(3rem, 8vw, 6.5rem);
     font-weight: 700;
 
-    line-height: 0.98;
+    line-height: 1.05;
     letter-spacing: -0.06em;
 
     margin-bottom: var(--space-md);
