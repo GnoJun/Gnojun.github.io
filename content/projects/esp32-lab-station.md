@@ -1,7 +1,8 @@
 ## Overview
 
 ![esp32-lab image](../../images/projects/esp32-lab/esp32-lab.webp "ESP32-S3 Portable Lab Station")
-### Why I am building it
+
+> **Why I am building it**
 
 Electrical engineering projects often require several separate tools: an oscilloscope, signal generator, logic analyzer, development board, and computer.
 
@@ -11,7 +12,7 @@ The ESP32-S3 acts as the central controller. It manages the OLED interface, user
 
 The goal is not to replace professional laboratory equipment. The goal is to create a portable learning tool for debugging low-voltage embedded systems and documenting the engineering decisions behind it.
 
-### Project Goals
+> **Project Goals** 
 
 - Portable and USB-powered
 - Modular software architecture
@@ -40,21 +41,21 @@ The project is being developed incrementally so that each subsystem can be teste
 
 The platform separates user input, signal processing, and output functions into independent subsystems.
 
-### Input Layer — Controls and Signals
+> **Input Layer — Controls and Signals**
 
 - Physical buttons
 - Analog signal input
 - Digital logic channels
 - I²C peripherals
 
-### Processing Layer — ESP32-S3
+> **Processing Layer — ESP32-S3**
 
 - Menu state management
 - ADC sampling
 - PWM generation
 - Data processing
 
-### Output Layer — Display and Interfaces
+> **Output Layer — Display and Interfaces**
 
 - OLED visualization
 - Signal output
@@ -73,15 +74,15 @@ The platform separates user input, signal processing, and output functions into 
 
 Hardware photos, interface screenshots, and measurement results will be added as each subsystem is developed and verified.
 
-### OLED Menu Screenshot
+> **OLED Menu Screenshot**
 
 A clear photo or screenshot showing the multi-level tool-selection interface.
 
-### Prototype Assembly
+> **Prototype Assembly**
 
 A photo documenting the ESP32-S3, OLED, buttons, wiring, and prototype-board layout.
 
-### Waveform Test Result
+> **Waveform Test Result**
 
 An oscilloscope capture or test screenshot showing the generated frequency and duty cycle.
 
@@ -102,19 +103,19 @@ Confirmed interface pins are documented first. Measurement and signal pins will 
 
 ## Roadmap
 
-### 01 — Stabilize the menu architecture
+> **01 — Stabilize the menu architecture**
 
 Separate display, input, and tool logic into maintainable software modules.
 
-### 02 — Build the analog input front end
+> **02 — Build the analog input front end**
 
 Add voltage limiting, scaling, filtering, and protection before connecting external signals.
 
-### 03 — Implement digital signal capture
+> **03 — Implement digital signal capture**
 
 Develop buffered multi-channel sampling for the logic analyzer subsystem.
 
-### 04 — Design a custom carrier PCB
+> **04 — Design a custom carrier PCB**
 
 Move from a prototype board to an organized, protected, and expandable hardware platform.
 
