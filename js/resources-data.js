@@ -18,7 +18,7 @@ const resourceLibrary = [
             "Internal Reference",
 
         description:
-            "A project-specific reference covering the ESP32-S3 logic level, interfaces, current pin assignments, safety considerations, and lab-station integration.",
+            "A project-specific reference covering the ESP32-S3 logic level, pinout, and safety considerations.",
 
         url:
             "components/esp32-s3-n16r8.html",
@@ -100,7 +100,7 @@ const resourceLibrary = [
         external: true,
 
         linkLabel:
-            "Open Documentation",
+            "Open Website",
 
         tags: [
             "ESP32-S3",
@@ -137,7 +137,7 @@ const resourceLibrary = [
         external: true,
 
         linkLabel:
-            "Open Documentation",
+            "Open Website",
 
         tags: [
             "Basys 3",
@@ -156,25 +156,25 @@ const resourceLibrary = [
         categoryLabel: "FPGA & Digital",
 
         date:
-            "2026-08-14",
+            "2026-08-26",
 
-        title: "HDL and Digital Design Reference",
+        title: "HDLBits — Digital Hardware Design Practice",
 
         provider:
-            "Learning Collection",
+            "HDLBits",
 
         resourceType:
             "Learning Reference",
 
         description:
-            "A future collection for Verilog syntax, combinational logic, sequential logic, finite-state machines, simulation, and timing concepts.",
+            "An interactive problem set and reference for learning Verilog, combinational & sequential logic, finite-state machines, simulation, and timing concepts directly in your browser.",
 
-        url: "",
+        url: "https://hdlbits.01xz.net/wiki/Main_Page",
 
         external: true,
 
         linkLabel:
-            "Open Resource",
+            "Open Website",
 
         tags: [
             "Verilog",
@@ -186,7 +186,7 @@ const resourceLibrary = [
     },
 
     {
-        id: "circuit-simulation-reference",
+        id: "circuit-lab",
 
         category: "circuits",
 
@@ -195,23 +195,23 @@ const resourceLibrary = [
         date:
             "2026-08-14",
 
-        title: "Circuit Simulation Reference",
+        title: "Circuit Simulation and Schematics",
 
         provider:
-            "Simulation Tools Collection",
+            "CircuitLab",
 
         resourceType:
             "Tool Reference",
 
         description:
-            "A future collection of circuit-simulation tools and references for testing analog behavior, transient response, filters, and component values.",
+            "Online circuit simulator and schematic editor. Easily build circuits with professional-grade schematics, and analyze analog/digital behavior, transient response, filters, and component values with SPICE-like simulation tools directly in your browser.",
 
-        url: "",
+        url: "https://www.circuitlab.com/",
 
         external: true,
 
         linkLabel:
-            "Open Resource",
+            "Open Website",
 
         tags: [
             "Simulation",
@@ -234,20 +234,20 @@ const resourceLibrary = [
         title: "KiCad Documentation",
 
         provider:
-            "KiCad Project",
+            "KiCad Development Team",
 
         resourceType:
             "Software Documentation",
 
         description:
-            "Documentation for schematic capture, symbol and footprint management, PCB layout, design-rule checking, and manufacturing-file generation.",
+            "It provides comprehensive user manuals, beginner guides, and reference materials for every tool in the software, including the schematic editor, PCB layout editor, and gerber viewer.",
 
-        url: "",
+        url: "https://docs.kicad.org/",
 
         external: true,
 
         linkLabel:
-            "Open Documentation",
+            "Open Website",
 
         tags: [
             "KiCad",
@@ -258,42 +258,6 @@ const resourceLibrary = [
         ]
     },
 
-    {
-        id: "web-platform-documentation",
-
-        category: "tools",
-
-        categoryLabel: "Tools",
-
-        date:
-            "2026-08-14",
-
-        title: "Web Platform Documentation",
-
-        provider:
-            "Web Development Reference",
-
-        resourceType:
-            "Development Reference",
-
-        description:
-            "A future reference for semantic HTML, responsive CSS, JavaScript APIs, accessibility, and browser-compatible portfolio development.",
-
-        url: "",
-
-        external: true,
-
-        linkLabel:
-            "Open Documentation",
-
-        tags: [
-            "HTML",
-            "CSS",
-            "JavaScript",
-            "Accessibility",
-            "Responsive Design"
-        ]
-    },
 
     {
         id: "git-workflow-reference",

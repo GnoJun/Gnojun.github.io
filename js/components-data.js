@@ -40,42 +40,6 @@ const componentLibrary = [
         ]
     },
 
-    {
-        id: "arduino-uno-r3",
-
-        category: "controller",
-
-        categoryLabel: "Controller",
-
-        date:
-            "2026-08-12",
-
-        name: "Arduino UNO R3",
-
-        model: "ATmega328P development board",
-
-        supply:
-            "5 V logic",
-
-        interfaces:
-            "GPIO, PWM, UART, I²C, SPI",
-
-        status: "Available",
-
-        summary:
-            "An introductory microcontroller platform used for circuit prototyping, sensor testing, and learning embedded programming fundamentals.",
-
-        projectUrl: "",
-
-        datasheetUrl: "",
-
-        tags: [
-            "Arduino",
-            "ATmega328P",
-            "Prototype",
-            "5V Logic"
-        ]
-    },
 
     {
         id: "pn532-nfc-module",
