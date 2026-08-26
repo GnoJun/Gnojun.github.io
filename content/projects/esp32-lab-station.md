@@ -98,8 +98,10 @@ Confirmed interface pins are documented first. Measurement and signal pins will 
 | Up / Left Button | `GPIO 48` | Confirmed | Configured with internal pull-up |
 | Down / Right Button | `GPIO 39` | Confirmed | Configured with internal pull-up |
 | Confirm Button | `GPIO 40` | Confirmed | Menu selection input |
-| Signal Output | `TBD` | Under Review | Final PWM-capable pin not yet assigned |
-| Oscilloscope Input | `TBD` | Under Review | Requires an ADC pin and protected front end |
+| Back Button | `GPIO 41` | Confirmed | Menu selection input |
+| Passive Buzzer | `GPIO 42` | Confirmed | With buzzer transistor driver circuit |
+| Signal Output | `GPIO 4` | Confirmed | With signal generator protection circuit |
+| Oscilloscope Input | `GPIO 1` | Confirmed | With oscilloscope protection circuit |
 
 ## Roadmap
 
