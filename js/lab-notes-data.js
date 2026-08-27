@@ -126,6 +126,25 @@ const labNotes = [
             "Frequency",
             "Signal Generator"
         ]
+    },
+
+    {
+        id: "pwm-signal-test",
+        type: "course",
+        category: "EELE 201",
+        title: "Circuits I",
+        summary:
+            "A collection of the notes that I took in circuits I.",
+        
+        formulaSearch:
+            "D Ton T duty cycle PWM percent",
+        date: "2026-08-01",
+        status: "In Progress",
+        tags: [
+            "PWM",
+            "Frequency",
+            "Signal Generator"
+        ]
     }
 ];
 
