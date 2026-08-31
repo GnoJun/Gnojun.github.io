@@ -95,7 +95,7 @@ Confirmed interface pins are documented first. Measurement and signal pins will 
 | :--- | :---: | :--- | :--- |
 | I²C SDA | `GPIO 8` | Confirmed | Shared OLED and peripheral data line |
 | I²C SCL | `GPIO 9` | Confirmed | Shared OLED and peripheral clock line |
-| Up / Left Button | `GPIO 48` | Confirmed | Configured with internal pull-up |
+| Up / Left Button | `GPIO 47` | Confirmed | Configured with internal pull-up |
 | Down / Right Button | `GPIO 39` | Confirmed | Configured with internal pull-up |
 | Confirm Button | `GPIO 40` | Confirmed | Menu selection input |
 | Back Button | `GPIO 41` | Confirmed | Menu selection input |
