@@ -26,9 +26,10 @@ if (navToggle && navMenu) {
     navToggle.addEventListener('click', () => {
         setMenuState(navToggle.getAttribute('aria-expanded') !== 'true');
     });
-    navMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => setMenuState(false));
-    });
+    // Keep links visible throughout native click activation. Closing the details
+    // here can hide a touch target before the browser follows its URL.
+    window.addEventListener('pagehide', () => setMenuState(false));
+    window.addEventListener('pageshow', () => setMenuState(false));
 
     if (dropdown && summary) {
         dropdown.addEventListener('pointerenter', event => {
