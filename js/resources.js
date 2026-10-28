@@ -8,6 +8,8 @@
     const clear = document.querySelector('#resource-search-clear');
     const status = document.querySelector('#resource-status');
     const empty = document.querySelector('#resources-empty-state');
+    const filterOptions = document.querySelector('#resource-filter-options');
+    const filterSummary = document.querySelector('#resource-filter-summary');
     const buttons = [...document.querySelectorAll('[data-resource-type]')];
     const labels = { note: 'Note', component: 'Component', reference: 'Reference' };
     const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({
@@ -28,15 +30,13 @@
         option.textContent = category;
         topic.append(option);
     });
-    document.querySelectorAll('[data-count]').forEach(node => {
-        node.textContent = items.filter(item => node.dataset.count === 'all' || item.kind === node.dataset.count).length;
-    });
     function readState() {
         const params = new URLSearchParams(location.search);
         type = Object.hasOwn(labels, params.get('type')) ? params.get('type') : 'all';
         search.value = params.get('q') || '';
         topic.value = [...topic.options].some(option => option.value === params.get('topic')) ? params.get('topic') : 'all';
         sort.value = ['newest', 'oldest'].includes(params.get('sort')) ? params.get('sort') : 'title';
+        filterOptions.open = topic.value !== 'all' || sort.value !== 'title';
     }
     function resourceRow(item) {
         let url = '';
@@ -51,11 +51,20 @@
         const specs = [item.model, item.supply, interfaces(item)].filter(Boolean);
         const formula = item.formula ? `<div class="resource-formula" data-math="${escape(item.formula)}">${escape(item.formula)}</div>` : '';
         const details = formula || specs.length ? `<details class="resource-inline-detail"><summary>${formula ? 'View formula' : 'View specifications'}</summary>${formula}${specs.length ? `<p>${specs.map(escape).join(' · ')}</p>` : ''}</details>` : '';
+        const metadata = [
+            ['Topic', item.category],
+            ['Updated', item.date],
+            ['Status', item.status],
+            ['Source', item.provider],
+            ['Tags', item.tags?.join(', ')]
+        ].filter(([, value]) => value);
+        const more = metadata.length ? `<details class="resource-more-details"><summary>Details</summary><dl class="resource-detail-meta">${metadata.map(([label, value]) => `<div><dt>${escape(label)}</dt><dd>${label === 'Updated' ? `<time datetime="${escape(value)}">${escape(value)}</time>` : escape(value)}</dd></div>`).join('')}</dl></details>` : '';
         return `<li class="resource-row">
-            <div class="resource-row-type">${escape(labels[item.kind])}<span>${escape(item.category)}</span></div>
-            <div class="resource-row-content"><h3>${title}</h3><p>${escape(item.description)}</p>
-                <p class="resource-row-tags">${(item.tags || []).map(escape).join(' · ')}</p>${details}</div>
-            <div class="resource-row-meta">${item.date ? `<time datetime="${escape(item.date)}">${escape(item.date)}</time>` : ''}<span>${escape(item.status || (item.external ? 'External' : url ? 'Read online' : 'Quick reference'))}</span></div>
+            <div class="resource-row-content">
+                <div class="resource-row-heading"><h3>${title}</h3><span class="resource-row-kind">${escape(labels[item.kind])}</span></div>
+                <p class="resource-row-description">${escape(item.description)}</p>
+                ${details || more ? `<div class="resource-row-actions">${details}${more}</div>` : ''}
+            </div>
         </li>`;
     }
     function render(updateUrl = true) {
@@ -69,7 +78,11 @@
         empty.hidden = visible.length > 0;
         list.hidden = visible.length === 0;
         clear.hidden = search.value.length === 0;
-        status.textContent = `${visible.length} of ${items.length} resources`;
+        status.textContent = visible.length === items.length
+            ? `${items.length} resources`
+            : `${visible.length} of ${items.length} resources`;
+        const activeFilters = Number(topic.value !== 'all') + Number(sort.value !== 'title');
+        filterSummary.textContent = activeFilters ? ` (${activeFilters})` : '';
         buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.resourceType === type)));
         if (typeof renderMathElements === 'function') renderMathElements(list);
         if (updateUrl) {
@@ -95,6 +108,7 @@
     sort.addEventListener('change', () => render());
     document.querySelector('#resource-reset').addEventListener('click', () => {
         search.value = ''; type = 'all'; topic.value = 'all'; sort.value = 'title';
+        filterOptions.open = false;
         render(); search.focus();
     });
     window.addEventListener('popstate', () => { readState(); render(false); });

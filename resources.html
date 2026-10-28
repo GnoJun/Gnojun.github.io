@@ -31,7 +31,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
-<body id="top">
+<body class="site-page" id="top">
 
     <a href="#main-content" class="skip-link">
         Skip to main content
@@ -261,35 +261,37 @@
 
     <main id="main-content" class="library-page">
         <section class="library-intro container" aria-labelledby="library-title">
-            <p class="section-label">THE ENGINEERING DESK</p>
-            <h1 id="library-title">Resources<span>.</span></h1>
-            <p>Notes to understand the idea. Components to build it.<br class="library-desktop-break"> References to take it further. Everything in one place.</p>
+            <h1 class="page-heading" id="library-title">Resources</h1>
+            <p>Notes, component references, and tools for practical engineering.</p>
         </section>
         <section class="container library-section" aria-label="Resource library">
             <div class="library-controls">
                 <form class="library-search" role="search" id="library-search-form">
-                    <label for="resource-search">Search the library</label>
+                    <label class="visually-hidden" for="resource-search">Search the library</label>
                     <div class="library-search-line">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg>
-                        <input id="resource-search" type="search" placeholder="Try ESP32, voltage, I²C, or Git…" autocomplete="off">
+                        <input id="resource-search" type="search" placeholder="Search resources…" autocomplete="off">
                         <button id="resource-search-clear" type="button" hidden>Clear</button>
                     </div>
                 </form>
-                <div class="library-filters">
+                <div class="library-toolbar">
                     <div class="library-types" role="group" aria-label="Resource type">
-                        <button type="button" data-resource-type="all" aria-pressed="true">All <span data-count="all"></span></button>
-                        <button type="button" data-resource-type="note" aria-pressed="false">Notes <span data-count="note"></span></button>
-                        <button type="button" data-resource-type="component" aria-pressed="false">Components <span data-count="component"></span></button>
-                        <button type="button" data-resource-type="reference" aria-pressed="false">References <span data-count="reference"></span></button>
+                        <button type="button" data-resource-type="all" aria-pressed="true">All</button>
+                        <button type="button" data-resource-type="note" aria-pressed="false">Notes</button>
+                        <button type="button" data-resource-type="component" aria-pressed="false">Components</button>
+                        <button type="button" data-resource-type="reference" aria-pressed="false">References</button>
                     </div>
-                    <div class="library-selects">
-                        <label for="resource-topic">Topic<select id="resource-topic"><option value="all">All topics</option></select></label>
-                        <label for="resource-sort">Sort<select id="resource-sort"><option value="title">Title A–Z</option><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label>
-                    </div>
+                    <details class="library-filter-options" id="resource-filter-options">
+                        <summary>Filters<span class="library-filter-summary" id="resource-filter-summary"></span></summary>
+                        <div class="library-selects">
+                            <label for="resource-topic">Topic<select id="resource-topic"><option value="all">All topics</option></select></label>
+                            <label for="resource-sort">Sort<select id="resource-sort"><option value="title">Title A–Z</option><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label>
+                        </div>
+                    </details>
                 </div>
-                </div>
+            </div>
             <div class="library-results-heading">
-                <h2>Browse the library</h2>
+                <h2 class="visually-hidden">Library</h2>
                 <p id="resource-status" role="status" aria-live="polite"></p>
             </div>
             <ul class="resource-list" id="resource-list"></ul>

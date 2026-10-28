@@ -7,7 +7,7 @@ const homeDashboard = {
             "ESP32-S3 Portable Lab Station",
 
         description:
-            "A handheld embedded platform combining an OLED menu, signal generation, measurement tools, wireless communication, and future hardware expansion.",
+            "A portable engineering platform built around the ESP32-S3, with an OLED interface and signal-generation and measurement tools in development.",
 
         status:
             "Active Development",
@@ -59,6 +59,12 @@ const homeDashboard = {
     },
 
 
+
+    resourceSummaries: {
+        "esp32-s3-n16r8": "Pinout, interfaces, and electrical limits for the ESP32-S3 N16R8.",
+        "voltage-divider": "A worked example of voltage scaling, with equations and loading limits.",
+        "esp32-s3-official-documentation": "Official documentation for developing with the ESP32-S3."
+    },
 
     featuredResourceIds: [
         "esp32-s3-n16r8",

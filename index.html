@@ -30,7 +30,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
-<body id="top">
+<body id="top" class="home-page site-page">
 
     <a href="#main-content" class="skip-link">
         Skip to main content
@@ -254,103 +254,79 @@
 
 
     <main id="main-content">
-
-        <section class="hero">
-
-            <div class="container">
-
-                <div class="hero-content">
-
-                    <p class="hero-eyebrow">
-                        Electrical Engineering Portfolio
-                    </p>
-
-                    <h1 class="hero-title">
-                        From circuits to 
-                        <span>working systems.</span>
+        <section class="home-intro">
+            <div class="container home-intro-grid">
+                <div class="home-intro-content">
+                    <p class="home-intro-eyebrow">Electrical Engineering Portfolio</p>
+                    <h1 class="home-intro-title page-heading">
+                        <span>From circuits to</span>
+                        <span class="home-intro-accent">working systems.</span>
                     </h1>
-
-                    <p class="hero-description">
-                        I explore embedded systems, digital hardware, and the engineering behind how things work.
-                    </p>
-
-                    <div class="hero-actions">
-
-                        <a
-                            href="projects.html"
-                            class="button button-primary"
-                        >
-                            Explore Projects
-
-                            <svg
-                                class="icon"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <path d="M5 12h14"></path>
-                                <path d="M13 6l6 6-6 6"></path>
-                            </svg>
-                        </a>
-
-                        <a
-                            href="https://github.com/gnojun"
-                            class="button button-secondary"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            View GitHub
-
-                            <svg
-                                class="icon"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <path d="M14 5h5v5"></path>
-                                <path d="M10 14L19 5"></path>
-                                <path d="M19 13v6H5V5h6"></path>
-                            </svg>
-                        </a>
-
+                    <p class="home-intro-description">I explore embedded systems, digital hardware, and the engineering behind how things work.</p>
+                    <div class="home-intro-actions">
+                        <a href="resources.html" class="button button-primary">Browse resources</a>
+                        <a href="projects.html" class="home-text-link text-link"><span class="link-label">Explore projects</span> <span class="link-arrow" aria-hidden="true">&rarr;</span></a>
                     </div>
-
                 </div>
-
+                <div class="home-intro-art" aria-hidden="true">
+                    <svg class="home-signal-art" viewBox="0 0 480 360" fill="none" focusable="false">
+                        <defs>
+                            <pattern id="home-signal-grid" width="32" height="32" patternUnits="userSpaceOnUse">
+                                <path d="M32 0H0V32" class="home-signal-grid-line"></path>
+                            </pattern>
+                            <radialGradient id="home-signal-glow">
+                                <stop stop-color="currentColor" stop-opacity=".1"></stop>
+                                <stop offset="1" stop-color="currentColor" stop-opacity="0"></stop>
+                            </radialGradient>
+                        </defs>
+                        <ellipse cx="248" cy="180" rx="224" ry="170" fill="url(#home-signal-glow)"></ellipse>
+                        <rect x="32" y="20" width="416" height="320" fill="url(#home-signal-grid)"></rect>
+                        <g class="home-signal-trace" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M32 100H100Q116 100 116 116V164H180"></path>
+                            <path d="M64 276H132Q148 276 148 260V228H180"></path>
+                            <path d="M216 120V76Q216 60 232 60H376"></path>
+                            <path d="M264 120V96H416"></path>
+                            <path d="M300 148H340Q356 148 356 132V116H448"></path>
+                            <path d="M300 244H328Q344 244 344 260V292H416"></path>
+                            <path d="M216 256V308H80"></path>
+                            <path d="M264 256V324H352"></path>
+                            <circle cx="32" cy="100" r="4"></circle>
+                            <circle cx="64" cy="276" r="4"></circle>
+                            <circle cx="376" cy="60" r="4"></circle>
+                            <circle cx="416" cy="96" r="4"></circle>
+                            <circle cx="448" cy="116" r="4"></circle>
+                            <circle cx="416" cy="292" r="4"></circle>
+                            <circle cx="80" cy="308" r="4"></circle>
+                            <circle cx="352" cy="324" r="4"></circle>
+                        </g>
+                        <rect class="home-signal-chip" x="180" y="120" width="120" height="136" rx="20"></rect>
+                        <rect class="home-signal-core" x="198" y="138" width="84" height="100" rx="10"></rect>
+                        <g class="home-signal-path" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M32 196H180"></path>
+                            <path d="M212 188H226L234 166L246 210L254 188H268"></path>
+                            <path d="M300 196H320C332 196 332 164 344 164S356 228 368 228S380 164 392 164S404 196 416 196H448"></path>
+                        </g>
+                        <circle class="home-signal-node" cx="32" cy="196" r="4"></circle>
+                        <circle class="home-signal-node" cx="448" cy="196" r="4"></circle>
+                    </svg>
+                </div>
             </div>
-
         </section>
 
-        <!-- =========================
-            Current Engineering Focus
-        ========================== -->
-
-        <section
-            class="home-focus-section"
-            aria-labelledby="home-focus-heading"
-        >
-
+        <section class="home-focus-section" aria-labelledby="home-focus-heading">
             <div class="container">
-
-                <div
-                    class="home-focus-container"
-                    id="home-focus-container"
-                >
-                    <p class="home-data-loading">
-                        Loading current engineering focus...
-                    </p>
+                <div class="home-focus-container" id="home-focus-container">
+                    <h2 id="home-focus-heading">Current project</h2>
+                    <p class="home-data-loading">Loading project details...</p>
                 </div>
-
+                <noscript><p><a href="projects/esp32-lab-station.html">Explore the ESP32-S3 Portable Lab Station</a>.</p></noscript>
             </div>
-
         </section>
-
 
         <section class="home-dashboard-section" aria-labelledby="home-resources-heading">
             <div class="container">
                 <header class="home-dashboard-header">
-                    <div>
-                        <p class="section-label">Engineering Library</p>
-                        <h2 id="home-resources-heading">Notes, hardware &amp; references.</h2>
-                    </div>
+                    <h2 id="home-resources-heading">Selected resources</h2>
                     <a class="home-text-link text-link" href="resources.html"><span class="link-label">Browse all resources</span> <span class="link-arrow" aria-hidden="true">&rarr;</span></a>
                 </header>
                 <ul class="home-resource-list" id="home-featured-resources">
