@@ -157,18 +157,6 @@
                     </li>
 
                     <li>
-                         <a href="lab-notes.html">
-                            Lab Notes
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="components.html">
-                            Components
-                        </a>
-                    </li>
-
-                    <li>
                         <a href="resources.html">Resources</a>
                     </li>
 
@@ -335,146 +323,21 @@
         </section>
 
 
-        <!-- =========================
-            Portfolio Dashboard
-        ========================== -->
-
-        <section
-            class="home-dashboard-section"
-            aria-labelledby="home-dashboard-heading"
-        >
-
+        <section class="home-dashboard-section" aria-labelledby="home-resources-heading">
             <div class="container">
-
                 <header class="home-dashboard-header">
-
                     <div>
-
-                        <p class="section-label">
-                            Engineering Knowledge Base
-                        </p>
-
-                        <h2 id="home-dashboard-heading">
-                            Recent work and references
-                        </h2>
-
+                        <p class="section-label">Engineering Library</p>
+                        <h2 id="home-resources-heading">Notes, hardware &amp; references.</h2>
                     </div>
-
-                    <p>
-                        Selected notes and technical resources
-                        from the portfolio database.
-                    </p>
-
+                    <a class="home-text-link text-link" href="resources.html"><span class="link-label">Browse all resources</span> <span class="link-arrow" aria-hidden="true">&rarr;</span></a>
                 </header>
-
-
-                <!-- Recent Lab Notes -->
-
-                <section
-                    class="home-preview-section"
-                    aria-labelledby="home-notes-heading"
-                >
-
-                    <header class="home-preview-header">
-
-                        <div>
-
-                            <p class="home-preview-eyebrow">
-                                Documentation
-                            </p>
-
-                            <h3 id="home-notes-heading">
-                                Recent Lab Notes
-                            </h3>
-
-                        </div>
-
-                        <a
-                            class="home-preview-view-all"
-                            href="lab-notes.html"
-                        >
-                            View All Notes
-
-                            <svg
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <path d="M5 12h14"></path>
-                                <path d="M13 6l6 6-6 6"></path>
-                            </svg>
-                        </a>
-
-                    </header>
-
-
-                    <div
-                        class="home-preview-grid"
-                        id="home-recent-notes"
-                    >
-                        <p class="home-data-loading">
-                            Loading recent notes...
-                        </p>
-                    </div>
-
-                </section>
-
-                
-
-
-                <!-- Resources Preview -->
-
-                <section
-                    class="home-preview-section"
-                    aria-labelledby="home-resources-heading"
-                >
-
-                    <header class="home-preview-header">
-
-                        <div>
-
-                            <p class="home-preview-eyebrow">
-                                Learning Library
-                            </p>
-
-                            <h3 id="home-resources-heading">
-                                Engineering Resources
-                            </h3>
-
-                        </div>
-
-                        <a
-                            class="home-preview-view-all"
-                            href="resources.html"
-                        >
-                            View Resources
-
-                            <svg
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <path d="M5 12h14"></path>
-                                <path d="M13 6l6 6-6 6"></path>
-                            </svg>
-                        </a>
-
-                    </header>
-
-
-                    <div
-                        class="home-preview-grid"
-                        id="home-featured-resources"
-                    >
-                        <p class="home-data-loading">
-                            Loading resources...
-                        </p>
-                    </div>
-
-                </section>
-
+                <ul class="home-resource-list" id="home-featured-resources">
+                    <li class="home-data-loading">Loading resources...</li>
+                </ul>
+                <noscript><p><a href="resources.html">Browse the resource library</a> for notes, component references, and documentation.</p></noscript>
             </div>
-
         </section>
-
     </main>
 
 
@@ -524,18 +387,6 @@
                         <li>
                             <a href="projects.html">
                                 Projects
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="lab-notes.html">
-                                Lab Notes
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="components.html">
-                                Components
                             </a>
                         </li>
 
@@ -620,8 +471,6 @@
     </footer>
 
 
-    <script src="js/lab-notes-data.js"></script>
-    <script src="js/components-data.js"></script>
     <script src="js/resources-data.js"></script>
 
     <script src="js/home-data.js"></script>

@@ -61,8 +61,8 @@ const homeDashboard = {
 
 
     featuredResourceIds: [
-        "esp32-s3-component-reference",
-        "voltage-divider-note",
+        "esp32-s3-n16r8",
+        "voltage-divider",
         "esp32-s3-official-documentation"
     ]
 };

@@ -3,8 +3,6 @@
         "index.html",
         "about.html",
         "projects.html",
-        "lab-notes.html",
-        "components.html",
         "resources.html",
 
         "projects/esp32-lab-station.html",

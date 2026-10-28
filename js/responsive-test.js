@@ -17,7 +17,7 @@
             layoutRules: [
                 {
                     selector:
-                        ".home-preview-grid",
+                        ".home-focus-layout",
 
                     maxWidth:
                         768,
@@ -44,43 +44,9 @@
             layoutRules: []
         },
 
-        {
-            path: "lab-notes.html",
 
-            label: "Lab Notes",
 
-            layoutRules: [
-                {
-                    selector:
-                        ".notes-grid",
 
-                    maxWidth:
-                        900,
-
-                    expectedColumns:
-                        1
-                }
-            ]
-        },
-
-        {
-            path: "components.html",
-
-            label: "Components",
-
-            layoutRules: [
-                {
-                    selector:
-                        ".components-grid",
-
-                    maxWidth:
-                        768,
-
-                    expectedColumns:
-                        1
-                }
-            ]
-        },
 
         {
             path: "resources.html",
@@ -90,7 +56,7 @@
             layoutRules: [
                 {
                     selector:
-                        ".resources-grid",
+                        ".resource-row",
 
                     maxWidth:
                         768,

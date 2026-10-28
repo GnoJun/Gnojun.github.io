@@ -9,14 +9,14 @@
 
     <meta
         name="description"
-        content="A curated engineering resource library covering official documentation, embedded systems, FPGA development, circuit simulation, PCB design, and software-development tools."
+        content="Engineering notes, component references, formulas, and development tools in one searchable library. Browse by type or topic."
     >
 
     <meta
         name="robots"
         content="noindex, nofollow"
     >
-    
+
     <meta
         name="theme-color"
         content="#0f1115"
@@ -25,6 +25,7 @@
     <script src="js/theme-init.js"></script>
 
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -147,24 +148,14 @@
                             About
                         </a>
                     </li>
-                    
+
                     <li>
                         <a href="projects.html">Projects</a>
                     </li>
 
-                   <li>
-                        <a href="lab-notes.html">
-                            Lab Notes
-                        </a>
-                    </li>
 
-                    <li>
-                        <a
-                            href="components.html"
-                        >
-                            Components
-                        </a>
-                    </li>
+
+
 
                     <li>
                         <a
@@ -247,259 +238,47 @@
     </header>
 
 
-    <main id="main-content">
-
-        <!-- =========================
-            Resources Hero
-        ========================== -->
-
-        <section class="page-hero resources-page-hero">
-
-            <div class="container">
-
-                <div class="page-hero-content">
-
-                    <p class="page-eyebrow">
-                        Engineering Learning Library
-                    </p>
-
-                    <h1 class="page-title">
-                        Resources
-                    </h1>
-
-                    <p class="page-description">
-                        A curated collection of technical documentation,
-                        engineering references, development tools, and
-                        learning materials used throughout my projects.
-                    </p>
-
-                </div>
-
-            </div>
-
+    <main id="main-content" class="library-page">
+        <section class="library-intro container" aria-labelledby="library-title">
+            <p class="section-label">THE ENGINEERING DESK</p>
+            <h1 id="library-title">Resources<span>.</span></h1>
+            <p>Notes to understand the idea. Components to build it.<br class="library-desktop-break"> References to take it further. Everything in one place.</p>
         </section>
-
-
-        <!-- =========================
-            Resource Library
-        ========================== -->
-
-        <section class="resource-library-section">
-
-            <div class="container">
-
-                <!-- Search -->
-
-                <div class="resource-search">
-
-                    <label
-                        class="resource-search-label"
-                        for="resource-search"
-                    >
-                        Search resources
-                    </label>
-
-
-                    <div class="resource-search-field">
-
-                        <svg
-                            class="resource-search-icon"
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                        >
-                            <circle
-                                cx="11"
-                                cy="11"
-                                r="7"
-                            ></circle>
-
-                            <path d="M20 20l-4-4"></path>
-                        </svg>
-
-
-                        <input
-                            class="resource-search-input"
-                            id="resource-search"
-                            type="search"
-                            placeholder="Search documentation, tools, or topics..."
-                            autocomplete="off"
-                            spellcheck="false"
-                        >
-
-
-                        <button
-                            class="resource-search-clear"
-                            id="resource-search-clear"
-                            type="button"
-                            aria-label="Clear resource search"
-                            hidden
-                        >
-                            <svg
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <path d="M6 6l12 12"></path>
-                                <path d="M18 6L6 18"></path>
-                            </svg>
-                        </button>
-
+        <section class="container library-section" aria-label="Resource library">
+            <div class="library-controls">
+                <form class="library-search" role="search" id="library-search-form">
+                    <label for="resource-search">Search the library</label>
+                    <div class="library-search-line">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg>
+                        <input id="resource-search" type="search" placeholder="Try ESP32, voltage, I²C, or Git…" autocomplete="off">
+                        <button id="resource-search-clear" type="button" hidden>Clear</button>
                     </div>
-
-                </div>
-
-
-                <!-- Filters -->
-
-                <div class="resource-toolbar">
-
-                    <div
-                        class="resource-filters"
-                        role="group"
-                        aria-label="Filter resources by category"
-                    >
-
-                        <button
-                            class="resource-filter-button is-active"
-                            type="button"
-                            data-resource-filter="all"
-                            aria-pressed="true"
-                        >
-                            All
-                        </button>
-
-                        <button
-                            class="resource-filter-button"
-                            type="button"
-                            data-resource-filter="official-docs"
-                            aria-pressed="false"
-                        >
-                            Official Docs
-                        </button>
-
-                        <button
-                            class="resource-filter-button"
-                            type="button"
-                            data-resource-filter="embedded"
-                            aria-pressed="false"
-                        >
-                            Embedded
-                        </button>
-
-                        <button
-                            class="resource-filter-button"
-                            type="button"
-                            data-resource-filter="fpga"
-                            aria-pressed="false"
-                        >
-                            FPGA & Digital
-                        </button>
-
-                        <button
-                            class="resource-filter-button"
-                            type="button"
-                            data-resource-filter="circuits"
-                            aria-pressed="false"
-                        >
-                            Circuits
-                        </button>
-
-                        <button
-                            class="resource-filter-button"
-                            type="button"
-                            data-resource-filter="pcb"
-                            aria-pressed="false"
-                        >
-                            PCB
-                        </button>
-
-                        <button
-                            class="resource-filter-button"
-                            type="button"
-                            data-resource-filter="tools"
-                            aria-pressed="false"
-                        >
-                            Tools
-                        </button>
-
+                </form>
+                <div class="library-filters">
+                    <div class="library-types" role="group" aria-label="Resource type">
+                        <button type="button" data-resource-type="all" aria-pressed="true">All <span data-count="all"></span></button>
+                        <button type="button" data-resource-type="note" aria-pressed="false">Notes <span data-count="note"></span></button>
+                        <button type="button" data-resource-type="component" aria-pressed="false">Components <span data-count="component"></span></button>
+                        <button type="button" data-resource-type="reference" aria-pressed="false">References <span data-count="reference"></span></button>
                     </div>
-
-
-                    <div class="content-toolbar-actions">
-
-                        <button
-                            class="content-sort-button"
-                            id="resource-sort"
-                            type="button"
-                            data-sort-order="newest"
-                            aria-label="Sorted by date, newest first. Activate to sort oldest first."
-                        >
-                            <span>
-                                Date
-                            </span>
-
-                            <svg
-                                class="content-sort-icon"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <path d="M12 5v14"></path>
-                                <path d="M7 14l5 5 5-5"></path>
-                            </svg>
-                        </button>
-
-
-                        <p
-                            class="resource-status"
-                            id="resource-status"
-                            role="status"
-                            aria-live="polite"
-                        ></p>
-
+                    <div class="library-selects">
+                        <label for="resource-topic">Topic<select id="resource-topic"><option value="all">All topics</option></select></label>
+                        <label for="resource-sort">Sort<select id="resource-sort"><option value="title">Title A–Z</option><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label>
                     </div>
-
                 </div>
-
-
-                <!-- Generated Cards -->
-
-                <div
-                    class="resources-grid"
-                    id="resources-grid"
-                ></div>
-
-
-                <!-- Empty State -->
-
-                <div
-                    class="resources-empty-state"
-                    id="resources-empty-state"
-                    hidden
-                >
-
-                    <svg
-                        class="resources-empty-icon"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                    >
-                        <path d="M4 5h16v14H4z"></path>
-                        <path d="M8 9h8"></path>
-                        <path d="M8 13h5"></path>
-                    </svg>
-
-                    <h2>
-                        No resources found
-                    </h2>
-
-                    <p id="resources-empty-text">
-                        No resources match the current search and category.
-                    </p>
-
                 </div>
-
+            <div class="library-results-heading">
+                <h2>Browse the library</h2>
+                <p id="resource-status" role="status" aria-live="polite"></p>
             </div>
-
+            <ul class="resource-list" id="resource-list"></ul>
+            <div class="library-empty" id="resources-empty-state" hidden>
+                <h2>No matching resources</h2>
+                <p>Try a broader search or choose another type or topic.</p>
+                <button class="library-text-button" id="resource-reset" type="button">Reset all filters &rarr;</button>
+            </div>
+            <noscript><p>Enable JavaScript to search the full library. You can also read the <a href="notes/voltage-divider.html">voltage divider note</a>, <a href="components/esp32-s3-n16r8.html">ESP32-S3 reference</a>, <a href="resources/git-workflow.html">Git workflow</a>, or <a href="resources/markdown-ref.html">Markdown reference</a> directly.</p></noscript>
         </section>
-
     </main>
 
 
@@ -552,17 +331,9 @@
                             </a>
                         </li>
 
-                        <li>
-                            <a href="lab-notes.html">
-                                Lab Notes
-                            </a>
-                        </li>
 
-                        <li>
-                            <a href="components.html">
-                                Components
-                            </a>
-                        </li>
+
+
 
                         <li>
                             <a href="resources.html">
@@ -645,6 +416,7 @@
     </footer>
 
 
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="js/resources-data.js"></script>
     <script src="js/resources.js"></script>
     <script src="js/theme.js"></script>
