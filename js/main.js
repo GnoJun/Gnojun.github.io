@@ -1,52 +1,85 @@
-const navToggle = document.querySelector(".nav-toggle");
-const navMenu = document.querySelector(".nav-menu");
+const navToggle = document.querySelector('.nav-toggle');
+const navMenu = document.querySelector('.nav-menu');
 
 if (navToggle && navMenu) {
-    const navLinks = navMenu.querySelectorAll("a");
+    const dropdown = navMenu.querySelector('[data-courses-dropdown]');
+    const summary = dropdown?.querySelector('summary');
+    const courseLinks = dropdown ? [...dropdown.querySelectorAll('a')] : [];
+    const hoverQuery = window.matchMedia('(min-width: 769px) and (hover: hover) and (pointer: fine)');
+    const mobileQuery = window.matchMedia('(max-width: 768px)');
+    let openedByHover = false;
 
-    function setMenuState(isOpen) {
-        navMenu.classList.toggle("is-open", isOpen);
-        navToggle.classList.toggle("is-active", isOpen);
-
-        navToggle.setAttribute(
-            "aria-expanded",
-            String(isOpen)
-        );
-
-        navToggle.setAttribute(
-            "aria-label",
-            isOpen
-                ? "Close navigation"
-                : "Open navigation"
-        );
+    function closeCourses() {
+        if (dropdown) dropdown.open = false;
+        openedByHover = false;
     }
 
-    navToggle.addEventListener("click", function () {
-        const isCurrentlyOpen =
-            navToggle.getAttribute("aria-expanded") === "true";
+    function setMenuState(isOpen, restoreFocus = false) {
+        navMenu.classList.toggle('is-open', isOpen);
+        navToggle.classList.toggle('is-active', isOpen);
+        navToggle.setAttribute('aria-expanded', String(isOpen));
+        navToggle.setAttribute('aria-label', isOpen ? 'Close navigation' : 'Open navigation');
+        if (!isOpen) closeCourses();
+        if (restoreFocus) navToggle.focus();
+    }
 
-        setMenuState(!isCurrentlyOpen);
+    navToggle.addEventListener('click', () => {
+        setMenuState(navToggle.getAttribute('aria-expanded') !== 'true');
+    });
+    navMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => setMenuState(false));
     });
 
-    navLinks.forEach(function (link) {
-        link.addEventListener("click", function () {
-            setMenuState(false);
+    if (dropdown && summary) {
+        dropdown.addEventListener('pointerenter', event => {
+            if (event.pointerType !== 'touch' && hoverQuery.matches && !dropdown.open) {
+                dropdown.open = true;
+                openedByHover = true;
+            }
         });
-    });
+        dropdown.addEventListener('pointerleave', () => {
+            if (openedByHover && !dropdown.contains(document.activeElement)) closeCourses();
+        });
+        dropdown.addEventListener('focusout', event => {
+            if (!dropdown.contains(event.relatedTarget)) closeCourses();
+        });
+        summary.addEventListener('click', () => { openedByHover = false; });
+        summary.addEventListener('keydown', event => {
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                event.preventDefault();
+                dropdown.open = true;
+                openedByHover = false;
+                const link = event.key === 'ArrowDown' ? courseLinks[0] : courseLinks.at(-1);
+                link?.focus();
+            }
+        });
+    }
 
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
+    document.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') return;
+        if (dropdown?.open) {
+            event.preventDefault();
+            closeCourses();
+            summary.focus();
+        } else if (navMenu.classList.contains('is-open')) {
+            event.preventDefault();
+            setMenuState(false, true);
+        }
+    });
+    document.addEventListener('pointerdown', event => {
+        if (!event.target.closest('.navbar')) setMenuState(false);
+        else if (dropdown && !dropdown.contains(event.target)) closeCourses();
+    });
+    document.addEventListener('focusin', event => {
+        if (navMenu.classList.contains('is-open') && !event.target.closest('.navbar')) {
             setMenuState(false);
         }
     });
-
-    window.addEventListener("resize", function () {
-        if (window.innerWidth > 768) {
-            setMenuState(false);
-        }
+    mobileQuery.addEventListener('change', () => {
+        const focusWasInMenu = navMenu.contains(document.activeElement);
+        setMenuState(false, mobileQuery.matches && focusWasInMenu);
     });
 }
-
 const currentYear = document.querySelector("#current-year");
 
 if (currentYear) {
