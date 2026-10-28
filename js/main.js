@@ -41,7 +41,9 @@ if (navToggle && navMenu) {
             if (openedByHover && !dropdown.contains(document.activeElement)) closeCourses();
         });
         dropdown.addEventListener('focusout', event => {
-            if (!dropdown.contains(event.relatedTarget)) closeCourses();
+            // A touch can blur the summary without focusing the link. Keep it
+            // visible until the click; outside pointer presses already close it.
+            if (event.relatedTarget && !dropdown.contains(event.relatedTarget)) closeCourses();
         });
         summary.addEventListener('click', () => { openedByHover = false; });
         summary.addEventListener('keydown', event => {
