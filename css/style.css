@@ -5221,6 +5221,7 @@ a.text-link { text-decoration: none; text-underline-offset: .2em; }
 .resource-inline-detail[open] summary { margin-bottom: .75rem; }
 .resource-inline-detail p { font-size: 1rem; line-height: 1.8; color: var(--color-text-secondary); overflow-wrap: anywhere; }
 .resource-formula { max-width: 100%; overflow-x: auto; padding: 1rem; border-radius: .75rem; background: var(--color-code-background); font-family: monospace; color: var(--color-text-primary); }
+html[data-theme="light"] .resource-formula { background: #ffffff; }
 .library-empty { padding: 3rem 1.5rem; border: 1px dashed var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface-soft); }
 .library-empty h2 { font-size: 1.25rem; margin-bottom: .75rem; }
 .library-empty p { color: var(--color-text-secondary); font-size: 1rem; line-height: 1.8; }
