@@ -204,9 +204,6 @@
                 used.add(id);
                 heading.attrSet('id', id);
                 if (heading.tag === 'h1') { heading.tag = 'h2'; state.tokens[i + 2].tag = 'h2'; }
-                const anchor = new state.Token('html_inline', '', 0);
-                anchor.content = `<a class="markdown-heading-anchor" href="#${escape(id)}" aria-label="${escape('Link to section: ' + text)}"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.5 9.5 9.5 6.5M6 11l-1 1a2.1 2.1 0 0 1-3-3l3-3a2.1 2.1 0 0 1 3 0m0-1 1-1a2.1 2.1 0 0 1 3 3l-3 3a2.1 2.1 0 0 1-3 0"/></svg></a>`;
-                inline.children.push(anchor);
             }
         });
 

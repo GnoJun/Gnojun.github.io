@@ -31,7 +31,7 @@ The HTML page supplies the article title. Start Markdown sections with `##`, the
 
 ###### A final detail
 
-This section's “Headings and navigation” title is a live H2 example. The automatic section navigation and reading progress use major sections. Each heading also has a permalink: use it to share a particular explanation. Repeated heading names receive distinct IDs.
+This section's “Headings and navigation” title is a live H2 example. The automatic section navigation and reading progress use major sections. Select a section in the navigation, then copy the browser URL to share it. Headings keep their IDs for `#heading-id` links; repeated heading names receive distinct IDs.
 
 ## Paragraphs and emphasis
 
@@ -78,7 +78,7 @@ Open `js/main.js` and inspect `readVoltage()`. The literal syntax `**bold**` rem
 
 ## Links and references
 
-Inline links keep the destination next to the label. Reference links move repeated URLs out of the paragraph. A bare web address becomes a link automatically. Use a heading's permalink for links within the current article.
+Inline links keep the destination next to the label. Reference links move repeated URLs out of the paragraph. A bare web address becomes a link automatically. Use a `#heading-id` fragment for links within the current article.
 
 **Source**
 

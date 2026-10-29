@@ -18,7 +18,7 @@ License files were downloaded from each pinned npm package's root `LICENSE` file
 
 ## Integration
 
-`js/markdown-renderer.js` loads the three Markdown bundles only on pages containing an element with `data-markdown-src`. It then loads `js/markdown-engine.js`, which configures Markdown parsing, the footnote plugin, and the `details` container. The engine adds this site's code toolbars, callouts, task lists, image figures, heading anchors, table controls, and math placeholders. Raw HTML in article sources is disabled.
+`js/markdown-renderer.js` loads the three Markdown bundles only on pages containing an element with `data-markdown-src`. It then loads `js/markdown-engine.js`, which configures Markdown parsing, the footnote plugin, and the `details` container. The engine adds this site's code toolbars, callouts, task lists, image figures, heading IDs, table controls, and math placeholders. Raw HTML in article sources is disabled.
 
 The renderer loads highlight.js when an article contains code with a language label. The common-language bundle includes JavaScript, Python, C++, Bash, JSON, XML/HTML, CSS, and other common languages. Unknown labels remain plain text. Highlighting is an optional enhancement; the original code remains readable and copyable if it cannot load.
 

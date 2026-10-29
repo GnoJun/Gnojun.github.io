@@ -55,7 +55,7 @@ test('All heading levels have unique stable IDs and one shell-owned H1', () => {
     assert.ok(html.includes('<h2 id="overview-2">'));
     assert.ok(html.includes('<h2 id="overview-3">'));
     assert.ok(html.includes('<h3 id="overview-4">'));
-    assert.equal(count(html, /class="markdown-heading-anchor"/g), 6);
+    assert.doesNotMatch(html, /markdown-heading-anchor|<a\b|<svg\b/);
     assert.equal(count(html, /<h[4-6] id=/g), 3);
 });
 test('Unicode headings and reserved footnote IDs remain usable', () => {
@@ -162,7 +162,7 @@ test('Figures resolve source paths, captions and diagram theme classes safely', 
 test('Source URLs and labels cannot inject HTML attributes', () => {
     const html = render('## A "title"\n\n![A "label"](https://example.org/a.png "A &quot;caption&quot;")\n\n' + fence + 'js title="&lt;img&gt;"\n"<script>"\n' + fence);
     assert.doesNotMatch(html, /<script>|<img>/);
-    assert.ok(html.includes('aria-label="Link to section: A &quot;title&quot;"'));
+    assert.ok(html.includes('<h2 id="a-title">A &quot;title&quot;</h2>'));
 });
 
 vm.runInContext(await readFile(new URL('js/vendor/highlight-11.12.0.min.js', root), 'utf8'), context);
