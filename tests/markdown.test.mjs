@@ -178,6 +178,8 @@ for (const file of [
     'content/resources/markdown-reference.md', 'content/resources/git-workflow.md',
     'content/resources/esp32-s3-n16r8.md', 'content/resources/eele201.md',
     'content/resources/voltage-divider.md', 'content/projects/esp32-lab-station.md',
+    'content/resources/circuits-ii.md', 'content/resources/physics-i.md',
+    'content/resources/physics-ii.md',
     'content/resources/_resource-template.md', 'content/resources/markdown-template.md'
 ]) {
     const markdown = await readFile(new URL(file, root), 'utf8');

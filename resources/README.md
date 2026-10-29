@@ -15,6 +15,19 @@ Notes, components, and references now share one library and one publishing workf
 
 Existing article URLs in `notes/` and `components/` stay valid. Their Markdown now lives in `content/resources/`. The former `lab-notes.html` and `components.html` indexes redirect to the corresponding type in Resources.
 
+## Course notes
+
+The Courses dropdown links to these pages. Edit the corresponding Markdown file to update a course's article; each new course page also offers a source download.
+
+| Course page | Markdown source |
+| :--- | :--- |
+| [Circuits I](../notes/eele201.html) | [eele201.md](../content/resources/eele201.md) |
+| [Circuits II](../notes/circuits-ii.html) | [circuits-ii.md](../content/resources/circuits-ii.md) |
+| [Physics I](../notes/physics-i.html) | [physics-i.md](../content/resources/physics-i.md) |
+| [Physics II](../notes/physics-ii.html) | [physics-ii.md](../content/resources/physics-ii.md) |
+
+The new courses begin with editable study outlines and starter notes. Their HTML shells own the page title, introduction, and active Courses link.
+
 ## Add a resource
 
 1. Copy `_resource-template.html` into `resources/your-slug.html`.

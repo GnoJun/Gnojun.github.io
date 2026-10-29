@@ -125,6 +125,45 @@ const resourceLibrary = [
         "formulaSearch": "D Ton T duty cycle PWM percent"
     },
     {
+        "id": "circuits-ii",
+        "kind": "note",
+        "category": "Circuit Analysis",
+        "title": "Circuits II",
+        "description": "Course-note starter for AC circuit analysis, phasors, impedance, and frequency response.",
+        "tags": ["Courses", "Circuits", "AC", "Phasors", "Impedance"],
+        "url": "notes/circuits-ii.html",
+        "external": false,
+        "date": "2026-10-29",
+        "status": "Starter",
+        "resourceType": "Course Notes"
+    },
+    {
+        "id": "physics-i",
+        "kind": "note",
+        "category": "Physics",
+        "title": "Physics I",
+        "description": "Course-note starter for motion, forces, energy, momentum, and introductory mechanics.",
+        "tags": ["Courses", "Physics", "Mechanics", "Motion", "Energy"],
+        "url": "notes/physics-i.html",
+        "external": false,
+        "date": "2026-10-29",
+        "status": "Starter",
+        "resourceType": "Course Notes"
+    },
+    {
+        "id": "physics-ii",
+        "kind": "note",
+        "category": "Physics",
+        "title": "Physics II",
+        "description": "Course-note starter for electric fields, potential, current, magnetism, and induction.",
+        "tags": ["Courses", "Physics", "Electricity", "Magnetism", "Fields"],
+        "url": "notes/physics-ii.html",
+        "external": false,
+        "date": "2026-10-29",
+        "status": "Starter",
+        "resourceType": "Course Notes"
+    },
+    {
         "id": "esp32-s3-n16r8",
         "kind": "component",
         "category": "Controller",
