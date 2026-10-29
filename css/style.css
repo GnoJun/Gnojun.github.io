@@ -53,6 +53,12 @@ Variables
 
     --color-accent: #4f8cff;
     --color-accent-hover: #6da0ff;
+    --color-accent-text: #91b8ff;
+    --color-accent-surface: rgba(79, 140, 255, .09);
+    --color-accent-surface-strong: rgba(79, 140, 255, .16);
+    --color-accent-border: rgba(79, 140, 255, .3);
+    --color-accent-solid: #2563eb;
+    --color-accent-solid-hover: #1d4ed8;
 
 /* Theme-aware supporting colors */
 
@@ -129,6 +135,10 @@ html[data-theme="light"] {
 
     --color-accent: #2563eb;
     --color-accent-hover: #1d4ed8;
+    --color-accent-text: #1d4ed8;
+    --color-accent-surface: rgba(37, 99, 235, .05);
+    --color-accent-surface-strong: rgba(37, 99, 235, .09);
+    --color-accent-border: rgba(37, 99, 235, .22);
 
 --color-header-background:
         rgba(245, 247, 251, 0.88);
@@ -5122,7 +5132,13 @@ a.text-link { text-decoration: none; text-underline-offset: .2em; }
 
 /* Quiet homepage: a clear introduction, one project, and selected reading. */
 .home-page main .container, .library-page .container { max-width: var(--container-width); }
-.home-page .home-intro { padding: 4.5rem 0 3.5rem; }
+.home-page .home-intro {
+    display: grid;
+    align-items: center;
+    min-height: calc(100vh - var(--header-height));
+    min-height: calc(100svh - var(--header-height));
+    padding: 4.5rem 0 3.5rem;
+}
 .home-intro-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); align-items: center; gap: 2.5rem; }
 .home-intro-content { min-width: 0; }
 .home-intro-eyebrow, .home-section-label {
@@ -5501,4 +5517,74 @@ html[data-theme="light"] .resource-formula { background: #ffffff; }
 }
 @media (max-width: 380px) {
     .site-page .home-intro-title.page-heading { font-size: 2.25rem; }
+}
+
+/* Blue accents share one palette across both themes and every page. */
+.site-page .site-header { border-bottom-color: var(--color-accent-border); }
+.site-page .home-intro, .site-page .page-intro {
+    background-image: radial-gradient(ellipse at 85% 0, var(--color-accent-surface), transparent 70%);
+}
+.site-page .library-page {
+    background-image: radial-gradient(ellipse 70% 320px at 100% 0, var(--color-accent-surface), transparent 100%);
+    background-repeat: no-repeat;
+}
+.site-page .home-intro-eyebrow,
+.site-page .home-section-label,
+.site-page .page-eyebrow,
+.site-page .project-page-eyebrow,
+.site-page .tech-note-eyebrow,
+.site-page .component-detail-eyebrow,
+.site-page .section-label,
+.site-page .error-code { color: var(--color-accent-text); }
+
+.site-page .button-primary { background: var(--color-accent-solid); border-color: var(--color-accent-solid); color: #ffffff; }
+.site-page .button-primary:hover { background: var(--color-accent-solid-hover); border-color: var(--color-accent-solid-hover); }
+.site-page .button-secondary { border-color: var(--color-accent-border); color: var(--color-accent-text); }
+.site-page .button-secondary:hover { border-color: var(--color-accent-border); background: var(--color-accent-surface); }
+.site-page .library-types button[aria-pressed="true"],
+.site-page .filter-button[aria-pressed="true"] {
+    border-color: var(--color-accent-border);
+    background: var(--color-accent-surface-strong);
+    color: var(--color-accent-text);
+}
+.site-page .library-filter-options[open] > summary,
+.site-page .library-filter-options > summary:hover,
+.site-page .content-sort-button:hover {
+    border-color: var(--color-accent-border);
+    background: var(--color-accent-surface);
+    color: var(--color-accent-text);
+}
+.site-page .library-filter-summary { color: var(--color-accent-text); }
+.site-page .library-search-line:focus-within { background: var(--color-accent-surface); }
+
+.site-page .nav-menu a[aria-current="page"],
+.site-page .nav-dropdown-toggle.is-current,
+.site-page .nav-dropdown[open] > .nav-dropdown-toggle { color: var(--color-accent-text); }
+.site-page .nav-dropdown-panel { border-color: var(--color-accent-border); }
+.site-page .nav-menu .nav-dropdown-list a:hover,
+.site-page .nav-menu .nav-dropdown-list a:focus-visible,
+.site-page .nav-menu .nav-dropdown-list a[aria-current="page"] { background: var(--color-accent-surface); }
+.site-page .project-toc-link[aria-current="location"] { border-color: var(--color-accent-border); background: var(--color-accent-surface); color: var(--color-accent-text); }
+
+.site-page .markdown-table th { background: var(--color-accent-surface); }
+.site-page .page-summary, .site-page .project-summary.page-summary, .site-page .engineering-profile { border-color: var(--color-accent-border); }
+.site-page .home-focus-layout { border-top-color: var(--color-accent-border); }
+.site-page .project-cta, .site-page .about-cta, .site-page .tech-note-cta, .site-page .component-detail-cta { border-top-color: var(--color-accent-border); }
+.site-page .home-resource-meta, .site-page .resource-row-kind { color: var(--color-accent-text); }
+.site-page .home-resource-copy .link-arrow, .site-page .resource-row-heading .link-arrow { color: var(--color-accent-text); }
+.site-page .home-resource-row:hover, .site-page .resource-row:hover { border-top-color: var(--color-accent-border); }
+.site-page .home-resource-copy a:hover, .site-page .resource-row-heading a:hover { color: var(--color-accent-text); }
+.site-page .resource-row-actions details[open] > summary { color: var(--color-accent-text); }
+
+.site-page .profile-monogram, .site-page .focus-icon-wrapper { border-color: var(--color-accent-border); background: var(--color-accent-surface); color: var(--color-accent-text); }
+.site-page .focus-icon { stroke: var(--color-accent-text); }
+.site-page .focus-card, .site-page .focus-card:hover { border-top-color: var(--color-accent-border); }
+.site-page .journey-marker { border-color: var(--color-accent-border); background: var(--color-accent-surface); color: var(--color-accent-text); }
+.site-page .site-footer { border-top-color: var(--color-accent-border); background-image: linear-gradient(var(--color-accent-surface), transparent 160px); }
+.site-page .footer-heading { color: var(--color-accent-text); }
+
+@media (max-width: 768px) {
+    .site-page .nav-menu > li > a[aria-current="page"],
+    .site-page .nav-dropdown[open] > .nav-dropdown-toggle,
+    .site-page .nav-dropdown-toggle.is-current { background: var(--color-accent-surface); }
 }
