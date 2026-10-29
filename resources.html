@@ -19,7 +19,7 @@
 
     <meta
         name="theme-color"
-        content="#0f1115"
+        content="#0b1323"
     >
 
     <script src="js/theme-init.js"></script>
@@ -46,7 +46,7 @@
                 <a
                     href="index.html"
                     class="logo"
-                    aria-label="EE Portfolio home"
+                    aria-label="GnoJun home"
                 >
                     <svg
                         class="site-logo-mark"
@@ -261,7 +261,10 @@
 
     <main id="main-content" class="library-page">
         <section class="library-intro container" aria-labelledby="library-title">
-            <h1 class="page-heading" id="library-title">Resources</h1>
+            <p class="library-intro-eyebrow">The resource library</p>
+            <div class="library-heading-row">
+                <h1 class="page-heading" id="library-title">Resources</h1>
+            </div>
             <p>Notes, component references, and tools for practical engineering.</p>
         </section>
         <section class="container library-section" aria-label="Resource library">
@@ -270,7 +273,8 @@
                     <label class="visually-hidden" for="resource-search">Search the library</label>
                     <div class="library-search-line">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg>
-                        <input id="resource-search" type="search" placeholder="Search resources…" autocomplete="off">
+                        <input id="resource-search" type="search" placeholder="Search resources…" autocomplete="off" aria-controls="resource-list" aria-keyshortcuts="/">
+                        <span class="library-search-hint" aria-hidden="true">/</span>
                         <button id="resource-search-clear" type="button" hidden>Clear</button>
                     </div>
                 </form>
@@ -291,10 +295,11 @@
                 </div>
             </div>
             <div class="library-results-heading">
-                <h2 class="visually-hidden">Library</h2>
+                <h2 class="visually-hidden" id="resource-results-title">Library results</h2>
                 <p id="resource-status" role="status" aria-live="polite"></p>
+                <button class="library-reset" id="resource-reset-inline" type="button" hidden>Clear filters</button>
             </div>
-            <ul class="resource-list" id="resource-list"></ul>
+            <ul class="resource-list" id="resource-list" aria-labelledby="resource-results-title"></ul>
             <div class="library-empty" id="resources-empty-state" hidden>
                 <h2>No matching resources</h2>
                 <p>Try a broader search or choose another type or topic.</p>
@@ -314,12 +319,11 @@
                 <div class="footer-brand">
 
                     <a href="index.html" class="footer-logo">
-                        EE Portfolio
+                        GnoJun
                     </a>
 
                     <p class="footer-description">
-                        Documenting embedded systems, digital design,
-                        PCB development, and hands-on electrical engineering.
+                        Notes, experiments, and practical electrical engineering.
                     </p>
 
                 </div>

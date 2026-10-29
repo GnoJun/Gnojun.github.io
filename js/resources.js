@@ -6,12 +6,18 @@
     const topic = document.querySelector('#resource-topic');
     const sort = document.querySelector('#resource-sort');
     const clear = document.querySelector('#resource-search-clear');
+    const resetInline = document.querySelector('#resource-reset-inline');
     const status = document.querySelector('#resource-status');
     const empty = document.querySelector('#resources-empty-state');
     const filterOptions = document.querySelector('#resource-filter-options');
     const filterSummary = document.querySelector('#resource-filter-summary');
     const buttons = [...document.querySelectorAll('[data-resource-type]')];
     const labels = { note: 'Note', component: 'Component', reference: 'Reference' };
+    const symbols = {
+        note: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path>',
+        component: '<rect x="7" y="7" width="10" height="10" rx="2"></rect><path d="M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4"></path>',
+        reference: '<path d="M12 5v16M12 5C9 3 5 3 2 4v15c3-1 7-1 10 2 3-3 7-3 10-2V4c-3-1-7-1-10 1z"></path>'
+    };
     const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
     })[char]);
@@ -60,6 +66,7 @@
         ].filter(([, value]) => value);
         const more = metadata.length ? `<details class="resource-more-details"><summary>Details</summary><dl class="resource-detail-meta">${metadata.map(([label, value]) => `<div><dt>${escape(label)}</dt><dd>${label === 'Updated' ? `<time datetime="${escape(value)}">${escape(value)}</time>` : escape(value)}</dd></div>`).join('')}</dl></details>` : '';
         return `<li class="resource-row">
+            <span class="resource-row-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">${symbols[item.kind] || symbols.reference}</svg></span>
             <div class="resource-row-content">
                 <div class="resource-row-heading"><h3>${title}</h3><span class="resource-row-kind">${escape(labels[item.kind])}</span></div>
                 <p class="resource-row-description">${escape(item.description)}</p>
@@ -78,6 +85,7 @@
         empty.hidden = visible.length > 0;
         list.hidden = visible.length === 0;
         clear.hidden = search.value.length === 0;
+        resetInline.hidden = search.value.length === 0 && type === 'all' && topic.value === 'all' && sort.value === 'title';
         status.textContent = visible.length === items.length
             ? `${items.length} resources`
             : `${visible.length} of ${items.length} resources`;
@@ -98,6 +106,14 @@
     buttons.forEach(button => button.addEventListener('click', () => {
         type = button.dataset.resourceType; render();
     }));
+    document.addEventListener('keydown', event => {
+        if (event.key !== '/' || event.repeat || event.isComposing || event.defaultPrevented
+            || event.ctrlKey || event.metaKey || event.altKey) return;
+        const target = event.target;
+        if (target?.isContentEditable || target?.closest?.('input, textarea, select')) return;
+        event.preventDefault();
+        search.focus();
+    });
     search.addEventListener('input', () => render());
     search.addEventListener('keydown', event => {
         if (event.key === 'Escape') { search.value = ''; render(); }
@@ -106,11 +122,13 @@
     clear.addEventListener('click', () => { search.value = ''; render(); search.focus(); });
     topic.addEventListener('change', () => render());
     sort.addEventListener('change', () => render());
-    document.querySelector('#resource-reset').addEventListener('click', () => {
+    function resetFilters() {
         search.value = ''; type = 'all'; topic.value = 'all'; sort.value = 'title';
         filterOptions.open = false;
         render(); search.focus();
-    });
+    }
+    resetInline.addEventListener('click', resetFilters);
+    document.querySelector('#resource-reset').addEventListener('click', resetFilters);
     window.addEventListener('popstate', () => { readState(); render(false); });
     readState(); render(false);
 })();

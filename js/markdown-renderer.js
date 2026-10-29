@@ -662,11 +662,15 @@
 
 
             output.push(`
-                <pre>
-                    <code class="${languageClass.trim()}">${escapeHtml(
+                <div class="markdown-code-block">
+                    <div class="markdown-code-toolbar">
+                        <span class="markdown-code-language">${escapeHtml(codeLanguage || "Code")}</span>
+                        <button type="button" class="markdown-code-copy" data-code-copy aria-live="polite" aria-atomic="true">Copy</button>
+                    </div>
+                    <pre><code class="${languageClass.trim()}">${escapeHtml(
                         codeLines.join("\n")
-                    )}</code>
-                </pre>
+                    )}</code></pre>
+                </div>
             `);
 
 
@@ -1341,6 +1345,49 @@
         }
     }
 
+
+    const copyResetTimers = new WeakMap();
+
+    document.addEventListener("click", async function (event) {
+        const button = event.target.closest?.("[data-code-copy]");
+        const code = button
+            ?.closest(".markdown-code-block")
+            ?.querySelector("code");
+
+        if (!button || !code) {
+            return;
+        }
+
+        let status;
+
+        try {
+            if (!navigator.clipboard?.writeText) {
+                throw new Error("Clipboard unavailable");
+            }
+
+            await navigator.clipboard.writeText(code.textContent);
+            status = "Copied";
+        } catch (error) {
+            const selection = window.getSelection();
+
+            if (selection) {
+                const range = document.createRange();
+                range.selectNodeContents(code);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                status = "Code selected";
+            } else {
+                status = "Select & copy";
+            }
+        }
+
+        button.textContent = status;
+        clearTimeout(copyResetTimers.get(button));
+        copyResetTimers.set(button, setTimeout(function () {
+            button.textContent = "Copy";
+            copyResetTimers.delete(button);
+        }, 1500));
+    });
 
     markdownContainers.forEach(
         loadMarkdown

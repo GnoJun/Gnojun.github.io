@@ -27,7 +27,11 @@
                     <p class="home-focus-description">${escapeHtml(focus.description)}</p>
                     <a class="home-text-link text-link" href="${escapeHtml(focus.projectUrl)}"><span class="link-label">Explore the project</span> <span class="link-arrow" aria-hidden="true">&rarr;</span></a>
                 </div>
-                <div class="home-focus-progress">
+                <figure class="home-project-visual">
+                    <img src="images/projects/esp32-lab/esp32-lab.webp" alt="ESP32-S3 lab station prototype with two OLED displays and push buttons" width="2286" height="1643" loading="lazy" decoding="async">
+                    <figcaption>ESP32-S3 Portable Lab Station &middot; Prototype</figcaption>
+                </figure>
+                <footer class="home-project-footer home-focus-progress">
                     <p class="home-progress-label">${escapeHtml(focus.status)}</p>
                     <details class="home-project-details">
                         <summary>Development progress</summary>
@@ -39,7 +43,7 @@
                             </li>`;
                         }).join("")}</ul>
                     </details>
-                </div>
+                </footer>
             </article>`;
     }
 
@@ -49,10 +53,11 @@
         const selected = selectedIds.map(id => library.find(item => item.id === id)).filter(item => item?.url);
         const resources = selected.length ? selected : library.filter(item => item.url).slice(0, 3);
         const summaries = dashboard.resourceSummaries || {};
-        resourceContainer.innerHTML = resources.length ? resources.map(resource => `
+        resourceContainer.innerHTML = resources.length ? resources.map((resource, index) => `
             <li class="home-resource-row">
-                <p class="home-resource-meta">${escapeHtml(kindLabels[resource.kind] || "Reference")}</p>
+                <span class="home-resource-number" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>
                 <div class="home-resource-copy">
+                    <p class="home-resource-meta">${escapeHtml(kindLabels[resource.kind] || "Reference")}</p>
                     <h3><a class="text-link" href="${escapeHtml(resource.url)}"${resource.external ? ' target="_blank" rel="noopener noreferrer"' : ""}><span class="link-label">${escapeHtml(resource.title)}</span> <span class="link-arrow" aria-hidden="true">${resource.external ? "&#8599;" : "&rarr;"}</span>${resource.external ? '<span class="visually-hidden"> (opens in a new tab)</span>' : ""}</a></h3>
                     <p>${escapeHtml(summaries[resource.id] || resource.description)}</p>
                 </div>

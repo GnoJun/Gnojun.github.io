@@ -63,8 +63,8 @@
         themeColorMeta.setAttribute(
             "content",
             initialTheme === "light"
-                ? "#f5f7fb"
-                : "#0f1115"
+                ? "#f8faff"
+                : "#0b1323"
         );
     }
 })();
