@@ -379,6 +379,25 @@ const resourceLibrary = [
         "resourceType": "Development Utility"
     },
     {
+        "id": "markdown-article-template",
+        "kind": "reference",
+        "category": "Tools",
+        "title": "Markdown Article Template",
+        "description": "A copyable writing guide with live examples of code, equations, tables, images, callouts, and expandable teaching exercises.",
+        "tags": [
+            "Markdown",
+            "Template",
+            "Writing",
+            "Math",
+            "Code"
+        ],
+        "url": "resources/markdown-template.html",
+        "external": false,
+        "date": "2026-10-29",
+        "provider": "GnoJun",
+        "resourceType": "Writing Guide"
+    },
+    {
         "id": "markdown-reference",
         "kind": "reference",
         "category": "Tools",

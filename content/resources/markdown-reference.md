@@ -2,6 +2,10 @@
 
 This page is a living reference for the Markdown syntax used throughout the engineering portfolio.
 
+For the current authoring workflow and a complete set of copyable source-to-result examples, start with the [Markdown Article Template](../../resources/markdown-template.html). It includes downloadable lesson starters, highlighted code, equations, tables, footnotes, callouts, and expandable answers.
+
+This reference also retains the original HTML and CSS implementation examples for readers inspecting the site's structure.
+
 The important idea is simple:
 
 - The `.md` file stores technical content.

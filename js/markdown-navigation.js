@@ -145,7 +145,7 @@
                 )
         ).filter(
             function (heading) {
-                return Boolean(
+                return !heading.closest("details") && Boolean(
                     heading
                         .textContent
                         .trim()
@@ -319,7 +319,7 @@
             tocLinks.find(
                 function (link) {
                     return (
-                        link.hash.slice(1) ===
+                        decodeURIComponent(link.hash.slice(1)) ===
                         headingId
                     );
                 }

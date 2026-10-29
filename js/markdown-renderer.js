@@ -1,1395 +1,213 @@
+/* Article loading and accessible controls. Parsing lives in markdown-engine.js. */
 (function () {
-    const markdownContainers =
-        document.querySelectorAll(
-            "[data-markdown-src]"
-        );
+    'use strict';
 
+    const containers = Array.from(document.querySelectorAll('[data-markdown-src]'));
+    if (!containers.length) return;
 
-    if (markdownContainers.length === 0) {
-        return;
+    const scriptBase = new URL('.', document.currentScript.src);
+    const assets = new Map();
+    const resetTimers = new WeakMap();
+    let enginePromise;
+    let previewDialog;
+    let previewOpener;
+
+    function loadScript(path) {
+        const url = new URL(path, scriptBase).href;
+        if (!assets.has(url)) {
+            assets.set(url, new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                const timer = setTimeout(() => {
+                    script.remove();
+                    reject(new Error('Script timed out: ' + url));
+                }, 15000);
+                script.src = url;
+                script.onload = () => { clearTimeout(timer); resolve(); };
+                script.onerror = () => { clearTimeout(timer); reject(new Error('Script unavailable: ' + url)); };
+                document.head.appendChild(script);
+            }));
+        }
+        return assets.get(url);
     }
 
-
-    function escapeHtml(value) {
-        return String(value ?? "")
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
-    }
-
-    function resolveMarkdownUrl(
-        rawUrl,
-        markdownSource
-    ) {
-        try {
-            const markdownUrl =
-                new URL(
-                    markdownSource,
-                    window.location.href
-                );
-
-
-            const resolvedUrl =
-                new URL(
-                    rawUrl,
-                    markdownUrl
-                );
-
-
-            if (
-                resolvedUrl.protocol !== "http:" &&
-                resolvedUrl.protocol !== "https:"
-            ) {
-                return "";
-            }
-
-
-            return resolvedUrl.href;
-
-        } catch (error) {
-            return "";
-        }
-    }
-
-
-    function renderInlineMarkdown(text) {
-        let output =
-            escapeHtml(text);
-
-
-        /* Inline code */
-
-        output =
-            output.replace(
-                /`([^`]+)`/g,
-                "<code>$1</code>"
-            );
-
-
-        /* Bold */
-
-        output =
-            output.replace(
-                /\*\*([^*]+)\*\*/g,
-                "<strong>$1</strong>"
-            );
-
-
-        /* Italic */
-
-        output =
-            output.replace(
-                /\*([^*]+)\*/g,
-                "<em>$1</em>"
-            );
-
-
-        /* Links */
-
-        output =
-            output.replace(
-                /\[([^\]]+)\]\(([^)]+)\)/g,
-                function (
-                    match,
-                    label,
-                    url
-                ) {
-                    return `
-                        <a href="${url}">
-                            ${label}
-                        </a>
-                    `;
-                }
-            );
-
-
-        return output;
-    }
-
-
-    function createHeadingId(text) {
-        return text
-            .toLowerCase()
-            .replace(/<[^>]*>/g, "")
-            .replace(/[^a-z0-9\s-]/g, "")
-            .trim()
-            .replace(/\s+/g, "-");
-    }
-
-    function splitMarkdownTableRow(
-        line
-    ) {
-        let content =
-            String(line ?? "")
-                .trim();
-
-
-        if (
-            content.startsWith("|")
-        ) {
-            content =
-                content.slice(1);
-        }
-
-
-        if (
-            content.endsWith("|") &&
-            !content.endsWith("\\|")
-        ) {
-            content =
-                content.slice(
-                    0,
-                    -1
-                );
-        }
-
-
-        const cells = [];
-
-        let currentCell = "";
-
-        let inInlineCode = false;
-
-
-        for (
-            let index = 0;
-            index < content.length;
-            index += 1
-        ) {
-            const character =
-                content[index];
-
-
-            if (
-                character === "\\" &&
-                content[index + 1] === "|"
-            ) {
-                currentCell += "|";
-
-                index += 1;
-
-                continue;
-            }
-
-
-            if (
-                character === "`"
-            ) {
-                inInlineCode =
-                    !inInlineCode;
-
-                currentCell +=
-                    character;
-
-                continue;
-            }
-
-
-            if (
-                character === "|" &&
-                !inInlineCode
-            ) {
-                cells.push(
-                    currentCell.trim()
-                );
-
-                currentCell = "";
-
-                continue;
-            }
-
-
-            currentCell +=
-                character;
-        }
-
-
-        cells.push(
-            currentCell.trim()
-        );
-
-
-        return cells;
-    }
-
-    function parseMarkdownTableSeparator(
-        line
-    ) {
-        if (
-            !String(line ?? "")
-                .includes("|")
-        ) {
-            return null;
-        }
-
-
-        const cells =
-            splitMarkdownTableRow(
-                line
-            );
-
-
-        if (
-            cells.length === 0
-        ) {
-            return null;
-        }
-
-
-        const alignments = [];
-
-
-        for (
-            const cell
-            of cells
-        ) {
-            const marker =
-                cell
-                    .replace(
-                        /\s+/g,
-                        ""
-                    );
-
-
-            if (
-                !/^:?-{3,}:?$/.test(
-                    marker
-                )
-            ) {
-                return null;
-            }
-
-
-            const startsWithColon =
-                marker.startsWith(":");
-
-            const endsWithColon =
-                marker.endsWith(":");
-
-
-            if (
-                startsWithColon &&
-                endsWithColon
-            ) {
-                alignments.push(
-                    "center"
-                );
-
-                continue;
-            }
-
-
-            if (endsWithColon) {
-                alignments.push(
-                    "right"
-                );
-
-                continue;
-            }
-
-
-            alignments.push(
-                "left"
+    function getEngine() {
+        if (!enginePromise) {
+            enginePromise = Promise.all([
+                loadScript('vendor/markdown-it-15.0.3.min.js'),
+                loadScript('vendor/markdown-it-footnote-4.0.0.min.js'),
+                loadScript('vendor/markdown-it-container-4.0.0.min.js')
+            ]).then(() => loadScript('markdown-engine.js')).then(() =>
+                window.MarkdownArticleEngine.create({ pageURL: window.location.href })
             );
         }
-
-
-        return alignments;
+        return enginePromise;
     }
 
-    function normalizeMarkdownTableRow(
-        cells,
-        columnCount
-    ) {
-        const normalizedCells =
-            cells.slice(
-                0,
-                columnCount
-            );
-
-
-        while (
-            normalizedCells.length <
-            columnCount
-        ) {
-            normalizedCells.push("");
+    async function highlightCode(container) {
+        const blocks = Array.from(container.querySelectorAll('pre > code[class*="language-"]'))
+            .filter(code => !code.dataset.highlighted && code.textContent.length <= 50000 &&
+                !code.matches('.language-text, .language-plaintext'));
+        if (!blocks.length) return;
+        if (!window.hljs) await loadScript('vendor/highlight-11.12.0.min.js');
+        for (const code of blocks) {
+            const language = Array.from(code.classList).find(name => name.startsWith('language-'))?.slice(9);
+            if (language && window.hljs.getLanguage(language)) window.hljs.highlightElement(code);
         }
-
-
-        return normalizedCells;
     }
 
-    function createMarkdownTable(
-        headerCells,
-        alignments,
-        bodyRows
-    ) {
-        const columnCount =
-            headerCells.length;
-
-
-        const normalizedHeader =
-            normalizeMarkdownTableRow(
-                headerCells,
-                columnCount
-            );
-
-
-        const headerMarkup =
-            normalizedHeader
-                .map(
-                    function (
-                        cell,
-                        index
-                    ) {
-                        const alignment =
-                            alignments[index] ||
-                            "left";
-
-
-                        return `
-                            <th
-                                scope="col"
-                                class="markdown-table-align-${alignment}"
-                            >
-                                ${renderInlineMarkdown(
-                                    cell
-                                )}
-                            </th>
-                        `;
-                    }
-                )
-                .join("");
-
-
-        const bodyMarkup =
-            bodyRows
-                .map(
-                    function (row) {
-                        const cells =
-                            normalizeMarkdownTableRow(
-                                row,
-                                columnCount
-                            );
-
-
-                        const cellMarkup =
-                            cells
-                                .map(
-                                    function (
-                                        cell,
-                                        index
-                                    ) {
-                                        const alignment =
-                                            alignments[index] ||
-                                            "left";
-
-
-                                        return `
-                                            <td
-                                                class="markdown-table-align-${alignment}"
-                                            >
-                                                ${renderInlineMarkdown(
-                                                    cell
-                                                )}
-                                            </td>
-                                        `;
-                                    }
-                                )
-                                .join("");
-
-
-                        return `
-                            <tr>
-                                ${cellMarkup}
-                            </tr>
-                        `;
-                    }
-                )
-                .join("");
-
-
-        return `
-            <div
-                class="markdown-table-wrapper"
-                role="region"
-                aria-label="Scrollable data table"
-                tabindex="0"
-            >
-                <table class="markdown-table">
-
-                    <thead>
-                        <tr>
-                            ${headerMarkup}
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        ${bodyMarkup}
-                    </tbody>
-
-                </table>
-            </div>
-        `;
-    }
-
-    const markdownCalloutTypes = {
-        note: {
-            label:
-                "Engineering Note"
-        },
-
-        warning: {
-            label:
-                "Warning"
-        },
-
-        implemented: {
-            label:
-                "Implemented"
-        },
-
-        prototype: {
-            label:
-                "Prototype"
-        },
-
-        testing: {
-            label:
-                "Testing"
-        },
-
-        planned: {
-            label:
-                "Planned"
+    async function renderMath(container) {
+        const expressions = container.querySelectorAll('[data-math]');
+        if (!expressions.length) return;
+        if (!window.katex) {
+            if (!document.querySelector('link[href*="katex"][rel="stylesheet"]')) {
+                const stylesheet = document.createElement('link');
+                stylesheet.rel = 'stylesheet';
+                stylesheet.href = 'https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css';
+                document.head.appendChild(stylesheet);
+            }
+            await loadScript('https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.js');
         }
-    };
-
-    function parseMarkdownCalloutStart(
-        line
-    ) {
-        const match =
-            String(line ?? "")
-                .trim()
-                .match(
-                    /^>\s*\[!([a-z-]+)\](?:\s+(.+))?$/i
-                );
-
-
-        if (!match) {
-            return null;
-        }
-
-
-        const type =
-            match[1]
-                .toLowerCase();
-
-
-        const configuration =
-            markdownCalloutTypes[
-                type
-            ];
-
-
-        if (!configuration) {
-            return null;
-        }
-
-
-        return {
-            type,
-
-            label:
-                configuration.label,
-
-            title:
-                (
-                    match[2] || ""
-                ).trim()
-        };
-    }
-
-    function createMarkdownCallout(
-        callout,
-        bodyLines
-    ) {
-        const bodyText =
-            bodyLines
-                .join(" ")
-                .trim();
-
-
-        const titleMarkup =
-            callout.title
-                ? `
-                    <h3
-                        class="markdown-callout-title"
-                    >
-                        ${renderInlineMarkdown(
-                            callout.title
-                        )}
-                    </h3>
-                `
-                : "";
-
-
-        const bodyMarkup =
-            bodyText
-                ? `
-                    <p
-                        class="markdown-callout-body"
-                    >
-                        ${renderInlineMarkdown(
-                            bodyText
-                        )}
-                    </p>
-                `
-                : "";
-
-
-        return `
-            <aside
-                class="
-                    markdown-callout
-                    markdown-callout-${callout.type}
-                "
-                aria-label="${escapeHtml(
-                    callout.label
-                )}"
-            >
-
-                <div
-                    class="markdown-callout-heading"
-                >
-
-                    <span
-                        class="markdown-callout-label"
-                    >
-                        ${escapeHtml(
-                            callout.label
-                        )}
-                    </span>
-
-                    ${titleMarkup}
-
-                </div>
-
-
-                ${bodyMarkup}
-
-            </aside>
-        `;
-    }
-
-    function parseMarkdown(
-        markdown,
-        markdownSource
-    ) {
-        const lines =
-            markdown
-                .replace(/\r\n/g, "\n")
-                .split("\n");
-
-
-        const output = [];
-
-        const consumedTableLines =
-            new Set();
-
-        const consumedCalloutLines =
-            new Set();
-
-        let paragraphLines = [];
-
-        let listType = null;
-
-        let codeBlockOpen = false;
-        let codeLanguage = "";
-        let codeLines = [];
-
-        let mathBlockOpen = false;
-        let mathLines = [];
-
-
-        function flushParagraph() {
-            if (
-                paragraphLines.length === 0
-            ) {
-                return;
-            }
-
-
-            output.push(`
-                <p>
-                    ${renderInlineMarkdown(
-                        paragraphLines.join(" ")
-                    )}
-                </p>
-            `);
-
-
-            paragraphLines = [];
-        }
-
-
-        function closeList() {
-            if (!listType) {
-                return;
-            }
-
-
-            output.push(
-                listType === "ul"
-                    ? "</ul>"
-                    : "</ol>"
-            );
-
-
-            listType = null;
-        }
-
-
-        function flushCodeBlock() {
-            const languageClass =
-                codeLanguage
-                    ? ` language-${escapeHtml(
-                        codeLanguage
-                    )}`
-                    : "";
-
-
-            output.push(`
-                <div class="markdown-code-block">
-                    <div class="markdown-code-toolbar">
-                        <span class="markdown-code-language">${escapeHtml(codeLanguage || "Code")}</span>
-                        <button type="button" class="markdown-code-copy" data-code-copy aria-live="polite" aria-atomic="true">Copy</button>
-                    </div>
-                    <pre><code class="${languageClass.trim()}">${escapeHtml(
-                        codeLines.join("\n")
-                    )}</code></pre>
-                </div>
-            `);
-
-
-            codeLines = [];
-            codeLanguage = "";
-        }
-
-
-        function flushMathBlock() {
-            const expression =
-                mathLines
-                    .join("\n")
-                    .trim();
-
-
-            output.push(`
-                <div
-                    class="markdown-equation"
-                    data-math="${escapeHtml(
-                        expression
-                    )}"
-                    data-math-display="true"
-                ></div>
-            `);
-
-
-            mathLines = [];
-        }
-
-
-        lines.forEach(function (line,index) {
-
-            if (
-                consumedTableLines.has(
-                    index
-                ) ||
-                consumedCalloutLines.has(
-                    index
-                )
-            ) {
-                return;
-            }
-
-            const trimmed =
-                line.trim();
-
-
-            /* Code block */
-
-            if (
-                trimmed.startsWith("```")
-            ) {
-                if (!codeBlockOpen) {
-                    flushParagraph();
-                    closeList();
-
-                    codeBlockOpen = true;
-
-                    codeLanguage =
-                        trimmed
-                            .slice(3)
-                            .trim();
-
-                    return;
-                }
-
-
-                codeBlockOpen = false;
-
-                flushCodeBlock();
-
-                return;
-            }
-
-
-            if (codeBlockOpen) {
-                codeLines.push(line);
-                return;
-            }
-
-
-            /* Math block */
-
-            if (trimmed === "$$") {
-                if (!mathBlockOpen) {
-                    flushParagraph();
-                    closeList();
-
-                    mathBlockOpen = true;
-
-                    return;
-                }
-
-
-                mathBlockOpen = false;
-
-                flushMathBlock();
-
-                return;
-            }
-
-
-            if (mathBlockOpen) {
-                mathLines.push(line);
-
-                return;
-            }
-
-
-            /* Blank line */
-
-            if (!trimmed) {
-                flushParagraph();
-                closeList();
-
-                return;
-            }
-
-            /* Table */
-
-            const nextLine =
-                lines[index + 1] || "";
-
-
-            const tableAlignments =
-                parseMarkdownTableSeparator(
-                    nextLine
-                );
-
-
-            if (
-                trimmed.includes("|") &&
-                tableAlignments
-            ) {
-                const headerCells =
-                    splitMarkdownTableRow(
-                        line
-                    );
-
-
-                if (
-                    headerCells.length ===
-                    tableAlignments.length
-                ) {
-                    flushParagraph();
-
-                    closeList();
-
-
-                    const bodyRows = [];
-
-
-                    consumedTableLines.add(
-                        index + 1
-                    );
-
-
-                    let bodyIndex =
-                        index + 2;
-
-
-                    while (
-                        bodyIndex <
-                        lines.length
-                    ) {
-                        const bodyLine =
-                            lines[bodyIndex];
-
-                        const bodyTrimmed =
-                            bodyLine.trim();
-
-
-                        if (
-                            !bodyTrimmed ||
-                            !bodyTrimmed.includes("|")
-                        ) {
-                            break;
-                        }
-
-
-                        if (
-                            bodyTrimmed.startsWith("## ") ||
-                            bodyTrimmed.startsWith("### ") ||
-                            bodyTrimmed.startsWith("```") ||
-                            bodyTrimmed === "$$"
-                        ) {
-                            break;
-                        }
-
-
-                        bodyRows.push(
-                            splitMarkdownTableRow(
-                                bodyLine
-                            )
-                        );
-
-
-                        consumedTableLines.add(
-                            bodyIndex
-                        );
-
-
-                        bodyIndex += 1;
-                    }
-
-
-                    output.push(
-                        createMarkdownTable(
-                            headerCells,
-                            tableAlignments,
-                            bodyRows
-                        )
-                    );
-
-
-                    return;
-                }
-            }
-
-            /* Image */
-
-            const imageMatch =
-                trimmed.match(
-                    /^!\[([^\]]*)\]\((\S+?)(?:\s+"([^"]*)")?\)$/
-                );
-
-
-            if (imageMatch) {
-                flushParagraph();
-                closeList();
-
-
-                const altText =
-                    imageMatch[1];
-
-                const imagePath =
-                    imageMatch[2];
-
-                const caption =
-                    imageMatch[3] || "";
-
-
-                const imageUrl =
-                    resolveMarkdownUrl(
-                        imagePath,
-                        markdownSource
-                    );
-
-                const isThemeAwareDiagram =
-                    imagePath
-                        .toLowerCase()
-                        .endsWith(
-                            ".diagram.svg"
-                        );
-
-
-                if (!imageUrl) {
-                    output.push(`
-                        <p class="markdown-image-error">
-                            Image could not be loaded:
-                            ${escapeHtml(imagePath)}
-                        </p>
-                    `);
-
-                    return;
-                }
-
-
-                output.push(`
-                    <figure class="markdown-figure">
-
-                        <img
-                            class="${
-                                isThemeAwareDiagram
-                                    ? "markdown-image markdown-image-diagram"
-                                    : "markdown-image"
-                            }"
-                            src="${escapeHtml(
-                                imageUrl
-                            )}"
-                            alt="${escapeHtml(
-                                altText
-                            )}"
-                            loading="lazy"
-                            decoding="async"
-                        >
-
-                        ${
-                            caption
-                                ? `
-                                    <figcaption>
-                                        ${escapeHtml(
-                                            caption
-                                        )}
-                                    </figcaption>
-                                `
-                                : ""
-                        }
-
-                    </figure>
-                `);
-
-
-                return;
-            }
-
-            /* H2 */
-
-            if (
-                trimmed.startsWith("## ")
-            ) {
-                flushParagraph();
-                closeList();
-
-
-                const heading =
-                    trimmed.slice(3);
-
-
-                const headingHtml =
-                    renderInlineMarkdown(
-                        heading
-                    );
-
-
-                output.push(`
-                    <h2
-                        id="${createHeadingId(
-                            heading
-                        )}"
-                    >
-                        ${headingHtml}
-                    </h2>
-                `);
-
-                return;
-            }
-
-
-            /* H3 */
-
-            if (
-                trimmed.startsWith("### ")
-            ) {
-                flushParagraph();
-                closeList();
-
-
-                const heading =
-                    trimmed.slice(4);
-
-
-                output.push(`
-                    <h3
-                        id="${createHeadingId(
-                            heading
-                        )}"
-                    >
-                        ${renderInlineMarkdown(
-                            heading
-                        )}
-                    </h3>
-                `);
-
-                return;
-            }
-
-
-            /* Unordered list */
-
-            const unorderedMatch =
-                trimmed.match(
-                    /^[-*]\s+(.+)$/
-                );
-
-
-            if (unorderedMatch) {
-                flushParagraph();
-
-
-                if (listType !== "ul") {
-                    closeList();
-
-                    output.push("<ul>");
-
-                    listType = "ul";
-                }
-
-
-                output.push(`
-                    <li>
-                        ${renderInlineMarkdown(
-                            unorderedMatch[1]
-                        )}
-                    </li>
-                `);
-
-                return;
-            }
-
-
-            /* Ordered list */
-
-            const orderedMatch =
-                trimmed.match(
-                    /^\d+\.\s+(.+)$/
-                );
-
-
-            if (orderedMatch) {
-                flushParagraph();
-
-
-                if (listType !== "ol") {
-                    closeList();
-
-                    output.push("<ol>");
-
-                    listType = "ol";
-                }
-
-
-                output.push(`
-                    <li>
-                        ${renderInlineMarkdown(
-                            orderedMatch[1]
-                        )}
-                    </li>
-                `);
-
-                return;
-            }
-
-            /* Callout */
-
-            const callout =
-                parseMarkdownCalloutStart(
-                    line
-                );
-
-
-            if (callout) {
-                flushParagraph();
-
-                closeList();
-
-
-                const bodyLines =
-                    [];
-
-
-                let bodyIndex =
-                    index + 1;
-
-
-                while (
-                    bodyIndex <
-                    lines.length
-                ) {
-                    const bodyLine =
-                        lines[
-                            bodyIndex
-                        ];
-
-                    const bodyTrimmed =
-                        bodyLine.trim();
-
-
-                    if (
-                        parseMarkdownCalloutStart(
-                            bodyLine
-                        )
-                    ) {
-                        break;
-                    }
-
-
-                    if (
-                        !bodyTrimmed.startsWith(
-                            ">"
-                        )
-                    ) {
-                        break;
-                    }
-
-
-                    const bodyContent =
-                        bodyTrimmed === ">"
-                            ? ""
-                            : bodyTrimmed
-                                .replace(
-                                    /^>\s?/,
-                                    ""
-                                );
-
-
-                    bodyLines.push(
-                        bodyContent
-                    );
-
-
-                    consumedCalloutLines
-                        .add(
-                            bodyIndex
-                        );
-
-
-                    bodyIndex += 1;
-                }
-
-
-                output.push(
-                    createMarkdownCallout(
-                        callout,
-                        bodyLines
-                    )
-                );
-
-
-                return;
-            }
-
-            /* Blockquote */
-
-            if (
-                trimmed.startsWith("> ")
-            ) {
-                flushParagraph();
-                closeList();
-
-
-                output.push(`
-                    <blockquote>
-                        <p>
-                            ${renderInlineMarkdown(
-                                trimmed.slice(2)
-                            )}
-                        </p>
-                    </blockquote>
-                `);
-
-                return;
-            }
-
-
-            paragraphLines.push(
-                trimmed
-            );
+        expressions.forEach(element => {
+            if (element.dataset.mathRendered === 'true') return;
+            try {
+                window.katex.render(element.dataset.math, element, {
+                    displayMode: element.dataset.mathDisplay !== 'false',
+                    throwOnError: false, trust: false, strict: 'warn'
+                });
+                element.dataset.mathRendered = 'true';
+            } catch { /* Keep readable LaTeX if an optional enhancement fails. */ }
         });
-
-
-        flushParagraph();
-        closeList();
-
-
-        if (codeBlockOpen) {
-            flushCodeBlock();
-        }
-
-
-        if (mathBlockOpen) {
-            flushMathBlock();
-        }
-
-
-        return output.join("");
     }
 
-
-    async function loadMarkdown(
-        container
-    ) {
-        const source =
-            container.dataset
-                .markdownSrc;
-
-
-        if (!source) {
-            return;
-        }
-
-
-        container.setAttribute(
-            "aria-busy",
-            "true"
-        );
-
-
+    function visitInitialFragment(container) {
+        if (!window.location.hash) return;
         try {
-            const response =
-                await fetch(
-                    source,
-                    {
-                        cache:
-                            "no-store"
-                    }
-                );
-
-
-            if (!response.ok) {
-                throw new Error(
-                    `HTTP ${response.status}`
-                );
+            const target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+            if (target && container.contains(target)) {
+                for (let parent = target.parentElement; parent && parent !== container; parent = parent.parentElement) {
+                    if (parent.tagName === 'DETAILS') parent.open = true;
+                }
+                target.scrollIntoView();
             }
+        } catch { /* Ignore malformed URL fragments. */ }
+    }
 
-
-            const markdown =
-                await response.text();
-
-
-            container.innerHTML =
-                parseMarkdown(
-                    markdown,
-                    source
-                );
-
-
-            container.setAttribute(
-                "aria-busy",
-                "false"
-            );
-
-
-            if (
-                typeof renderMathElements ===
-                "function"
-            ) {
-                renderMathElements(
-                    container
-                );
-            }
-
-
-            container.dispatchEvent(
-                new CustomEvent(
-                    "markdown:rendered",
-                    {
-                        bubbles: true
-                    }
-                )
-            );
-
+    async function loadMarkdown(container, index) {
+        const source = container.dataset.markdownSrc;
+        if (!source) return;
+        container.setAttribute('aria-busy', 'true');
+        try {
+            const [response, engine] = await Promise.all([
+                fetch(source, { cache: 'no-cache' }), getEngine()
+            ]);
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            const markdown = await response.text();
+            const reservedIds = Array.from(document.querySelectorAll('[id]'), element => element.id);
+            container.innerHTML = engine.render(markdown, source, {
+                reservedIds, documentId: 'article-' + (index + 1)
+            });
+            container.setAttribute('aria-busy', 'false');
+            container.dispatchEvent(new CustomEvent('markdown:rendered', { bubbles: true }));
+            visitInitialFragment(container);
+            // The article is already readable while optional highlighting and math load.
+            await Promise.allSettled([highlightCode(container), renderMath(container)]);
+            container.dispatchEvent(new CustomEvent('markdown:enhanced', { bubbles: true }));
         } catch (error) {
-            console.error(
-                "Markdown could not be loaded:",
-                source,
-                error
-            );
-
-
-            container.innerHTML = `
-                <div
-                    class="markdown-load-error"
-                    role="alert"
-                >
-                    <h2>
-                        Content unavailable
-                    </h2>
-
-                    <p>
-                        This technical document
-                        could not be loaded.
-                    </p>
-                </div>
-            `;
-
-
-            container.setAttribute(
-                "aria-busy",
-                "false"
-            );
+            console.error('Markdown could not be loaded:', source, error);
+            container.replaceChildren();
+            const message = document.createElement('p');
+            message.className = 'markdown-load-error';
+            message.setAttribute('role', 'alert');
+            message.textContent = 'This article could not be loaded. Please reload the page to try again.';
+            container.appendChild(message);
+            container.setAttribute('aria-busy', 'false');
         }
     }
 
-
-    const copyResetTimers = new WeakMap();
-
-    document.addEventListener("click", async function (event) {
-        const button = event.target.closest?.("[data-code-copy]");
-        const code = button
-            ?.closest(".markdown-code-block")
-            ?.querySelector("code");
-
-        if (!button || !code) {
-            return;
-        }
-
+    async function copyContent(button, text, selectionTarget, originalLabel, selectedLabel) {
         let status;
-
         try {
-            if (!navigator.clipboard?.writeText) {
-                throw new Error("Clipboard unavailable");
-            }
-
-            await navigator.clipboard.writeText(code.textContent);
-            status = "Copied";
-        } catch (error) {
+            if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+            await navigator.clipboard.writeText(text);
+            status = 'Copied';
+        } catch {
             const selection = window.getSelection();
-
             if (selection) {
                 const range = document.createRange();
-                range.selectNodeContents(code);
+                range.selectNodeContents(selectionTarget);
                 selection.removeAllRanges();
                 selection.addRange(range);
-                status = "Code selected";
-            } else {
-                status = "Select & copy";
-            }
+                status = selectedLabel;
+            } else status = 'Select & copy';
         }
-
         button.textContent = status;
-        clearTimeout(copyResetTimers.get(button));
-        copyResetTimers.set(button, setTimeout(function () {
-            button.textContent = "Copy";
-            copyResetTimers.delete(button);
-        }, 1500));
+        clearTimeout(resetTimers.get(button));
+        resetTimers.set(button, setTimeout(() => {
+            button.textContent = originalLabel;
+            resetTimers.delete(button);
+        }, 1800));
+    }
+
+    function showImage(button) {
+        const image = button.querySelector('img');
+        if (!image) return;
+        if (!previewDialog) {
+            previewDialog = document.createElement('dialog');
+            // Browsers without native dialogs can still open the full image.
+            if (typeof previewDialog.showModal !== 'function') {
+                previewDialog = null;
+                window.open(image.src, '_blank', 'noopener');
+                return;
+            }
+            previewDialog.className = 'markdown-image-dialog';
+            previewDialog.setAttribute('aria-label', 'Image preview');
+            const close = document.createElement('button');
+            close.type = 'button';
+            close.className = 'markdown-image-close';
+            close.textContent = 'Close';
+            close.addEventListener('click', () => previewDialog.close());
+            const preview = document.createElement('img');
+            preview.className = 'markdown-image-preview';
+            const caption = document.createElement('p');
+            caption.className = 'markdown-image-caption';
+            previewDialog.append(close, preview, caption);
+            previewDialog.addEventListener('click', event => {
+                if (event.target !== previewDialog) return;
+                const bounds = previewDialog.getBoundingClientRect();
+                if (event.clientX < bounds.left || event.clientX > bounds.right ||
+                    event.clientY < bounds.top || event.clientY > bounds.bottom) previewDialog.close();
+            });
+            previewDialog.addEventListener('close', () => previewOpener?.focus({ preventScroll: true }));
+            document.body.appendChild(previewDialog);
+        }
+        previewOpener = button;
+        const preview = previewDialog.querySelector('img');
+        preview.src = image.currentSrc || image.src;
+        preview.alt = image.alt;
+        preview.classList.toggle('markdown-image-diagram', image.classList.contains('markdown-image-diagram'));
+        previewDialog.querySelector('.markdown-image-caption').textContent = image.title || image.alt;
+        previewDialog.showModal();
+    }
+
+    document.addEventListener('click', event => {
+        const button = event.target.closest?.('[data-code-copy], [data-code-wrap], [data-table-copy], [data-image-open]');
+        if (!button || !button.closest('[data-markdown-src]')) return;
+        if (button.hasAttribute('data-code-wrap')) {
+            const block = button.closest('.markdown-code-block');
+            const wrapped = block.classList.toggle('is-wrapped');
+            button.setAttribute('aria-pressed', String(wrapped));
+        } else if (button.hasAttribute('data-code-copy')) {
+            const code = button.closest('.markdown-code-block').querySelector('code');
+            void copyContent(button, code.textContent, code, 'Copy', 'Code selected');
+        } else if (button.hasAttribute('data-table-copy')) {
+            const table = button.closest('.markdown-table-block').querySelector('table');
+            const text = Array.from(table.rows, row => Array.from(row.cells, cell =>
+                cell.textContent.trim().replace(/\s+/g, ' ')
+            ).join('\t')).join('\n');
+            void copyContent(button, text, table, 'Copy table', 'Table selected');
+        } else showImage(button);
     });
 
-    markdownContainers.forEach(
-        loadMarkdown
-    );
+    window.addEventListener('hashchange', () => containers.forEach(visitInitialFragment));
+    containers.forEach(loadMarkdown);
 })();
