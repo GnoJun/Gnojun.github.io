@@ -279,51 +279,62 @@
 
     <main id="main-content" class="library-page">
         <section class="library-intro container" aria-labelledby="library-title">
-            <p class="library-intro-eyebrow">The resource library</p>
+            <p class="library-intro-eyebrow">THE ENGINEERING LIBRARY</p>
             <div class="library-heading-row">
                 <h1 class="page-heading" id="library-title">Resources</h1>
+                <span class="library-total" id="resource-total" hidden></span>
             </div>
-            <p>Notes, component references, and tools for practical engineering.</p>
+            <p>A place for course notes, useful formulas, and the tools I build with.</p>
         </section>
-        <section class="container library-section" aria-label="Resource library">
-            <div class="library-controls">
+        <section class="container library-section library-workspace" aria-label="Resource library">
+            <aside class="library-sidebar" aria-label="Browse the library">
+                <h2 class="library-sidebar-label">Browse library</h2>
+                <div class="library-types" role="group" aria-label="Resource type">
+                    <button type="button" data-resource-type="all" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg><span>All resources</span><span class="library-type-count" data-resource-count="all"></span></button>
+                    <button type="button" data-resource-type="course" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5zM6 11v6c4 3 8 3 12 0v-6M22 9v7"></path></svg><span>Course notes</span><span class="library-type-count" data-resource-count="course"></span></button>
+                    <button type="button" data-resource-type="note" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5"></path></svg><span>All notes &amp; formulas</span><span class="library-type-count" data-resource-count="note"></span></button>
+                    <button type="button" data-resource-type="component" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2"></rect><path d="M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4"></path></svg><span>Components</span><span class="library-type-count" data-resource-count="component"></span></button>
+                    <button type="button" data-resource-type="reference" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v16M12 5C9 3 5 3 2 4v15c3-1 7-1 10 2 3-3 7-3 10-2V4c-3-1-7-1-10 1z"></path></svg><span>Tools &amp; references</span><span class="library-type-count" data-resource-count="reference"></span></button>
+                </div>
+                <p class="library-sidebar-note">From the classroom<br>to the workbench.</p>
+            </aside>
+            <div class="library-content">
                 <form class="library-search" role="search" id="library-search-form">
                     <label class="visually-hidden" for="resource-search">Search the library</label>
                     <div class="library-search-line">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg>
-                        <input id="resource-search" type="search" placeholder="Search resources…" autocomplete="off" aria-controls="resource-list" aria-keyshortcuts="/">
-                        <span class="library-search-hint" aria-hidden="true">/</span>
-                        <button id="resource-search-clear" type="button" hidden>Clear</button>
+                        <input id="resource-search" type="search" placeholder="Search notes, formulas, components…" autocomplete="off" aria-controls="resource-list" aria-keyshortcuts="/">
+                        <kbd class="library-search-hint" aria-hidden="true">/</kbd>
+                        <button id="resource-search-clear" type="button" aria-label="Clear search" hidden>Clear</button>
                     </div>
                 </form>
                 <div class="library-toolbar">
-                    <div class="library-types" role="group" aria-label="Resource type">
-                        <button type="button" data-resource-type="all" aria-pressed="true">All</button>
-                        <button type="button" data-resource-type="note" aria-pressed="false">Notes</button>
-                        <button type="button" data-resource-type="component" aria-pressed="false">Components</button>
-                        <button type="button" data-resource-type="reference" aria-pressed="false">References</button>
-                    </div>
-                    <details class="library-filter-options" id="resource-filter-options">
-                        <summary>Filters<span class="library-filter-summary" id="resource-filter-summary"></span></summary>
-                        <div class="library-selects">
-                            <label for="resource-topic">Topic<select id="resource-topic"><option value="all">All topics</option></select></label>
-                            <label for="resource-sort">Sort<select id="resource-sort"><option value="title">Title A–Z</option><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label>
+                    <div class="library-topic">
+                        <label id="resource-topic-label" for="resource-topic">Topic</label>
+                        <div class="library-topic-picker" id="resource-topic-picker">
+                            <select id="resource-topic" aria-controls="resource-list"><option value="all">All topics</option></select>
+                            <button class="library-topic-toggle" id="resource-topic-toggle" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="resource-topic-menu" aria-labelledby="resource-topic-label resource-topic-value" hidden>
+                                <span id="resource-topic-value">All topics</span>
+                                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"></path></svg>
+                            </button>
+                            <ul class="library-topic-menu" id="resource-topic-menu" role="listbox" aria-labelledby="resource-topic-label" hidden></ul>
                         </div>
-                    </details>
+                    </div>
+                    <label class="library-sort" for="resource-sort"><span>Sort by</span><select id="resource-sort" aria-controls="resource-list"><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label>
                 </div>
+                <div class="library-results-heading">
+                    <div class="library-results-label"><h2 id="resource-results-title">All resources</h2><p id="resource-status" role="status" aria-live="polite" aria-atomic="true"></p></div>
+                    <button class="library-reset" id="resource-reset-inline" type="button" hidden>Reset filters</button>
+                </div>
+                <ul class="resource-list" id="resource-list" aria-labelledby="resource-results-title"></ul>
+                <div class="library-empty" id="resources-empty-state" hidden>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5M8 10.5h5"></path></svg>
+                    <h3>No matching resources</h3>
+                    <p>Try a different keyword or a broader topic.</p>
+                    <button class="library-text-button" id="resource-reset" type="button">Reset all filters &rarr;</button>
+                </div>
+                <noscript><p>Enable JavaScript to search the full library. Read <a href="notes/eele201.html">Circuits I</a>, the <a href="notes/voltage-divider.html">voltage divider note</a>, <a href="components/esp32-s3-n16r8.html">ESP32-S3 reference</a>, or <a href="resources/git-workflow.html">Git workflow</a> directly.</p></noscript>
             </div>
-            <div class="library-results-heading">
-                <h2 class="visually-hidden" id="resource-results-title">Library results</h2>
-                <p id="resource-status" role="status" aria-live="polite"></p>
-                <button class="library-reset" id="resource-reset-inline" type="button" hidden>Clear filters</button>
-            </div>
-            <ul class="resource-list" id="resource-list" aria-labelledby="resource-results-title"></ul>
-            <div class="library-empty" id="resources-empty-state" hidden>
-                <h2>No matching resources</h2>
-                <p>Try a broader search or choose another type or topic.</p>
-                <button class="library-text-button" id="resource-reset" type="button">Reset all filters &rarr;</button>
-            </div>
-            <noscript><p>Enable JavaScript to search the full library. You can also read the <a href="notes/voltage-divider.html">voltage divider note</a>, <a href="components/esp32-s3-n16r8.html">ESP32-S3 reference</a>, <a href="resources/git-workflow.html">Git workflow</a>, or <a href="resources/markdown-ref.html">Markdown reference</a> directly.</p></noscript>
         </section>
     </main>
 
@@ -463,9 +474,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="js/resources-data.js"></script>
-    <script src="js/resources.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/resources.js"></script>
 </body>
 
 </html>

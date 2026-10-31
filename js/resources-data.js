@@ -40,7 +40,7 @@ const resourceLibrary = [
         "kind": "note",
         "category": "Analog Circuits",
         "title": "Resistive Voltage Divider",
-        "description": "A two-resistor circuit used to produce a lower output voltage from a higher input voltage. A technical note explaining the voltage-divider circuit, equation, variables, worked example, applications, and loading limitations.",
+        "description": "Scaling voltages with a two-resistor divider, including equations, worked examples, and loading limits.",
         "tags": [
             "Resistors",
             "Voltage",
@@ -112,17 +112,20 @@ const resourceLibrary = [
         "kind": "note",
         "category": "EELE 201",
         "title": "Circuits I",
-        "description": "A collection of the notes that I took in circuits I.",
+        "description": "EELE 201 course notes on circuit analysis, resistive networks, and first-order circuit equations.",
         "tags": [
-            "PWM",
-            "Frequency",
-            "Signal Generator"
+            "Courses",
+            "EELE 201",
+            "Circuits",
+            "Circuit Analysis",
+            "First-Order Circuits"
         ],
         "url": "notes/eele201.html",
         "external": false,
         "date": "2026-08-01",
         "status": "In Progress",
-        "formulaSearch": "D Ton T duty cycle PWM percent"
+        "formulaSearch": "EELE201 circuits I voltage divider RC RL time constant transient first order",
+        "resourceType": "Course Notes"
     },
     {
         "id": "circuits-ii",
@@ -168,7 +171,7 @@ const resourceLibrary = [
         "kind": "component",
         "category": "Controller",
         "title": "ESP32-S3 N16R8",
-        "description": "The primary microcontroller platform for my portable lab station, display interfaces, wireless communication, and embedded-system experiments. A project-specific reference covering the ESP32-S3 logic level, pinout, and safety considerations.",
+        "description": "Pinout, logic levels, interfaces, and safety notes for the ESP32-S3 used in my portable lab station.",
         "tags": [
             "ESP32-S3",
             "Embedded",
