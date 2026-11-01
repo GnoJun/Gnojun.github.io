@@ -17,7 +17,7 @@
             layoutRules: [
                 {
                     selector:
-                        ".home-focus-layout",
+                        ".home-intro-grid",
 
                     maxWidth:
                         768,

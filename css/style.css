@@ -2142,23 +2142,10 @@ header strong {
         display: inline;
     }
 
-    .home-focus-section,
     .home-dashboard-section {
         padding:
             var(--space-xl)
             0;
-    }
-
-    .home-milestone {
-        grid-template-columns:
-            10px
-            minmax(0, 1fr);
-
-        gap: 0.65rem;
-    }
-
-    .home-milestone-status {
-        grid-column: 2;
     }
 
     .home-dashboard-header {
@@ -2642,11 +2629,11 @@ html[data-theme="light"] .theme-toggle-icon-sun { display: none; }
 html[data-theme="light"] .theme-toggle-icon-moon { display: block; }
 .theme-toggle-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 
-/* A full-screen opening, followed by an editorial project feature. */
+/* Homepage introduction and selected resources. */
 .home-intro { display: grid; align-items: center; min-height: calc(100vh - var(--header-height)); min-height: calc(100svh - var(--header-height)); padding-block: clamp(3rem, 7vh, 6rem); background: radial-gradient(ellipse at 85% 35%, var(--color-accent-surface), transparent 65%); }
 .home-intro-grid { display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(0, .82fr); align-items: center; gap: 3rem 3.5rem; }
 .home-intro-content { min-width: 0; }
-.home-intro-eyebrow, .home-section-label, .library-intro-eyebrow { color: var(--color-accent-text); font-family: var(--font-sans); font-size: .875rem; font-weight: 400; letter-spacing: .025em; line-height: 1.7; }
+.home-intro-eyebrow, .library-intro-eyebrow { color: var(--color-accent-text); font-family: var(--font-sans); font-size: .875rem; font-weight: 400; letter-spacing: .025em; line-height: 1.7; }
 .site-page .home-intro-title.page-heading { max-width: none; margin: 1.5rem 0; font-size: clamp(3.1rem, 5.8vw, 4.8rem); font-weight: 600; letter-spacing: -.055em; line-height: 1.1; }
 .home-intro-title > span { display: block; }
 .home-intro-accent { color: var(--color-accent); }
@@ -2660,23 +2647,6 @@ html[data-theme="light"] .theme-toggle-icon-moon { display: block; }
 .home-signal-core { fill: var(--color-background); stroke: var(--color-border); }
 .home-signal-path { stroke: var(--color-accent); stroke-width: 2.5; }
 .home-signal-node { fill: var(--color-background); stroke: var(--color-accent); stroke-width: 2; }
-.home-intro-note { grid-column: 1 / -1; justify-self: start; display: inline-flex; align-items: center; gap: .75rem; min-height: 44px; color: var(--color-text-secondary); font-size: .875rem; }
-.home-focus-section { padding-block: var(--section-space); border-top: 1px solid var(--color-accent-border); scroll-margin-top: var(--header-height); }
-.home-focus-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 2.5rem 4rem; }
-.home-focus-copy { min-width: 0; }
-.home-focus-copy h2 { max-width: 22ch; margin: 1rem 0 1.25rem; font-size: clamp(1.85rem, 3.5vw, 2.6rem); font-weight: 600; line-height: 1.25; letter-spacing: -.035em; }
-.home-focus-description { max-width: 55ch; margin-bottom: 1rem; color: var(--color-text-secondary); font-size: 1rem; line-height: 1.9; }
-.home-project-visual { min-width: 0; margin: 0; }
-.home-project-visual img { display: block; width: 100%; height: auto; border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
-.home-project-visual figcaption { margin-top: .8rem; color: var(--color-text-secondary); font-size: .875rem; line-height: 1.6; }
-.home-project-footer { grid-column: 1 / -1; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 1rem 2rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border); }
-.home-progress-label { color: var(--color-accent-text); font-size: .875rem; }
-.home-project-details { width: min(100%, 400px); }
-.home-project-details > summary { width: fit-content; min-height: 44px; margin-left: auto; padding: .5rem 0; color: var(--color-text-secondary); font-size: .9375rem; }
-.home-project-details > summary:hover { color: var(--color-accent-text); }
-.home-milestone-list { display: grid; list-style: none; margin-top: .75rem; }
-.home-milestone { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 1rem; padding: .75rem 0; border-top: 1px solid var(--color-border); }
-.home-milestone-label, .home-milestone-status { min-width: 0; color: var(--color-text-secondary); font-size: .875rem; font-weight: 400; line-height: 1.6; overflow-wrap: anywhere; }
 .home-dashboard-section { padding-top: 0; padding-bottom: var(--section-space); }
 .home-dashboard-header { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: .75rem 1.5rem; margin-bottom: 1.5rem; }
 .home-dashboard-header h2 { font-size: var(--font-section-title); font-weight: 600; letter-spacing: -.03em; line-height: 1.4; }
@@ -2936,7 +2906,7 @@ html[data-theme="light"] .markdown-image-diagram { filter: none; opacity: 1; }
 .responsive-width-button, .responsive-check-button { min-height: 44px; border-radius: .65rem; font-size: .9375rem; }
 
 @media (max-width: 1000px) {
-    .home-focus-layout, .about-intro-grid { gap: 2.5rem; }
+    .about-intro-grid { gap: 2.5rem; }
     .project-hero-grid { grid-template-columns: minmax(0, 1fr) 220px; gap: 2rem; }
 }
 @media (max-width: 900px) {
@@ -2963,11 +2933,6 @@ html[data-theme="light"] .markdown-image-diagram { filter: none; opacity: 1; }
     .site-page .home-intro-title.page-heading { font-size: clamp(2.6rem, 7.5vw, 3.75rem); }
     .home-intro-description { font-size: 1rem; }
     .home-intro-art { max-width: 340px; height: 170px; aspect-ratio: auto; justify-self: center; }
-    .home-intro-note { margin-top: .25rem; }
-    .home-focus-layout { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
-    .home-project-footer { gap: .5rem; }
-    .home-project-details { width: 100%; }
-    .home-project-details > summary { margin-left: 0; }
     .home-dashboard-header { align-items: flex-start; flex-direction: column; }
     .home-resource-row { grid-template-columns: 2rem minmax(0, 1fr); gap: .75rem; }
     .page-intro { padding-top: 2.5rem; padding-bottom: 2rem; }

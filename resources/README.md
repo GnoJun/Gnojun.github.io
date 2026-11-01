@@ -35,6 +35,8 @@ These parts are maintained separately. For example, editing `content/resources/e
 
 `date` is a manually maintained `YYYY-MM-DD` value. It controls the displayed update date and the default **Newest first** order; **Oldest first** reverses the date order, and equal dates are ordered by title. Editing an article does not automatically change its date. Update the catalogue date when you want that resource to move in the date order.
 
+The homepage's **Latest resources** section automatically shows the three newest catalogue entries using the same date and title ordering. Its titles and descriptions come directly from the catalogue; no separate featured list is maintained. Entries without an article URL link to their filtered view in Resources so readers can access inline formulas or specifications.
+
 ## Browse the library
 
 The sidebar groups resources by type and shows each category's total count. Course notes have a dedicated filter. Topic and sort controls stay visible beside the search results; topic choices narrow to the selected type, and switching types clears an incompatible topic. The topic menu always opens below its button and scrolls internally for long lists. Use arrow keys, Home/End, or type a topic prefix to navigate, Enter/Space to select, and Escape to close without changing the selection. Each result shows its essential metadata, while formulas and specifications share a single expandable **Preview**. On small screens, categories become a horizontally scrollable row.
