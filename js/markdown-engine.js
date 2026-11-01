@@ -174,8 +174,11 @@
             const token = tokens[index];
             const url = resolveUrl(token.attrGet('src'), env.source, pageURL, true);
             if (!url) return escape(token.content);
+            // The filename opts monochrome artwork into the existing theme filter.
+            // Check only the path so query parameters cannot opt ordinary photos in.
+            const diagram = /\.diagram\.(?:svg|png|jpe?g|webp|gif|avif)$/i.test(new URL(url).pathname);
             token.attrSet('src', url);
-            token.attrJoin('class', 'markdown-image' + (/\.diagram\.svg(?:[?#]|$)/i.test(url) ? ' markdown-image-diagram' : ''));
+            token.attrJoin('class', 'markdown-image' + (diagram ? ' markdown-image-diagram' : ''));
             token.attrSet('loading', 'lazy');
             token.attrSet('decoding', 'async');
             return defaultImage(tokens, index, opts, env, self);
@@ -320,8 +323,8 @@
                         quiz.answer = quiz.choices.findIndex(choice => choice.correct);
                     }
                 } else quiz.prompt = question;
-                if (!quiz.prompt.some(part => part.type === 'inline' && part.content.trim())) {
-                    quiz.error ||= 'Add a question before the choices or explanation.';
+                if (!quiz.prompt.some(part => part.type === 'article_figure' || (part.type === 'inline' && part.content.trim()))) {
+                    quiz.error ||= 'Add question text or an image before the choices or explanation.';
                 }
                 if (!quiz.error) {
                     let id;

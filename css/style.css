@@ -3247,6 +3247,9 @@ img.markdown-image-preview, .markdown-image-preview img { display: block; width:
 .markdown-quiz-prompt > * + *, .markdown-quiz-explanation > * + * { margin-top: .85rem; }
 .markdown-quiz-prompt > :first-child, .markdown-quiz-explanation > :first-child { margin-top: 0; }
 .markdown-quiz-prompt > :last-child, .markdown-quiz-explanation > :last-child { margin-bottom: 0; }
+.markdown-quiz .markdown-figure { margin: 1rem 0; }
+.markdown-quiz-prompt > .markdown-figure:first-child { margin-top: 0; }
+.markdown-quiz-prompt > .markdown-figure:last-child, .markdown-quiz-explanation > .markdown-figure:last-child { margin-bottom: 0; }
 .markdown-quiz-options { display: grid; gap: .6rem; margin-top: 1rem; }
 .markdown-quiz-option {
     display: flex;

@@ -309,7 +309,13 @@ Use descriptive alternative text for the image and an optional quoted title for 
 
 ![Two series resistors with the output measured across R2](../../images/lab-notes/voltage-divider/circuit-diagram.diagram.svg "An ideal voltage divider: Vout is measured across R2.")
 
-The `.diagram.svg` filename keeps this site's diagram theme adaptation. Ordinary photos use the same Markdown syntax:
+### Black-and-white diagrams in both themes
+
+The existing `.diagram.svg` naming convention opts a picture into automatic theme adaptation. It also works with `.diagram.png`, `.diagram.jpg`, `.diagram.jpeg`, `.diagram.webp`, `.diagram.gif`, and `.diagram.avif`. Save one image with black lines and text on a white or transparent background, then include `.diagram` immediately before its file extension.
+
+In light mode, the original image is displayed. In dark mode, the same image is inverted with CSS (`invert(1) brightness(1.15)`, at 92% opacity): black lines become light and a white background becomes dark. The website's theme button changes `data-theme` on the page, so both the article image and its larger preview update immediately. You do not need a second image file or a different Markdown path for each theme. The source file itself is never modified.
+
+This is a filename convention, so the site does not inspect whether an image is actually black and white. Reserve it for monochrome diagrams; color photos and plots would also have their colors inverted. Ordinary photos use the same Markdown syntax without `.diagram` in the filename:
 
 ```markdown
 ![ESP32 lab-station hardware](../../images/projects/esp32-lab/esp32-lab.webp "The ESP32 lab station.")
@@ -439,7 +445,7 @@ You can also indent the entire block under a list item:
 
 Use one `:::quiz` block for each question. Readers select or enter an answer and choose **Check answer** to see feedback and the explanation. They can change their answer and try again, or choose **Reset** to clear the question. Answers are not saved when the page reloads.
 
-Separate the question from its explanation with `---`, leaving a blank line before and after the separator. Both parts support Markdown and equations. Close the quiz with `:::`.
+Separate the question from its explanation with `---`, leaving a blank line before and after the separator. Both parts support Markdown, equations, and images. Close the quiz with `:::`.
 
 ### Single-choice question
 
@@ -449,79 +455,159 @@ Start with `:::quiz choice`. Write the question, then one task list with at leas
 
 ```markdown
 :::quiz choice
-For an unloaded voltage divider, keep $V_{\text{in}}$ and $R_1$
-fixed. What happens to $V_{\text{out}}$ when $R_2$ decreases?
+For the circuit below, let $V_1 = 12\,\text{V}$, $V_2 = 6\,\text{V}$,
+and $R_1 = R_2 = R_3 = 1\,\text{k}\Omega$.
+What is the current $I$ through $R_3$, taking the downward arrow as positive?
 
-- [ ] The output voltage increases.
-- [x] The output voltage decreases.
-- [ ] The output voltage stays the same.
+![Two voltage sources feed a central node through R1 and R2; current I flows downward through R3 to ground. V1 is positive at the top and V2 is positive at the bottom.](../../images/quizzes/circuit-1.diagram.png "Find I through R3. Pay attention to the opposite source polarities.")
+
+- [ ] $-2\,\text{mA}$ (upward)
+- [x] $2\,\text{mA}$ (downward)
+- [ ] $6\,\text{mA}$ (downward)
+- [ ] $10\,\text{mA}$ (downward)
 
 ---
 
-The ratio $R_2 / (R_1 + R_2)$ becomes smaller, so the output
-voltage decreases. This assumes the output has no connected load.
+The bottom wire is ground. The left source sets its upper node to
+$+12\,\text{V}$, while the right source sets its upper node to
+$-6\,\text{V}$ because its positive terminal is grounded.
+Let the central node voltage be $v$. Kirchhoff's current law gives
+$(v-12)/1000 + (v+6)/1000 + v/1000 = 0$, so $v=2\,\text{V}$.
+Therefore $I=v/R_3=2\,\text{mA}$, in the downward direction shown.
 :::
 ```
 
 **Result**
 
 :::quiz choice
-For an unloaded voltage divider, keep $V_{\text{in}}$ and $R_1$
-fixed. What happens to $V_{\text{out}}$ when $R_2$ decreases?
+For the circuit below, let $V_1 = 12\,\text{V}$, $V_2 = 6\,\text{V}$,
+and $R_1 = R_2 = R_3 = 1\,\text{k}\Omega$.
+What is the current $I$ through $R_3$, taking the downward arrow as positive?
 
-- [ ] The output voltage increases.
-- [x] The output voltage decreases.
-- [ ] The output voltage stays the same.
+![Two voltage sources feed a central node through R1 and R2; current I flows downward through R3 to ground. V1 is positive at the top and V2 is positive at the bottom.](../../images/quizzes/circuit-1.diagram.png "Find I through R3. Pay attention to the opposite source polarities.")
+
+- [ ] $-2\,\text{mA}$ (upward)
+- [x] $2\,\text{mA}$ (downward)
+- [ ] $6\,\text{mA}$ (downward)
+- [ ] $10\,\text{mA}$ (downward)
 
 ---
 
-The ratio $R_2 / (R_1 + R_2)$ becomes smaller, so the output
-voltage decreases. This assumes the output has no connected load.
+The bottom wire is ground. The left source sets its upper node to
+$+12\,\text{V}$, while the right source sets its upper node to
+$-6\,\text{V}$ because its positive terminal is grounded.
+Let the central node voltage be $v$. Kirchhoff's current law gives
+$(v-12)/1000 + (v+6)/1000 + v/1000 = 0$, so $v=2\,\text{V}$.
+Therefore $I=v/R_3=2\,\text{mA}$, in the downward direction shown.
 :::
 
 ### Numerical question
 
-Start with `:::quiz numeric` and set the expected answer in the opening line. The following example accepts `2.5`, `2.5 V`, or `2500 mV`.
+Start with `:::quiz numeric` and set the expected answer in the opening line. This example uses the same circuit and values as the choice question, and accepts `2`, `2 mA`, `0.002 A`, or `2000 uA`.
 
 **Source**
 
 ```markdown
-:::quiz numeric answer=2.5 unit=V tolerance=0.01
-An unloaded divider has $V_{\text{in}} = 5\,\text{V}$ and
-$R_1 = R_2 = 10\,\text{k}\Omega$. What is the output voltage?
+:::quiz numeric answer=2 unit=mA tolerance=0.01
+Find the current $I$ through $R_3$ in the downward direction shown.
+Use $V_1 = 12\,\text{V}$, $V_2 = 6\,\text{V}$, and
+$R_1 = R_2 = R_3 = 1\,\text{k}\Omega$.
+
+![Two sources with opposite polarities connect to a central node through R1 and R2; I points down through R3 to ground.](../../images/quizzes/circuit-1.diagram.png "Question circuit: V1 is positive at the top; V2 is positive at the bottom.")
 
 ---
 
-Equal resistors split the input voltage equally:
+Let $v$ be the voltage at the junction of the three resistors,
+measured relative to the grounded bottom wire. The source-side nodes are
+$+V_1$ on the left and $-V_2$ on the right.
+
+![The same two-source circuit, with the central node connected to ground through R3.](../../images/quizzes/circuit-1.diagram.png "For the stated values, the central node is at +2 V and I is 2 mA downward.")
+
+Apply Kirchhoff's current law, taking currents leaving the central node as positive:
 
 $$
-V_{\text{out}} = 5\frac{10}{10 + 10} = 2.5\,\text{V}
+\frac{v-V_1}{R_1}+\frac{v+V_2}{R_2}+\frac{v}{R_3}=0
+$$
+
+$$
+I=\frac{v}{R_3}
+ =\frac{V_1R_2-V_2R_1}{R_1R_2+R_1R_3+R_2R_3}
+$$
+
+For the stated values:
+
+$$
+\frac{v-12}{1000}+\frac{v+6}{1000}+\frac{v}{1000}=0
+\quad\Rightarrow\quad v=2\,\text{V}
+$$
+
+$$
+I=\frac{2\,\text{V}}{1\,\text{k}\Omega}
+ =2\,\text{mA}\quad\text{(downward)}
 $$
 :::
 ```
 
 **Result**
 
-:::quiz numeric answer=2.5 unit=V tolerance=0.01
-An unloaded divider has $V_{\text{in}} = 5\,\text{V}$ and
-$R_1 = R_2 = 10\,\text{k}\Omega$. What is the output voltage?
+:::quiz numeric answer=2 unit=mA tolerance=0.01
+Find the current $I$ through $R_3$ in the downward direction shown.
+Use $V_1 = 12\,\text{V}$, $V_2 = 6\,\text{V}$, and
+$R_1 = R_2 = R_3 = 1\,\text{k}\Omega$.
+
+![Two sources with opposite polarities connect to a central node through R1 and R2; I points down through R3 to ground.](../../images/quizzes/circuit-1.diagram.png "Question circuit: V1 is positive at the top; V2 is positive at the bottom.")
 
 ---
 
-Equal resistors split the input voltage equally:
+Let $v$ be the voltage at the junction of the three resistors,
+measured relative to the grounded bottom wire. The source-side nodes are
+$+V_1$ on the left and $-V_2$ on the right.
+
+![The same two-source circuit, with the central node connected to ground through R3.](../../images/quizzes/circuit-1.diagram.png "For the stated values, the central node is at +2 V and I is 2 mA downward.")
+
+Apply Kirchhoff's current law, taking currents leaving the central node as positive:
 
 $$
-V_{\text{out}} = 5\frac{10}{10 + 10} = 2.5\,\text{V}
+\frac{v-V_1}{R_1}+\frac{v+V_2}{R_2}+\frac{v}{R_3}=0
+$$
+
+$$
+I=\frac{v}{R_3}
+ =\frac{V_1R_2-V_2R_1}{R_1R_2+R_1R_3+R_2R_3}
+$$
+
+For the stated values:
+
+$$
+\frac{v-12}{1000}+\frac{v+6}{1000}+\frac{v}{1000}=0
+\quad\Rightarrow\quad v=2\,\text{V}
+$$
+
+$$
+I=\frac{2\,\text{V}}{1\,\text{k}\Omega}
+ =2\,\text{mA}\quad\text{(downward)}
 $$
 :::
 
 | Setting | Meaning |
 | :--- | :--- |
-| `answer=2.5` | Required finite number, expressed in the declared unit. Scientific notation such as `answer=2.5e-3` is also accepted. |
-| `unit=V` | Optional unit. An answer without a unit uses this unit. Omit it for a dimensionless answer. |
-| `tolerance=0.01` | Optional absolute tolerance in the declared unit. Here, answers within 0.01 V of 2.5 V are correct. The default is zero. |
+| `answer=2` | Required finite number, expressed in the declared unit. Here, the expected answer is 2 mA. Scientific notation such as `answer=2e0` is also accepted. |
+| `unit=mA` | Optional unit. An answer without a unit uses this unit. Here, `2` means 2 mA. Omit it for a dimensionless answer. |
+| `tolerance=0.01` | Optional absolute tolerance in the declared unit. Here, answers within 0.01 mA of 2 mA are correct. The default is zero. |
 
 Unit prefixes are case sensitive. Supported conversions use `p`, `n`, `u` (or `µ` / `μ`), `m`, `k`, `M`, and `G` with `V`, `A`, `ohm` / `Ω`, `F`, `H`, `Hz`, `s`, and `W`. For example, `mV` means millivolts while `MV` means megavolts. Other unit labels must match the declared unit exactly. A wrong or unrecognized unit prompts the reader to check the entry before the explanation is revealed.
+
+### Images in a quiz
+
+Use the same image syntax as elsewhere in an article. Both examples above show the two-source circuit in the question; the numerical example also repeats it in the explanation. Each **Source** block can be copied, and its **Result** is a working quiz.
+
+```markdown
+![Describe what the circuit shows](../../images/quizzes/circuit-1.diagram.png "Optional visible caption.")
+```
+
+Put the image on its own paragraph, with a blank line before and after it. Before `---`, it is visible with the question; in a choice quiz, place it before the options list. After `---`, it stays hidden with the explanation until the reader submits a valid answer. Readers can click or tap either figure to enlarge it. Images use the existing article image renderer, including captions, zoom, and [automatic diagram theme adaptation](#black-and-white-diagrams-in-both-themes).
+
+Store your image in the site's `images/` folder and write the path relative to the Markdown file, not the HTML article shell. For a file under `content/resources/`, `../../images/...` goes up two folders to the site root, then into `images/`. For example, save `images/quizzes/my-circuit.diagram.png` and reference it as `../../images/quizzes/my-circuit.diagram.png`. The example above uses an existing diagram, so it works without uploading another file. For an ordinary photo, use its normal filename without `.diagram`.
 
 > [!TIP] Write useful feedback
 > Use the explanation to show the reasoning or a common mistake, rather than only repeating the correct answer. These quizzes are intended for practice; their answers are included in the article source.

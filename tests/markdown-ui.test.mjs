@@ -292,10 +292,10 @@ await check('Table clipboard produces normalized tab-separated text and a manual
     }
 });
 
-function imageControl(h, { diagram = true } = {}) {
+function imageControl(h, { diagram = true, parent = h.articles[0] } = {}) {
     const button = h.element('button', { 'data-image-open': '' }); const image = h.element('img');
     Object.assign(image, { src: 'https://site.test/image.png', currentSrc: 'https://site.test/image@2x.png', alt: 'Circuit diagram', title: 'Annotated circuit' });
-    if (diagram) image.classList.add('markdown-image-diagram'); button.appendChild(image); h.articles[0].appendChild(button); return button;
+    if (diagram) image.classList.add('markdown-image-diagram'); button.appendChild(image); parent.appendChild(button); return button;
 }
 
 await check('Image dialog uses current source/caption, closes by control/backdrop/native cancel, and restores focus', async () => {
@@ -347,6 +347,36 @@ function assertEmptyQuizFeedback(feedback) {
     assert.equal(feedback.textContent, '');
     assert.equal(feedback.dataset.state, undefined);
 }
+
+await check('Quiz images zoom without submitting and answer images follow explanation visibility', async () => {
+    const h = await harness(); const q = quizControls(h);
+    const prompt = h.element('div', { class: 'markdown-quiz-prompt' }); q.form.appendChild(prompt);
+    const questionImage = imageControl(h, { parent: prompt });
+    h.click(questionImage);
+    const dialog = h.document.querySelector('dialog');
+    assert.equal(dialog.open, true);
+    assert.ok(dialog.querySelector('img').classList.contains('markdown-image-diagram'));
+    assert.equal(q.form.dataset.quizState, undefined);
+    assertEmptyQuizFeedback(q.feedback);
+    assert.equal(q.explanation.hidden, true);
+    dialog.close(); assert.equal(h.document.activeElement, questionImage);
+
+    const answerImage = imageControl(h, { parent: q.explanation, diagram: false });
+    Object.assign(answerImage.querySelector('img'), { src: 'https://site.test/measurement.webp', currentSrc: 'https://site.test/measurement.webp', title: 'Measured output' });
+    q.radios[1].checked = true; h.submit(q.form);
+    assert.equal(q.explanation.hidden, false);
+    h.click(answerImage);
+    assert.equal(dialog.open, true);
+    assert.equal(dialog.querySelector('img').src, 'https://site.test/measurement.webp');
+    assert.ok(!dialog.querySelector('img').classList.contains('markdown-image-diagram'), 'A photo must not inherit the preceding diagram filter');
+    assert.equal(dialog.querySelector('.markdown-image-caption').textContent, 'Measured output');
+    assert.equal(q.form.dataset.quizState, 'correct');
+    dialog.close(); assert.equal(h.document.activeElement, answerImage);
+    h.reset(q.form);
+    assert.equal(q.explanation.hidden, true);
+    assert.equal(q.form.dataset.quizState, undefined);
+    assertEmptyQuizFeedback(q.feedback);
+});
 
 await check('Choice quizzes validate selection, explain a wrong answer, allow retry, and reset', async () => {
     const h = await harness(); const q = quizControls(h);

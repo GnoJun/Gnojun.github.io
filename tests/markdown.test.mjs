@@ -159,6 +159,20 @@ test('Figures resolve source paths, captions and diagram theme classes safely', 
     const inline = render('A small ![symbol](../../images/symbol.svg) in a sentence.');
     assert.doesNotMatch(inline, /<figure|data-image-open/);
 });
+
+test('Monochrome diagram opt-in supports raster images and preserves ordinary photos', () => {
+    for (const extension of ['svg', 'png', 'jpg', 'jpeg', 'webp', 'gif', 'avif', 'PNG', 'SVG']) {
+        const path = `../../images/circuit.diagram.${extension}?revision=2#detail`;
+        const html = render(`![A monochrome circuit](${path})`);
+        assert.match(html, /class="markdown-image markdown-image-diagram"/, extension);
+        assert.ok(html.includes(`src="https://site.test/images/circuit.diagram.${extension}?revision=2#detail"`), extension);
+    }
+    for (const filename of ['hardware.webp', 'circuit.png', 'diagram.svg', 'circuit.diagram.png.backup', 'photo.jpg?name=circuit.diagram.png']) {
+        const html = render(`![Ordinary image](../../images/${filename})`);
+        assert.match(html, /class="markdown-image"/, filename);
+        assert.doesNotMatch(html, /markdown-image-diagram/, filename);
+    }
+});
 test('Source URLs and labels cannot inject HTML attributes', () => {
     const html = render('## A "title"\n\n![A "label"](https://example.org/a.png "A &quot;caption&quot;")\n\n' + fence + 'js title="&lt;img&gt;"\n"<script>"\n' + fence);
     assert.doesNotMatch(html, /<script>|<img>/);
@@ -280,6 +294,55 @@ test('Footnotes defined inside a quiz keep their reference and one complete arti
     assert.match(html, /A source defined inside the quiz\./);
     assert.match(html, /href="#fnref-quiz-local-1"/);
     assert.doesNotMatch(form, /<section class="footnotes">/);
+});
+
+test('Quiz question and explanation images keep source paths, captions, zoom, and theme opt-in', () => {
+    for (const settings of ['choice', 'numeric answer=2.5 unit=V']) {
+        const choices = settings === 'choice' ? '\n\n- [ ] 5 V\n- [x] 2.5 V' : '';
+        const markdown = ':::quiz ' + settings + '\nFind the output of this divider.\n\n' +
+            '![A divider diagram](../../images/question.diagram.png "Question circuit")' + choices +
+            '\n\n---\n\nCompare the predicted value with this measurement.\n\n' +
+            '![A measured circuit](../../images/measurement.webp "Measured output")\n:::';
+        const [form] = quizForms(render(markdown));
+        assert.ok(form, settings);
+        assert.equal(count(form, /<figure class="markdown-figure">/g), 2);
+        assert.equal(count(form, /data-image-open/g), 2);
+        const prompt = form.slice(form.indexOf('class="markdown-quiz-prompt"'), form.indexOf('class="markdown-quiz-actions"'));
+        assert.match(prompt, /src="https:\/\/site\.test\/images\/question\.diagram\.png"/);
+        assert.match(prompt, /markdown-image-diagram/);
+        assert.match(prompt, /<figcaption>Question circuit<\/figcaption>/);
+        const explanation = form.slice(form.indexOf('class="markdown-quiz-explanation"'));
+        assert.match(explanation, /^class="markdown-quiz-explanation" hidden>/);
+        assert.match(explanation, /src="https:\/\/site\.test\/images\/measurement\.webp"/);
+        assert.match(explanation, /<figcaption>Measured output<\/figcaption>/);
+        assert.doesNotMatch(explanation, /markdown-image-diagram/);
+    }
+});
+
+test('A standalone image can be the complete choice or numeric quiz prompt', () => {
+    for (const settings of ['choice', 'numeric answer=2.5 unit=V']) {
+        const choices = settings === 'choice' ? '\n\n- [ ] 5 V\n- [x] 2.5 V' : '';
+        const markdown = ':::quiz ' + settings + '\n' +
+            '![Calculate the voltage shown by the divider](../../images/circuit.diagram.svg)' + choices +
+            '\n\n---\n\nEqual resistors divide the voltage by two.\n:::';
+        const html = render(markdown);
+        const [form] = quizForms(html);
+        assert.ok(form, settings);
+        assert.doesNotMatch(html, /markdown-quiz-error/);
+        assert.match(form, /<figure class="markdown-figure">/);
+        assert.match(form, /alt="Calculate the voltage shown by the divider"/);
+        assert.match(form, /data-image-open/);
+    }
+});
+
+test('Quiz image URLs cannot enable executable content', () => {
+    const markdown = ':::quiz numeric answer=2.5\nInspect the circuit.\n\n' +
+        '![Bad](data:image/svg+xml,boom)\n\n---\n\n' +
+        '![Bad](javascript:alert(1))\n\n![Bad](file:///private/circuit.diagram.png)\n:::';
+    const [form] = quizForms(render(markdown));
+    assert.ok(form);
+    assert.doesNotMatch(form, /(?:src|href)="(?:data|javascript|file):/i);
+    assert.doesNotMatch(form, /<script\b|\bonerror=/i);
 });
 
 vm.runInContext(await readFile(new URL('js/vendor/highlight-11.12.0.min.js', root), 'utf8'), context);
