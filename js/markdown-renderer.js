@@ -189,6 +189,107 @@
         previewDialog.showModal();
     }
 
+    const quizPrefixes = { '': 1, p: 1e-12, n: 1e-9, u: 1e-6, '\u00b5': 1e-6, '\u03bc': 1e-6, m: 1e-3, k: 1e3, M: 1e6, G: 1e9 };
+    const quizUnits = { V: 'V', A: 'A', ohm: '\u03a9', '\u03a9': '\u03a9', F: 'F', H: 'H', Hz: 'Hz', s: 's', W: 'W' };
+
+    function unitDefinition(unit) {
+        if (Object.hasOwn(quizUnits, unit)) return { dimension: quizUnits[unit], scale: 1 };
+        const prefix = unit[0];
+        const base = unit.slice(1);
+        if (prefix && Object.hasOwn(quizPrefixes, prefix) && Object.hasOwn(quizUnits, base)) {
+            return { dimension: quizUnits[base], scale: quizPrefixes[prefix] };
+        }
+        return null;
+    }
+
+    function quizNumber(raw, expectedUnit) {
+        const match = raw.trim().match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)(?:\s*([^\s]+))?$/i);
+        if (!match) return null;
+        let value = Number(match[1]);
+        const unit = match[2] || expectedUnit;
+        if (unit !== expectedUnit) {
+            const actual = unitDefinition(unit), expected = unitDefinition(expectedUnit);
+            if (!actual || !expected || actual.dimension !== expected.dimension) return null;
+            value *= actual.scale / expected.scale;
+        }
+        return Number.isFinite(value) ? value : null;
+    }
+
+    function quizForm(event) {
+        const form = event.target.closest?.('form.markdown-quiz');
+        return form?.closest('[data-markdown-src]') ? form : null;
+    }
+
+    function clearQuiz(form) {
+        const feedback = form.querySelector('.markdown-quiz-feedback');
+        const explanation = form.querySelector('.markdown-quiz-explanation');
+        feedback.textContent = '';
+        delete feedback.dataset.state;
+        delete form.dataset.quizState;
+        if (explanation) explanation.hidden = true;
+        form.querySelector('.markdown-quiz-input')?.removeAttribute('aria-invalid');
+    }
+
+    document.addEventListener('submit', event => {
+        const form = quizForm(event);
+        if (!form) return;
+        event.preventDefault();
+        clearQuiz(form);
+        const feedback = form.querySelector('.markdown-quiz-feedback');
+        const explanation = form.querySelector('.markdown-quiz-explanation');
+        const numeric = form.querySelector('.markdown-quiz-input');
+        let correct, state, message;
+        if (form.dataset.quizKind === 'choice') {
+            const selected = form.querySelector('input[type="radio"]:checked');
+            if (!selected) {
+                state = 'empty';
+                message = 'Choose an answer before checking.';
+                form.querySelector('input[type="radio"]')?.focus();
+            } else correct = selected.value === form.dataset.quizAnswer;
+        } else if (numeric) {
+            if (!numeric.value.trim()) {
+                state = 'empty';
+                message = 'Enter an answer before checking.';
+            } else {
+                const unit = form.dataset.quizUnit || '';
+                const value = quizNumber(numeric.value, unit);
+                if (value === null) {
+                    state = 'invalid';
+                    message = unit ? `Enter a valid number in ${unit} or a compatible unit.` : 'Enter a valid number without a unit.';
+                } else {
+                    const answer = Number(form.dataset.quizAnswer), tolerance = Number(form.dataset.quizTolerance || 0);
+                    // Allow only floating-point rounding at the inclusive boundary,
+                    // scaled to the values so very small engineering units stay precise.
+                    const rounding = Number.EPSILON * Math.max(Math.abs(value), Math.abs(answer), tolerance) * 8;
+                    correct = Math.abs(value - answer) <= tolerance + rounding;
+                }
+            }
+            if (state) {
+                numeric.setAttribute('aria-invalid', 'true');
+                numeric.focus();
+            }
+        } else return;
+        if (typeof correct === 'boolean') {
+            state = correct ? 'correct' : 'incorrect';
+            message = correct ? 'Correct.' : explanation ? 'Not quite. Review the explanation and try again.' : 'Not quite. Try again.';
+            form.dataset.quizState = state;
+            if (explanation) explanation.hidden = false;
+        }
+        feedback.dataset.state = state;
+        feedback.textContent = message;
+    });
+
+    document.addEventListener('reset', event => {
+        const form = quizForm(event);
+        if (!form) return;
+        event.preventDefault();
+        clearQuiz(form);
+        form.querySelectorAll('input[type="radio"]').forEach(input => { input.checked = false; });
+        const numeric = form.querySelector('.markdown-quiz-input');
+        if (numeric) numeric.value = '';
+        (numeric || form.querySelector('input[type="radio"]'))?.focus();
+    });
+
     document.addEventListener('click', event => {
         const button = event.target.closest?.('[data-code-copy], [data-code-wrap], [data-table-copy], [data-image-open]');
         if (!button || !button.closest('[data-markdown-src]')) return;

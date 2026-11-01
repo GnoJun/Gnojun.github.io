@@ -165,6 +165,123 @@ test('Source URLs and labels cannot inject HTML attributes', () => {
     assert.ok(html.includes('<h2 id="a-title">A &quot;title&quot;</h2>'));
 });
 
+const choiceQuiz = ':::quiz choice\nWhich output is **correct**?\n\n- [ ] 5 V\n- [x] $2.5$ V\n- [ ] 0 V\n\n---\n\nEqual resistors divide the input by **two**.\n:::';
+const numericQuiz = ':::quiz numeric answer=2.5 unit=V tolerance=0.01\nFind the output voltage.\n\n---\n\n$V_{out}=5/2=2.5$ V.\n:::';
+const quizForms = html => [...html.matchAll(/<form\b(?=[^>]*\bclass="[^"]*\bmarkdown-quiz\b)[\s\S]*?<\/form>/g)].map(match => match[0]);
+
+test('Choice quizzes render unselected radio options and hide their explanation', () => {
+    const html = render(choiceQuiz);
+    const forms = quizForms(html);
+    assert.equal(forms.length, 1);
+    assert.match(forms[0], /data-quiz-kind="choice"/);
+    assert.match(forms[0], /data-quiz-answer="1"/);
+    const radios = [...forms[0].matchAll(/<input\b[^>]*\btype="radio"[^>]*>/g)].map(match => match[0]);
+    assert.equal(radios.length, 3);
+    assert.ok(radios.every(radio => !/\b(?:checked|disabled)\b/.test(radio)));
+    assert.match(forms[0], /<strong>correct<\/strong>/);
+    assert.match(forms[0], /data-math="2.5"/);
+    assert.match(forms[0], /class="markdown-quiz-explanation"[^>]*\bhidden\b/);
+    assert.match(forms[0], /Equal resistors divide the input by <strong>two<\/strong>/);
+    assert.match(forms[0], /type="submit"[^>]*>Check answer<\/button>/);
+    assert.match(forms[0], /type="reset"[^>]*>Reset<\/button>/);
+    assert.doesNotMatch(forms[0], /markdown-task-checkbox|\[x\]|\[ \]/);
+});
+
+test('Numeric quizzes preserve numeric configuration and an accessible text input', () => {
+    const [form] = quizForms(render(numericQuiz));
+    assert.ok(form);
+    assert.match(form, /data-quiz-kind="numeric"/);
+    assert.match(form, /data-quiz-answer="2.5"/);
+    assert.match(form, /data-quiz-unit="V"/);
+    assert.match(form, /data-quiz-tolerance="0.01"/);
+    assert.match(form, /<input\b[^>]*\btype="text"/);
+    assert.match(form, /Your answer/);
+    assert.match(form, /role="status"/);
+    assert.match(form, /aria-live="polite"/);
+    const feedback = form.match(/<p\b(?=[^>]*\bclass="markdown-quiz-feedback")[^>]*>/)?.[0];
+    assert.ok(feedback);
+    assert.doesNotMatch(feedback, /\bhidden\b/, 'The empty live region must be available before feedback is announced');
+    const [dimensionless] = quizForms(render(':::quiz numeric answer=4\nHow many?\n:::'));
+    assert.ok(dimensionless);
+    assert.match(dimensionless, /data-quiz-tolerance="0"/);
+});
+
+test('Multiple quizzes receive independent stable radio groups and unique article IDs', () => {
+    const markdown = choiceQuiz + '\n\n' + numericQuiz + '\n\n' + choiceQuiz;
+    const first = render(markdown, { documentId: 'quiz-a' });
+    assert.equal(quizForms(first).length, 3);
+    const names = [...first.matchAll(/<input\b[^>]*type="radio"[^>]*>/g)].map(match => match[0].match(/\bname="([^"]+)"/)[1]);
+    assert.equal(new Set(names).size, 2);
+    assert.equal(names[0], names[1]);
+    assert.notEqual(names[0], names[3]);
+    const ids = [...first.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
+    assert.equal(new Set(ids).size, ids.length);
+    assert.equal(first, render(markdown, { documentId: 'quiz-a' }));
+    const other = render(markdown, { documentId: 'quiz-b' });
+    assert.ok(!other.includes('name="' + names[0] + '"'));
+});
+
+test('Malformed authored quizzes report configuration errors without active forms', () => {
+    const malformed = [
+        ':::quiz choice\nQuestion\n\n- [ ] A\n- [ ] B\n:::',
+        ':::quiz choice\nQuestion\n\n- [x] A\n- [x] B\n:::',
+        ':::quiz choice\nQuestion\n\n- [x] A\n:::',
+        ':::quiz numeric answer=NaN\nQuestion\n:::',
+        ':::quiz numeric answer=Infinity\nQuestion\n:::',
+        ':::quiz numeric answer=2 tolerance=-1\nQuestion\n:::',
+        ':::quiz unsupported\nQuestion\n:::'
+    ];
+    for (const markdown of malformed) {
+        const html = render('Before the quiz.\n\n' + markdown + '\n\nAfter the quiz.');
+        assert.equal(quizForms(html).length, 0, markdown);
+        assert.match(html, /markdown-quiz-error/, markdown);
+        assert.ok(html.includes('Before the quiz.') && html.includes('After the quiz.'), 'An authoring error should preserve the surrounding article');
+    }
+});
+
+test('Quiz source fences stay literal and ordinary task lists remain read-only', () => {
+    const html = render(fence + 'markdown\n' + choiceQuiz + '\n' + fence + '\n\n- [x] Author task\n\n' + choiceQuiz);
+    assert.equal(quizForms(html).length, 1);
+    assert.match(html, /:::quiz choice/);
+    assert.equal(count(html, /class="markdown-task-checkbox"/g), 1);
+    assert.match(html, /type="checkbox" disabled checked/);
+});
+
+test('Quiz prompts, options and explanations preserve escaped content and safe links', () => {
+    const markdown = ':::quiz choice\n<img src=x onerror=alert(1)>\n\n- [x] <script>alert(1)</script>\n- [ ] [bad](javascript:alert(1))\n\n---\n\n<img src=x onerror=alert(2)>\n:::';
+    const [form] = quizForms(render(markdown));
+    assert.ok(form);
+    assert.doesNotMatch(form, /<script\b|<img\b|href="javascript:/i);
+    assert.match(form, /&lt;script&gt;/);
+    assert.match(form, /&lt;img src=x onerror=alert\(2\)&gt;/);
+});
+
+test('Choice quiz prompts preserve a givens list before the final answer options', () => {
+    const markdown = ':::quiz choice\nGiven this voltage divider:\n\n- Input: **5 V**\n- Both resistors: **1 kohm**\n\nWhat is the unloaded output?\n\n- [ ] 5 V\n- [x] 2.5 V\n- [ ] 0 V\n\n---\n\nEqual resistors divide the input by two.\n:::';
+    const html = render(markdown);
+    const [form] = quizForms(html);
+    assert.ok(form);
+    assert.doesNotMatch(html, /markdown-quiz-error/);
+    assert.match(form, /<ul>\s*<li>Input: <strong>5 V<\/strong><\/li>/);
+    assert.match(form, /Both resistors: <strong>1 kohm<\/strong>/);
+    assert.match(form, /What is the unloaded output\?/);
+    assert.equal(count(form, /type="radio"/g), 3);
+    assert.match(form, /data-quiz-answer="1"/);
+});
+
+test('Footnotes defined inside a quiz keep their reference and one complete article footer', () => {
+    const markdown = ':::quiz choice\nWhich result follows from the measurements?[^data]\n\n- [ ] 5 V\n- [x] 2.5 V\n\n---\n\nThe resistors are equal.\n\n[^data]: A source defined inside the quiz.\n:::';
+    const html = render(markdown, { documentId: 'quiz-local' });
+    const [form] = quizForms(html);
+    assert.ok(form);
+    assert.match(form, /href="#fn-quiz-local-1"/);
+    assert.equal(count(html, /<section class="footnotes">/g), 1);
+    assert.equal(count(html, /id="fn-quiz-local-1"/g), 1);
+    assert.match(html, /A source defined inside the quiz\./);
+    assert.match(html, /href="#fnref-quiz-local-1"/);
+    assert.doesNotMatch(form, /<section class="footnotes">/);
+});
+
 vm.runInContext(await readFile(new URL('js/vendor/highlight-11.12.0.min.js', root), 'utf8'), context);
 test('Known code languages highlight; unknown or oversized blocks stay plain', () => {
     const html = render(fence + 'javascript\nconst voltage = 2.5;\n' + fence + '\n\n' + fence + 'unknown-language\n<tag>\n' + fence);

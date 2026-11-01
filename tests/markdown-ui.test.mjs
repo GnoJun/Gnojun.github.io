@@ -20,6 +20,7 @@ class FixtureElement {
         this.tagName = tag.toUpperCase(); this.ownerDocument = document;
         this.children = []; this.attributes = new Map(); this.dataset = {};
         this.listeners = new Map(); this.classes = new Set(); this._text = ''; this._html = '';
+        this.hidden = false; this.value = ''; this.checked = false;
         this.classList = {
             contains: name => this.classes.has(name),
             add: name => this.classes.add(name),
@@ -49,10 +50,18 @@ class FixtureElement {
         this.attributes.set(name, String(value));
         if (name === 'class') this.className = String(value);
         if (name === 'id') this.id = String(value);
+        if (['type', 'name', 'value'].includes(name)) this[name] = String(value);
+        if (name === 'hidden') this.hidden = true;
+        if (name === 'checked') this.checked = true;
         if (name.startsWith('data-')) this.dataset[name.slice(5).replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = String(value);
     }
     getAttribute(name) { return this.attributes.get(name) ?? null; }
     hasAttribute(name) { return this.attributes.has(name); }
+    removeAttribute(name) {
+        this.attributes.delete(name);
+        if (name === 'hidden') this.hidden = false;
+        if (name.startsWith('data-')) delete this.dataset[name.slice(5).replace(/-([a-z])/g, (_, c) => c.toUpperCase())];
+    }
     append(...children) { children.forEach(child => this.appendChild(child)); }
     appendChild(child) {
         child.parentElement = this; this.children.push(child);
@@ -66,9 +75,15 @@ class FixtureElement {
             part = part.trim();
             if (part === 'pre > code[class*="language-"]') return this.tagName === 'CODE' && this.parentElement?.tagName === 'PRE' && this.className.includes('language-');
             if (part === 'link[href*="katex"][rel="stylesheet"]') return this.tagName === 'LINK' && this.href?.includes('katex') && this.rel === 'stylesheet';
-            if (part.startsWith('.')) return this.classList.contains(part.slice(1));
-            if (/^\[[\w-]+\]$/.test(part)) return this.hasAttribute(part.slice(1, -1));
-            return this.tagName.toLowerCase() === part;
+            let matches = true;
+            part = part.replace(/\[([\w-]+)(?:=(?:"([^"]*)"|'([^']*)'|([^\]]+)))?\]/g, (_, name, quoted, single, bare) => {
+                const expected = quoted ?? single ?? bare;
+                matches &&= expected === undefined ? this.hasAttribute(name) : (this.getAttribute(name) ?? this[name]) === expected;
+                return '';
+            });
+            part = part.replace(/:checked/g, () => { matches &&= this.checked === true; return ''; });
+            part = part.replace(/\.([\w-]+)/g, (_, name) => { matches &&= this.classList.contains(name); return ''; });
+            return matches && (!part || this.tagName.toLowerCase() === part);
         });
     }
     closest(selector) { for (let node = this; node; node = node.parentElement) if (node.matches(selector)) return node; return null; }
@@ -150,6 +165,16 @@ async function harness({ sources = ['# Fixture\n\nArticle **content**.'], failur
     return {
         document, articles, loaded, copied, opened, errors, events, fetches, timers, selection, element,
         click(target, properties = {}) { document.dispatchEvent(new FixtureEvent('click', { target, ...properties })); },
+        submit(form) {
+            const event = new FixtureEvent('submit', { target: form, cancelable: true });
+            document.dispatchEvent(event); return event;
+        },
+        reset(form) {
+            const event = new FixtureEvent('reset', { target: form, cancelable: true });
+            document.dispatchEvent(event);
+            if (!event.defaultPrevented) for (const input of form.querySelectorAll('input')) { input.value = input.getAttribute('value') || ''; input.checked = input.hasAttribute('checked'); }
+            return event;
+        },
         changeHash(hash) {
             sandbox.location.hash = hash;
             sandbox.location.href = 'https://site.test/resources/fixture.html' + hash;
@@ -298,6 +323,103 @@ await check('Browsers without native dialogs open the image with noopener', asyn
 
 await check('Pages with no Markdown article load no assets or fetches', async () => {
     const h = await harness({ sources: [] }); assert.equal(h.loaded.length, 0); assert.equal(h.fetches.length, 0);
+});
+
+function quizControls(h, { kind = 'choice', answer = kind === 'choice' ? '1' : '2.5', unit = kind === 'numeric' ? 'V' : '', tolerance = '0.01', parent = h.articles[0] } = {}) {
+    const form = h.element('form', { class: 'markdown-quiz', 'data-quiz-kind': kind, 'data-quiz-answer': answer, 'data-quiz-unit': unit, 'data-quiz-tolerance': tolerance });
+    const feedback = h.element('p', { class: 'markdown-quiz-feedback', role: 'status', 'aria-live': 'polite' });
+    const explanation = h.element('div', { class: 'markdown-quiz-explanation', hidden: '' }, 'Worked explanation.');
+    let input; const radios = [];
+    if (kind === 'choice') {
+        for (const value of ['0', '1', '2']) {
+            const radio = h.element('input', { type: 'radio', name: 'quiz-' + h.document.querySelectorAll('form').length, value });
+            form.appendChild(radio); radios.push(radio);
+        }
+    } else {
+        input = h.element('input', { class: 'markdown-quiz-input', type: 'text', value: '' }); form.appendChild(input);
+    }
+    form.append(feedback, explanation); parent.appendChild(form);
+    return { form, feedback, explanation, input, radios };
+}
+
+function assertEmptyQuizFeedback(feedback) {
+    assert.equal(feedback.hidden, false, 'The live region remains available to assistive technology');
+    assert.equal(feedback.textContent, '');
+    assert.equal(feedback.dataset.state, undefined);
+}
+
+await check('Choice quizzes validate selection, explain a wrong answer, allow retry, and reset', async () => {
+    const h = await harness(); const q = quizControls(h);
+    assertEmptyQuizFeedback(q.feedback);
+    assert.equal(h.submit(q.form).defaultPrevented, true);
+    assert.equal(q.feedback.hidden, false); assert.match(q.feedback.textContent, /select|choose/i);
+    assert.equal(q.explanation.hidden, true);
+    q.radios[0].checked = true; h.submit(q.form);
+    assert.equal(q.form.dataset.quizState, 'incorrect'); assert.equal(q.explanation.hidden, false);
+    assert.match(q.feedback.textContent, /incorrect|not quite|try again/i);
+    q.radios[0].checked = false; q.radios[1].checked = true; h.submit(q.form);
+    assert.equal(q.form.dataset.quizState, 'correct'); assert.match(q.feedback.textContent, /correct/i);
+    h.reset(q.form); await nextTurn();
+    assert.ok(q.radios.every(radio => !radio.checked));
+    assertEmptyQuizFeedback(q.feedback); assert.equal(q.explanation.hidden, true);
+    assert.ok(!q.form.dataset.quizState);
+});
+
+await check('Quizzes stay independent and unrelated forms are not intercepted', async () => {
+    const h = await harness(); const first = quizControls(h); const second = quizControls(h);
+    first.radios[1].checked = true; h.submit(first.form);
+    assert.equal(first.form.dataset.quizState, 'correct');
+    assertEmptyQuizFeedback(second.feedback); assert.equal(second.explanation.hidden, true);
+    h.reset(second.form); await nextTurn(); assert.equal(first.form.dataset.quizState, 'correct');
+    const outside = quizControls(h, { parent: h.document.body });
+    outside.radios[1].checked = true;
+    assert.equal(h.submit(outside.form).defaultPrevented, false);
+    assertEmptyQuizFeedback(outside.feedback);
+    const ordinary = h.element('form'); h.articles[0].appendChild(ordinary);
+    assert.equal(h.submit(ordinary).defaultPrevented, false);
+});
+
+await check('Numeric quizzes accept equivalent units, scientific notation, and absolute tolerance', async () => {
+    const h = await harness(); const q = quizControls(h, { kind: 'numeric' });
+    for (const value of ['2.5', '2.5 V', '2500 mV', '2500000 uV', '2500000 µV', '2500000 μV', '2.5e3 mV', '2.509 V', '2.49 V']) {
+        q.input.value = value; h.submit(q.form);
+        assert.equal(q.form.dataset.quizState, 'correct', value);
+        assert.equal(q.explanation.hidden, false);
+    }
+    q.input.value = '2.52 V'; h.submit(q.form);
+    assert.equal(q.form.dataset.quizState, 'incorrect');
+    assert.equal(q.explanation.hidden, false);
+    h.reset(q.form); await nextTurn();
+    assert.equal(q.input.value, ''); assertEmptyQuizFeedback(q.feedback); assert.equal(q.explanation.hidden, true);
+});
+
+await check('Numeric invalid input cannot reveal an explanation or turn garbage into an answer', async () => {
+    const h = await harness(); const q = quizControls(h, { kind: 'numeric' });
+    for (const value of ['', '   ', 'NaN', 'Infinity', '2.5 V extra', '2.5 volts', '2.5 A', '2.5 <script>', '2,5 V']) {
+        h.reset(q.form); await nextTurn(); q.input.value = value; h.submit(q.form);
+        assert.equal(q.feedback.hidden, false, value);
+        assert.notEqual(q.form.dataset.quizState, 'correct', value);
+        assert.equal(q.explanation.hidden, true, value);
+    }
+});
+
+await check('Numeric grading preserves SI prefix case and handles engineering unit aliases', async () => {
+    const h = await harness();
+    const samples = [
+        { answer: '1000', unit: 'ohm', good: '1 kΩ', bad: '1 MΩ' },
+        { answer: '0.000001', unit: 'F', good: '1 uF', bad: '1 mF' },
+        { answer: '1000000', unit: 'Hz', good: '1 MHz', bad: '1 mHz' },
+        { answer: '0.001', unit: 's', good: '1 ms', bad: '1 Ms' },
+        { answer: '0.002', unit: 'A', good: '2 mA', bad: '2 MA' },
+        { answer: '4', unit: '', good: '4e0', bad: '4 V' }
+    ];
+    for (const sample of samples) {
+        const q = quizControls(h, { kind: 'numeric', answer: sample.answer, unit: sample.unit, tolerance: '0' });
+        q.input.value = sample.good; h.submit(q.form);
+        assert.equal(q.form.dataset.quizState, 'correct', sample.good);
+        q.input.value = sample.bad; h.submit(q.form);
+        assert.notEqual(q.form.dataset.quizState, 'correct', sample.bad);
+    }
 });
 
 export { results };

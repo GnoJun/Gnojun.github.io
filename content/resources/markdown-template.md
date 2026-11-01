@@ -2,7 +2,7 @@
 
 This is a live, copyable guide to writing articles on this website. Each example pairs **Markdown source** with its **rendered result**. Use the download buttons above to save this guide or a shorter article starter.
 
-The article supports the rich text you expect in a chat response: readable explanations, highlighted code, equations, tables, diagrams, and expandable answers. It publishes your writing as an article; it does not generate AI responses or create a chat conversation.
+The article supports the rich text you expect in a chat response: readable explanations, highlighted code, equations, tables, diagrams, expandable answers, and interactive quizzes. It publishes your writing as an article; it does not generate AI responses or create a chat conversation.
 
 > [!TIP] A useful teaching sequence
 > State the learning goal, explain one idea, work through an example, and finish with a question the reader can try.
@@ -434,6 +434,97 @@ You can also indent the entire block under a list item:
    :::details Reveal the hint
    Simplify the resistor ratio first.
    :::
+
+## Interactive quizzes
+
+Use one `:::quiz` block for each question. Readers select or enter an answer and choose **Check answer** to see feedback and the explanation. They can change their answer and try again, or choose **Reset** to clear the question. Answers are not saved when the page reloads.
+
+Separate the question from its explanation with `---`, leaving a blank line before and after the separator. Both parts support Markdown and equations. Close the quiz with `:::`.
+
+### Single-choice question
+
+Start with `:::quiz choice`. Write the question, then one task list with at least two options. Mark exactly one correct option with `[x]` and every other option with `[ ]`. These markers define the answer; the published quiz starts with no option selected.
+
+**Source**
+
+```markdown
+:::quiz choice
+For an unloaded voltage divider, keep $V_{\text{in}}$ and $R_1$
+fixed. What happens to $V_{\text{out}}$ when $R_2$ decreases?
+
+- [ ] The output voltage increases.
+- [x] The output voltage decreases.
+- [ ] The output voltage stays the same.
+
+---
+
+The ratio $R_2 / (R_1 + R_2)$ becomes smaller, so the output
+voltage decreases. This assumes the output has no connected load.
+:::
+```
+
+**Result**
+
+:::quiz choice
+For an unloaded voltage divider, keep $V_{\text{in}}$ and $R_1$
+fixed. What happens to $V_{\text{out}}$ when $R_2$ decreases?
+
+- [ ] The output voltage increases.
+- [x] The output voltage decreases.
+- [ ] The output voltage stays the same.
+
+---
+
+The ratio $R_2 / (R_1 + R_2)$ becomes smaller, so the output
+voltage decreases. This assumes the output has no connected load.
+:::
+
+### Numerical question
+
+Start with `:::quiz numeric` and set the expected answer in the opening line. The following example accepts `2.5`, `2.5 V`, or `2500 mV`.
+
+**Source**
+
+```markdown
+:::quiz numeric answer=2.5 unit=V tolerance=0.01
+An unloaded divider has $V_{\text{in}} = 5\,\text{V}$ and
+$R_1 = R_2 = 10\,\text{k}\Omega$. What is the output voltage?
+
+---
+
+Equal resistors split the input voltage equally:
+
+$$
+V_{\text{out}} = 5\frac{10}{10 + 10} = 2.5\,\text{V}
+$$
+:::
+```
+
+**Result**
+
+:::quiz numeric answer=2.5 unit=V tolerance=0.01
+An unloaded divider has $V_{\text{in}} = 5\,\text{V}$ and
+$R_1 = R_2 = 10\,\text{k}\Omega$. What is the output voltage?
+
+---
+
+Equal resistors split the input voltage equally:
+
+$$
+V_{\text{out}} = 5\frac{10}{10 + 10} = 2.5\,\text{V}
+$$
+:::
+
+| Setting | Meaning |
+| :--- | :--- |
+| `answer=2.5` | Required finite number, expressed in the declared unit. Scientific notation such as `answer=2.5e-3` is also accepted. |
+| `unit=V` | Optional unit. An answer without a unit uses this unit. Omit it for a dimensionless answer. |
+| `tolerance=0.01` | Optional absolute tolerance in the declared unit. Here, answers within 0.01 V of 2.5 V are correct. The default is zero. |
+
+Unit prefixes are case sensitive. Supported conversions use `p`, `n`, `u` (or `µ` / `μ`), `m`, `k`, `M`, and `G` with `V`, `A`, `ohm` / `Ω`, `F`, `H`, `Hz`, `s`, and `W`. For example, `mV` means millivolts while `MV` means megavolts. Other unit labels must match the declared unit exactly. A wrong or unrecognized unit prompts the reader to check the entry before the explanation is revealed.
+
+> [!TIP] Write useful feedback
+> Use the explanation to show the reasoning or a common mistake, rather than only repeating the correct answer. These quizzes are intended for practice; their answers are included in the article source.
 
 ## Footnotes
 
