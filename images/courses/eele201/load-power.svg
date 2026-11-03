@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="550" viewBox="0 0 1100 550" role="img" aria-labelledby="load-power-title load-power-desc">
   <title id="load-power-title">Source network for a load-power calculation</title>
-  <desc id="load-power-desc">An ideal 2 volt voltage source with its positive terminal on top connects the common bottom node B to a left top node. A 100 ohm resistor R1 is in parallel with that source. A 200 ohm resistor R2 connects the left top node to terminal A. A 300 ohm resistor R3 and an upward 50 milliampere current source each connect B to A. An optional load resistor RL is shown in a dashed branch between terminals A and B. The circuit follows Exam II Version 2 Problem 1 and is redrawn for clarity.</desc>
+  <desc id="load-power-desc">An ideal 2 volt voltage source with its positive terminal on top connects the common bottom node B to a left top node. A 100 ohm resistor R1 is in parallel with that source. A 200 ohm resistor R2 connects the left top node to terminal A. A 300 ohm resistor R3 and an upward 50 milliampere current source each connect B to A. An optional load resistor RL is shown in a dashed branch between terminals A and B. The port voltage is the potential at A relative to B, and the port equivalent determines the power delivered to the load.</desc>
   <defs>
     <marker id="source-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#244760"/></marker>
   </defs>
@@ -17,7 +17,7 @@
   </style>
   <rect width="1100" height="550" fill="#f6f8fb"/>
   <text class="heading" x="32" y="47">Find the source equivalent before choosing the load</text>
-  <text class="subtitle" x="32" y="79">Exam II, Version 2, Problem 1 · Port voltage: V(A) − V(B)</text>
+  <text class="subtitle" x="32" y="79">A two-terminal network delivers power to a load · Port voltage: V(A) − V(B)</text>
   <rect x="28" y="105" width="1044" height="352" rx="17" fill="#fff" stroke="#dce5ed"/>
 
   <path class="wire" d="M130 185 H340 M500 185 H850 M130 400 H850 M130 185 V258 M130 326 V400"/>

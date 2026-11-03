@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="540" viewBox="0 0 1100 540" role="img" aria-labelledby="current-divider-title current-divider-desc">
-  <title id="current-divider-title">Current division in a redrawn resistive network</title>
-  <desc id="current-divider-desc">A 1.25 ampere current source points upward from the common bottom node to the left top node. A 100 ohm resistor R1 connects those same nodes. A 200 ohm resistor R2 connects the left top node to a right top node. A 300 ohm resistor R3 and a 400 ohm resistor R4 each connect the right top node to the common bottom node. The requested current Ix points downward through R4. This is the topology of Exam I Version 2 Problem 3, redrawn without a diagonal branch.</desc>
+  <title id="current-divider-title">Two stages of current division through parallel branches</title>
+  <desc id="current-divider-desc">A 1.25 ampere current source points upward from the common bottom node to the left top node. A 100 ohm resistor R1 connects those same nodes. A 200 ohm resistor R2 connects the left top node to a right top node. A 300 ohm resistor R3 and a 400 ohm resistor R4 each connect the right top node to the common bottom node. The current Ix points downward through R4. Current first splits between R1 and the R2 branch, then splits between R3 and R4.</desc>
   <defs>
     <marker id="current-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#244760"/></marker>
     <marker id="ix-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#c26232"/></marker>
@@ -18,7 +18,7 @@
   </style>
   <rect width="1100" height="540" fill="#f6f8fb"/>
   <text class="heading" x="32" y="47">Recognize the two stages of current division</text>
-  <text class="subtitle" x="32" y="79">Exam I, Version 2, Problem 3 · Same connections, simpler layout</text>
+  <text class="subtitle" x="32" y="79">Identify parallel branches by their shared nodes, then apply current division at each split.</text>
   <rect x="28" y="105" width="1044" height="344" rx="17" fill="#fff" stroke="#dce5ed"/>
 
   <path class="wire" d="M140 180 H400 M570 180 H880 M140 400 H880 M140 180 V256 M140 324 V400"/>

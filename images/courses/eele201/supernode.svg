@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="590" viewBox="0 0 1100 590" role="img" aria-labelledby="supernode-title supernode-desc">
+  <title id="supernode-title">A supernode joins two unknown node voltages</title>
+  <desc id="supernode-desc">Nodes A and B connect through an ideal 2 volt voltage source, with its positive terminal at A. A 2 kiloohm resistor Ra connects A to the common ground, and a 3 kiloohm resistor Rb connects B to ground. An independent 2 milliampere current source points upward from ground into A. A dashed enclosure surrounds the two nodes and the voltage source. KCL around this enclosure gives VA divided by Ra plus VB divided by Rb equals 2 milliamperes. The source constraint is VA minus VB equals 2 volts. These equations give VA equals 3.2 volts and VB equals 1.2 volts.</desc>
+  <defs>
+    <marker id="supernode-source-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#244760"/></marker>
+  </defs>
+  <style>
+    text{font-family:Arial,Helvetica,sans-serif;fill:#17364f}
+    .heading{font-size:29px;font-weight:700}.subtitle{font-size:17px;fill:#526b80}
+    .label{font-size:22px;font-weight:600}.value{font-size:18px;fill:#526b80}
+    .equation{font-size:20px;fill:#244760}.wire{fill:none;stroke:#244760;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+    .node{fill:#244760}.accent{fill:#c26232}.enclosure{fill:#c26232;fill-opacity:.035;stroke:#c26232;stroke-width:2;stroke-dasharray:8 6}
+  </style>
+  <rect width="1100" height="590" fill="#f6f8fb"/>
+  <text class="heading" x="32" y="47">A voltage source links two unknown node voltages</text>
+  <text class="subtitle" x="32" y="79">Apply KCL around the pair, then add the voltage-source constraint.</text>
+  <rect x="28" y="105" width="1044" height="390" rx="17" fill="#fff" stroke="#dce5ed"/>
+
+  <rect class="enclosure" x="350" y="185" width="600" height="115" rx="16"/>
+  <text class="label accent" x="650" y="163" text-anchor="middle">Supernode</text>
+
+  <path class="wire" d="M160 245 H618 M682 245 H900 M160 245 V316 M160 384 V450 M160 450 H900"/>
+  <circle class="wire" cx="160" cy="350" r="34"/>
+  <path d="M160 368 V332" fill="none" stroke="#244760" stroke-width="3" marker-end="url(#supernode-source-arrow)"/>
+  <text class="label" x="210" y="343">Iₛ</text>
+  <text class="value" x="210" y="372">2 mA</text>
+
+  <circle class="wire" cx="650" cy="245" r="32"/>
+  <path class="wire" d="M631 245 H645 M638 238 V252 M656 245 H670"/>
+  <text class="value" x="650" y="329" text-anchor="middle">Vₛ = 2 V</text>
+
+  <path class="wire" d="M400 245 V316 L389 326 L411 338 L389 350 L411 362 L389 374 L411 386 L400 396 V450"/>
+  <text class="label" x="439" y="355">R<tspan baseline-shift="sub" font-size="16">a</tspan></text>
+  <text class="value" x="439" y="384">2 kΩ</text>
+
+  <path class="wire" d="M900 245 V316 L889 326 L911 338 L889 350 L911 362 L889 374 L911 386 L900 396 V450"/>
+  <text class="label" x="938" y="355">R<tspan baseline-shift="sub" font-size="16">b</tspan></text>
+  <text class="value" x="938" y="384">3 kΩ</text>
+
+  <circle class="node" cx="400" cy="245" r="5"/>
+  <circle class="node" cx="900" cy="245" r="5"/>
+  <circle class="node" cx="400" cy="450" r="4.5"/>
+  <text class="label" x="400" y="220" text-anchor="middle">A</text>
+  <text class="label" x="900" y="220" text-anchor="middle">B</text>
+  <path class="wire" d="M650 450 V468 M632 468 H668 M638 476 H662 M644 484 H656"/>
+
+  <text class="equation" x="32" y="532">KCL: V(A) / R<tspan baseline-shift="sub" font-size="14">a</tspan> + V(B) / R<tspan baseline-shift="sub" font-size="14">b</tspan> = 2 mA</text>
+  <text class="equation" x="650" y="532">Constraint: V(A) − V(B) = 2 V</text>
+  <text class="subtitle" x="32" y="566">The source current stays inside the enclosure, so it does not appear in the supernode KCL equation.</text>
+</svg>

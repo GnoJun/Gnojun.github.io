@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="585" viewBox="0 0 1100 585" role="img" aria-labelledby="mesh-analysis-title mesh-analysis-desc">
+  <title id="mesh-analysis-title">Two mesh currents share one resistor</title>
+  <desc id="mesh-analysis-desc">An ideal 6 volt voltage source has its positive terminal at the top on the left. A 1 kiloohm resistor R1 connects the source's top terminal to a top-center node. A vertical 2 kiloohm resistor Rm connects that node to the common bottom wire. A second 2 kiloohm resistor R2 connects the same node to the bottom wire through the right outer branch. Clockwise mesh current I1 flows up through the source, right through R1, and down through Rm. Clockwise mesh current I2 flows right along the top wire, down through R2, and up through Rm. The shared resistor's downward current is I1 minus I2. KVL gives I1 equals 3 milliamperes and I2 equals 1.5 milliamperes.</desc>
+  <defs>
+    <marker id="mesh-current-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#c26232"/></marker>
+  </defs>
+  <style>
+    text{font-family:Arial,Helvetica,sans-serif;fill:#17364f}
+    .heading{font-size:29px;font-weight:700}.subtitle{font-size:17px;fill:#526b80}
+    .label{font-size:22px;font-weight:600}.value{font-size:18px;fill:#526b80}
+    .equation{font-size:19px;fill:#244760}.wire{fill:none;stroke:#244760;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+    .node{fill:#244760}.mesh{fill:none;stroke:#c26232;stroke-width:2.5;stroke-linecap:round}
+    .accent{fill:#c26232}.mesh-label{font-size:25px;font-weight:600;fill:#c26232}
+  </style>
+  <rect width="1100" height="585" fill="#f6f8fb"/>
+  <text class="heading" x="32" y="47">Mesh currents turn loop voltages into equations</text>
+  <text class="subtitle" x="32" y="79">Choose clockwise reference currents. Each mesh contributes to the shared branch.</text>
+  <rect x="28" y="105" width="1044" height="370" rx="17" fill="#fff" stroke="#dce5ed"/>
+
+  <path class="wire" d="M160 190 H260 M420 190 H920 M160 190 V291 M160 359 V430 M160 430 H920"/>
+  <circle class="wire" cx="160" cy="325" r="34"/>
+  <path class="wire" d="M150 312 H170 M160 302 V322 M150 343 H170"/>
+  <text class="label" x="112" y="315" text-anchor="end">Vₛ</text>
+  <text class="value" x="112" y="345" text-anchor="end">6 V</text>
+
+  <path class="wire" d="M260 190 H272 L283 179 L299 201 L315 179 L331 201 L347 179 L363 201 L379 179 L395 201 L406 190 H420"/>
+  <text class="label" x="340" y="151" text-anchor="middle">R₁ = 1 kΩ</text>
+
+  <path class="wire" d="M580 190 V270 L569 280 L591 292 L569 304 L591 316 L569 328 L591 340 L580 350 V430"/>
+  <text class="label" x="617" y="302">Rₘ</text>
+  <text class="value" x="617" y="331">2 kΩ</text>
+
+  <path class="wire" d="M920 190 V270 L909 280 L931 292 L909 304 L931 316 L909 328 L931 340 L920 350 V430"/>
+  <text class="label" x="956" y="302">R₂</text>
+  <text class="value" x="956" y="331">2 kΩ</text>
+  <circle class="node" cx="580" cy="190" r="4.5"/>
+  <circle class="node" cx="580" cy="430" r="4.5"/>
+
+  <path class="mesh" d="M300 330 C295 266 380 254 410 300 C435 337 405 383 365 382" marker-end="url(#mesh-current-arrow)"/>
+  <text class="mesh-label" x="355" y="322" text-anchor="middle">I₁</text>
+  <text class="value accent" x="355" y="352" text-anchor="middle">3 mA</text>
+
+  <path class="mesh" d="M705 330 C700 266 785 254 815 300 C840 337 810 383 770 382" marker-end="url(#mesh-current-arrow)"/>
+  <text class="mesh-label" x="760" y="322" text-anchor="middle">I₂</text>
+  <text class="value accent" x="760" y="352" text-anchor="middle">1.5 mA</text>
+
+  <text class="equation" x="32" y="510">Left mesh: (1 kΩ + 2 kΩ) I₁ − (2 kΩ) I₂ = 6 V</text>
+  <text class="equation" x="32" y="540">Right mesh: −(2 kΩ) I₁ + (2 kΩ + 2 kΩ) I₂ = 0 V</text>
+  <text class="subtitle" x="32" y="570">Downward current through Rₘ: I₁ − I₂ = 1.5 mA. Curved arrows label the mesh reference directions.</text>
+</svg>

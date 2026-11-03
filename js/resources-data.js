@@ -112,7 +112,7 @@ const resourceLibrary = [
         "kind": "note",
         "category": "EELE 201",
         "title": "Circuits I",
-        "description": "EELE 201 Exam I and II review with worked examples on controlled sources, ideal meters, superposition, op-amps, equivalent circuits, and load power.",
+        "description": "Learn EELE 201 circuit concepts through explanations, diagrams, and worked examples of network analysis, controlled sources, measurements, feedback, and load power.",
         "tags": [
             "Courses",
             "EELE 201",
@@ -131,7 +131,7 @@ const resourceLibrary = [
         "external": false,
         "date": "2026-11-02",
         "status": "Documented",
-        "formulaSearch": "EELE201 circuits I exam review KCL KVL nodal mesh supernode controlled dependent source DMM superposition op amp Thevenin Norton maximum load power voltage divider RC RL time constant transient first order",
+        "formulaSearch": "EELE201 circuits I concepts KCL KVL nodal mesh supernode controlled dependent source DMM superposition op amp feedback Thevenin Norton maximum load power voltage current divider RC RL time constant transient first order",
         "resourceType": "Course Notes"
     },
     {

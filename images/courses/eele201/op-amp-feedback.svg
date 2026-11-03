@@ -17,7 +17,7 @@
   </style>
   <rect width="1200" height="720" fill="#f6f8fb"/>
   <text class="heading" x="32" y="47">Separate the amplifier output from the requested voltage</text>
-  <text class="subtitle" x="32" y="79">Exam II, Version 2, Problem 2 · Node labels support a step-by-step KCL solution</text>
+  <text class="subtitle" x="32" y="79">Use the input and feedback node voltages to apply KCL throughout the network.</text>
   <rect x="28" y="105" width="1144" height="534" rx="17" fill="#fff" stroke="#dce5ed"/>
 
   <!-- Input network: all three branches return to the same reference node. -->
