@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="540" viewBox="0 0 1100 540" role="img" aria-labelledby="current-divider-title current-divider-desc">
+  <title id="current-divider-title">Current division in a redrawn resistive network</title>
+  <desc id="current-divider-desc">A 1.25 ampere current source points upward from the common bottom node to the left top node. A 100 ohm resistor R1 connects those same nodes. A 200 ohm resistor R2 connects the left top node to a right top node. A 300 ohm resistor R3 and a 400 ohm resistor R4 each connect the right top node to the common bottom node. The requested current Ix points downward through R4. This is the topology of Exam I Version 2 Problem 3, redrawn without a diagonal branch.</desc>
+  <defs>
+    <marker id="current-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#244760"/></marker>
+    <marker id="ix-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#c26232"/></marker>
+  </defs>
+  <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #17364f; }
+    .heading { font-size: 29px; font-weight: 700; }
+    .subtitle { font-size: 17px; fill: #526b80; }
+    .label { font-size: 22px; font-weight: 600; }
+    .value { font-size: 19px; fill: #526b80; }
+    .wire { fill: none; stroke: #244760; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .node { fill: #244760; }
+    .accent { fill: #c26232; }
+    .note { font-size: 18px; }
+  </style>
+  <rect width="1100" height="540" fill="#f6f8fb"/>
+  <text class="heading" x="32" y="47">Recognize the two stages of current division</text>
+  <text class="subtitle" x="32" y="79">Exam I, Version 2, Problem 3 · Same connections, simpler layout</text>
+  <rect x="28" y="105" width="1044" height="344" rx="17" fill="#fff" stroke="#dce5ed"/>
+
+  <path class="wire" d="M140 180 H400 M570 180 H880 M140 400 H880 M140 180 V256 M140 324 V400"/>
+  <circle class="wire" cx="140" cy="290" r="34"/>
+  <path d="M140 308 V273" fill="none" stroke="#244760" stroke-width="3" marker-end="url(#current-arrow)"/>
+  <text class="label" x="91" y="282" text-anchor="end">Iₛ</text>
+  <text class="value" x="91" y="309" text-anchor="end">1.25 A</text>
+
+  <path class="wire" d="M320 180 V244 L309 253 L331 265 L309 277 L331 289 L309 301 L331 313 L309 325 L320 336 V400"/>
+  <text class="label" x="350" y="281">R₁</text>
+  <text class="value" x="350" y="309">100 Ω</text>
+
+  <path class="wire" d="M400 180 H418 L429 169 L445 191 L461 169 L477 191 L493 169 L509 191 L525 169 L541 191 L552 180 H570"/>
+  <text class="label" x="485" y="141" text-anchor="middle">R₂ = 200 Ω</text>
+  <path class="wire" d="M650 180 V244 L639 253 L661 265 L639 277 L661 289 L639 301 L661 313 L639 325 L650 336 V400"/>
+  <text class="label" x="683" y="281">R₃</text>
+  <text class="value" x="683" y="309">300 Ω</text>
+
+  <path class="wire" d="M880 180 V244 L869 253 L891 265 L869 277 L891 289 L869 301 L891 313 L869 325 L880 336 V400"/>
+  <text class="label" x="828" y="281" text-anchor="end">R₄</text>
+  <text class="value" x="828" y="309" text-anchor="end">400 Ω</text>
+  <path d="M956 250 V325" fill="none" stroke="#c26232" stroke-width="3.5" marker-end="url(#ix-arrow)"/>
+  <text class="label accent" x="975" y="295">Iₓ</text>
+
+  <circle class="node" cx="320" cy="180" r="4.5"/><circle class="node" cx="320" cy="400" r="4.5"/>
+  <circle class="node" cx="650" cy="180" r="4.5"/><circle class="node" cx="650" cy="400" r="4.5"/>
+  <path class="wire" d="M500 400 V418 M481 418 H519 M487 426 H513 M494 434 H506"/>
+  <text class="note" x="32" y="484">First split: R₁ versus [R₂ + (R₃ ∥ R₄)]. Then split the right-branch current between R₃ and R₄.</text>
+  <text class="subtitle" x="32" y="515">R₃ and R₄ share the same two nodes. Their appearance on the page does not determine their connection.</text>
+</svg>

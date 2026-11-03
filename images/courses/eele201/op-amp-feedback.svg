@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="op-amp-title op-amp-desc">
+  <title id="op-amp-title">Ideal op-amp feedback network with an output measured across a resistor</title>
+  <desc id="op-amp-desc">The noninverting input voltage is u. R1 of 1 kiloohm connects u to ground. A 2 milliampere current source points upward from ground to u. A 2.5 volt source, positive at u, is in series with R2 of 2 kiloohms to ground. The inverting input is a separate node v minus, equal in voltage to u only under linear negative feedback. R3 of 3 kiloohms connects v minus to ground, and R4 of 4 kiloohms connects it to node w. R5 of 5 kiloohms connects the actual op-amp output vo to w. R6 of 6 kiloohms connects w to ground. The amplifier supplies are plus and minus 20 volts. The requested Vout is vo minus w, the voltage across R5, positive at its upper end, rather than vo relative to ground.</desc>
+  <defs>
+    <marker id="op-amp-current-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#244760"/></marker>
+  </defs>
+  <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #17364f; }
+    .heading { font-size: 29px; font-weight: 700; }
+    .subtitle { font-size: 17px; fill: #526b80; }
+    .label { font-size: 22px; font-weight: 600; }
+    .value { font-size: 18px; fill: #526b80; }
+    .wire { fill: none; stroke: #244760; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .node { fill: #244760; }
+    .accent { fill: #c26232; }
+    .measure { font-size: 24px; font-weight: 600; fill: #c26232; }
+  </style>
+  <rect width="1200" height="720" fill="#f6f8fb"/>
+  <text class="heading" x="32" y="47">Separate the amplifier output from the requested voltage</text>
+  <text class="subtitle" x="32" y="79">Exam II, Version 2, Problem 2 · Node labels support a step-by-step KCL solution</text>
+  <rect x="28" y="105" width="1144" height="534" rx="17" fill="#fff" stroke="#dce5ed"/>
+
+  <!-- Input network: all three branches return to the same reference node. -->
+  <path class="wire" d="M130 230 H790 M130 600 H1000"/>
+  <path class="wire" d="M130 230 V356 L119 365 L141 377 L119 389 L141 401 L119 413 L141 425 L119 437 L130 448 V600"/>
+  <text class="label" x="164" y="392">R₁</text>
+  <text class="value" x="164" y="420">1 kΩ</text>
+
+  <path class="wire" d="M320 230 V365 M320 435 V600"/>
+  <circle class="wire" cx="320" cy="400" r="35"/>
+  <path d="M320 419 V381" fill="none" stroke="#244760" stroke-width="3" marker-end="url(#op-amp-current-arrow)"/>
+  <text class="label" x="366" y="391">Iₛ</text>
+  <text class="value" x="366" y="419">2 mA</text>
+
+  <path class="wire" d="M510 230 V307 M510 373 V418 L499 427 L521 439 L499 451 L521 463 L499 475 L521 487 L499 499 L510 510 V600"/>
+  <circle class="wire" cx="510" cy="340" r="33"/>
+  <path class="wire" d="M500 327 H520 M510 317 V337 M500 354 H520"/>
+  <text class="label" x="555" y="331">Vᵢₙ</text>
+  <text class="value" x="555" y="359">2.5 V</text>
+  <text class="label" x="546" y="459">R₂</text>
+  <text class="value" x="546" y="487">2 kΩ</text>
+
+  <circle class="node" cx="320" cy="230" r="4.5"/>
+  <circle class="node" cx="510" cy="230" r="4.5"/>
+  <text class="label accent" x="694" y="211">u</text>
+
+  <!-- Ideal op-amp: the two input nodes are not joined by a wire. -->
+  <path d="M790 196 L895 265 L790 334 Z" fill="#eef4f8" stroke="#244760" stroke-width="3" stroke-linejoin="round"/>
+  <text class="label" x="805" y="238">+</text>
+  <text class="label" x="805" y="306">−</text>
+  <path class="wire" d="M832 224 V179 M832 306 V358 M895 265 H1000"/>
+  <text class="value" x="832" y="158" text-anchor="middle">+20 V</text>
+  <text class="value" x="832" y="383" text-anchor="middle">−20 V</text>
+  <text class="label accent" x="1020" y="261">vₒ</text>
+
+  <!-- Feedback divider: v-minus connects to R3 and R4; w connects R4, R5, R6. -->
+  <path class="wire" d="M790 300 H740 V440 M740 440 V466 L729 475 L751 487 L729 499 L751 511 L729 523 L751 535 L740 546 V600"/>
+  <text class="label accent" x="709" y="371" text-anchor="end">v<tspan baseline-shift="sub" font-size="16">−</tspan> = u</text>
+  <text class="label" x="702" y="505" text-anchor="end">R₃</text>
+  <text class="value" x="702" y="533" text-anchor="end">3 kΩ</text>
+
+  <path class="wire" d="M740 440 H817 L828 429 L844 451 L860 429 L876 451 L892 429 L908 451 L924 429 L940 451 L951 440 H1000"/>
+  <text class="label" x="885" y="415" text-anchor="middle">R₄ = 4 kΩ</text>
+
+  <path class="wire" d="M1000 265 V298 L989 307 L1011 319 L989 331 L1011 343 L989 355 L1011 367 L989 379 L1000 390 V440"/>
+  <text class="label" x="958" y="334" text-anchor="end">R₅</text>
+  <text class="value" x="958" y="362" text-anchor="end">5 kΩ</text>
+  <text class="measure" x="1050" y="300">+</text>
+  <text class="measure" x="1050" y="352">V<tspan baseline-shift="sub" font-size="16">out</tspan></text>
+  <text class="measure" x="1050" y="428">−</text>
+
+  <path class="wire" d="M1000 440 V466 L989 475 L1011 487 L989 499 L1011 511 L989 523 L1011 535 L1000 546 V600"/>
+  <text class="label" x="1035" y="504">R₆</text>
+  <text class="value" x="1035" y="532">6 kΩ</text>
+  <text class="label accent" x="1021" y="456">w</text>
+
+  <circle class="node" cx="740" cy="440" r="4.5"/>
+  <circle class="node" cx="1000" cy="440" r="4.5"/>
+  <circle class="node" cx="320" cy="600" r="4.5"/>
+  <circle class="node" cx="510" cy="600" r="4.5"/>
+  <circle class="node" cx="740" cy="600" r="4.5"/>
+  <path class="wire" d="M620 600 V612 M601 612 H639 M607 620 H633 M614 628 H626"/>
+
+  <text class="subtitle" x="32" y="672">Vout is the drop across R₅: vₒ − w. It is not the amplifier output voltage vₒ measured relative to ground.</text>
+  <text class="subtitle" x="32" y="703">The equality v− = u assumes linear operation with negative feedback; the input nodes are not physically shorted.</text>
+</svg>

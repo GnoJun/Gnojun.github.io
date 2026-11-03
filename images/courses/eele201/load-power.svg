@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="550" viewBox="0 0 1100 550" role="img" aria-labelledby="load-power-title load-power-desc">
+  <title id="load-power-title">Source network for a load-power calculation</title>
+  <desc id="load-power-desc">An ideal 2 volt voltage source with its positive terminal on top connects the common bottom node B to a left top node. A 100 ohm resistor R1 is in parallel with that source. A 200 ohm resistor R2 connects the left top node to terminal A. A 300 ohm resistor R3 and an upward 50 milliampere current source each connect B to A. An optional load resistor RL is shown in a dashed branch between terminals A and B. The circuit follows Exam II Version 2 Problem 1 and is redrawn for clarity.</desc>
+  <defs>
+    <marker id="source-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#244760"/></marker>
+  </defs>
+  <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #17364f; }
+    .heading { font-size: 29px; font-weight: 700; }
+    .subtitle { font-size: 17px; fill: #526b80; }
+    .label { font-size: 22px; font-weight: 600; }
+    .value { font-size: 18px; fill: #526b80; }
+    .wire { fill: none; stroke: #244760; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .node { fill: #244760; }
+    .optional { fill: none; stroke: #c26232; stroke-width: 3; stroke-dasharray: 7 6; stroke-linecap: round; stroke-linejoin: round; }
+    .accent { fill: #c26232; }
+  </style>
+  <rect width="1100" height="550" fill="#f6f8fb"/>
+  <text class="heading" x="32" y="47">Find the source equivalent before choosing the load</text>
+  <text class="subtitle" x="32" y="79">Exam II, Version 2, Problem 1 · Port voltage: V(A) − V(B)</text>
+  <rect x="28" y="105" width="1044" height="352" rx="17" fill="#fff" stroke="#dce5ed"/>
+
+  <path class="wire" d="M130 185 H340 M500 185 H850 M130 400 H850 M130 185 V258 M130 326 V400"/>
+  <circle class="wire" cx="130" cy="292" r="34"/>
+  <path class="wire" d="M120 280 H140 M130 270 V290 M120 306 H140"/>
+  <text class="label" x="84" y="284" text-anchor="end">Vₛ</text>
+  <text class="value" x="84" y="311" text-anchor="end">2 V</text>
+
+  <path class="wire" d="M285 185 V245 L274 254 L296 266 L274 278 L296 290 L274 302 L296 314 L274 326 L285 337 V400"/>
+  <text class="label" x="316" y="281">R₁</text>
+  <text class="value" x="316" y="309">100 Ω</text>
+
+  <path class="wire" d="M340 185 H352 L363 174 L379 196 L395 174 L411 196 L427 174 L443 196 L459 174 L475 196 L486 185 H500"/>
+  <text class="label" x="420" y="145" text-anchor="middle">R₂ = 200 Ω</text>
+
+  <path class="wire" d="M560 185 V245 L549 254 L571 266 L549 278 L571 290 L549 302 L571 314 L549 326 L560 337 V400"/>
+  <text class="label" x="591" y="281">R₃</text>
+  <text class="value" x="591" y="309">300 Ω</text>
+
+  <path class="wire" d="M745 185 V258 M745 326 V400"/>
+  <circle class="wire" cx="745" cy="292" r="34"/>
+  <path d="M745 310 V274" fill="none" stroke="#244760" stroke-width="3" marker-end="url(#source-arrow)"/>
+  <text class="label" x="790" y="281">Iₛ</text>
+  <text class="value" x="790" y="309">50 mA</text>
+
+  <circle class="node" cx="285" cy="185" r="4.5"/><circle class="node" cx="285" cy="400" r="4.5"/>
+  <circle class="node" cx="560" cy="185" r="4.5"/><circle class="node" cx="560" cy="400" r="4.5"/>
+  <circle class="node" cx="745" cy="185" r="4.5"/><circle class="node" cx="745" cy="400" r="4.5"/>
+  <circle class="node" cx="850" cy="185" r="5.5"/><circle class="node" cx="850" cy="400" r="5.5"/>
+  <text class="label" x="848" y="160" text-anchor="middle">A</text>
+  <text class="label" x="848" y="431" text-anchor="middle">B</text>
+
+  <path class="optional" d="M856 185 H960 V243 M960 339 V400 H856"/>
+  <path d="M960 243 V252 L949 261 L971 273 L949 285 L971 297 L949 309 L971 321 L960 331 V339" fill="none" stroke="#c26232" stroke-width="3" stroke-linejoin="round"/>
+  <text class="label accent" x="995" y="290">Rₗ</text>
+  <text class="value accent" x="960" y="431" text-anchor="middle">optional load</text>
+
+  <path class="wire" d="M445 400 V422 M426 422 H464 M432 430 H458 M439 438 H451"/>
+  <text class="subtitle" x="32" y="492">For Vₜₕ, leave the load disconnected. For Rₜₕ, short the independent voltage source and open the current source.</text>
+  <text class="subtitle" x="32" y="523">The load connects across A and B; it is separate from the original source network.</text>
+</svg>
