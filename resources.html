@@ -323,10 +323,18 @@
                     <label class="library-sort" for="resource-sort"><span>Sort by</span><select id="resource-sort" aria-controls="resource-list"><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label>
                 </div>
                 <div class="library-results-heading">
-                    <div class="library-results-label"><h2 id="resource-results-title">All resources</h2><p id="resource-status" role="status" aria-live="polite" aria-atomic="true"></p></div>
+                    <div class="library-results-label"><h2 id="resource-results-title" tabindex="-1">All resources</h2><p id="resource-status" role="status" aria-live="polite" aria-atomic="true"></p></div>
                     <button class="library-reset" id="resource-reset-inline" type="button" hidden>Reset filters</button>
                 </div>
                 <ul class="resource-list" id="resource-list" aria-labelledby="resource-results-title"></ul>
+                <nav class="library-pagination" id="resource-pagination" aria-label="Resource pages" hidden>
+                    <p id="resource-page-status"></p>
+                    <div class="library-pagination-controls">
+                        <button id="resource-page-prev" type="button" aria-controls="resource-list">Previous</button>
+                        <div class="library-page-numbers" id="resource-page-numbers"></div>
+                        <button id="resource-page-next" type="button" aria-controls="resource-list">Next</button>
+                    </div>
+                </nav>
                 <div class="library-empty" id="resources-empty-state" hidden>
                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5M8 10.5h5"></path></svg>
                     <h3>No matching resources</h3>

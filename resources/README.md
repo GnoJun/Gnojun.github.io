@@ -6,7 +6,7 @@ Course notes, engineering notes, components, and references share one library an
 
 - `resources.html`: searchable library with sidebar categories, a course filter, and always-visible topic and date-sorting controls.
 - `js/resources-data.js`: the single `resourceLibrary` catalogue, also used on the homepage.
-- `js/resources.js`: search, category counts, topic filtering, sorting, and combined formula/specification previews.
+- `js/resources.js`: search, category counts, topic filtering, sorting, pagination, and combined formula/specification previews.
 - `content/resources/`: all resource Markdown articles.
 - `resources/_resource-template.html`: common article shell.
 - `content/resources/_resource-template.md`: Markdown starting point.
@@ -41,7 +41,17 @@ The homepage's **Latest resources** section automatically shows the three newest
 
 The sidebar groups resources by type and shows each category's total count. Course notes have a dedicated filter. Topic and sort controls stay visible beside the search results; topic choices narrow to the selected type, and switching types clears an incompatible topic. The topic menu always opens below its button and scrolls internally for long lists. Use arrow keys, Home/End, or type a topic prefix to navigate, Enter/Space to select, and Escape to close without changing the selection. Each result shows its essential metadata, while formulas and specifications share a single expandable **Preview**. On small screens, categories become a horizontally scrollable row.
 
-`?type=course`, `?type=note`, `?type=component`, `?type=reference`, `?q=ESP32`, `?topic=Display`, and `?sort=oldest` can be combined to share a filtered view. Sorting offers **Newest first** (the default) and **Oldest first**, based on each resource's date. The default newest order omits `sort` from the URL; legacy `sort=title` and invalid values fall back to newest first. Resetting filters also restores newest first. `type=course` selects note entries with `resourceType: "Course Notes"`; `type=note` continues to include every `kind: "note"` entry, including course notes.
+`?type=course`, `?type=note`, `?type=component`, `?type=reference`, `?q=ESP32`, `?topic=Display`, `?sort=oldest`, and `?page=2` can be combined to share a filtered view and its page. Sorting offers **Newest first** (the default) and **Oldest first**, based on each resource's date. The default newest order omits `sort` from the URL; legacy `sort=title` and invalid values fall back to newest first. Resetting filters also restores newest first. `type=course` selects note entries with `resourceType: "Course Notes"`; `type=note` continues to include every `kind: "note"` entry, including course notes.
+
+### Pagination
+
+The library shows up to **12 resources per page**. Search, type and topic filters, and sorting apply to the entire catalogue before the matching results are divided into pages. Results on later pages remain searchable; pagination does not limit the data being filtered. The result count describes the full matching set, while the current-page status identifies the page being displayed.
+
+Use **Previous**, **Next**, or a numbered page control to move through results. The current page is marked in the controls. Pagination is hidden when the matching results fit on one page; when nothing matches, the library shows its existing empty state without pagination.
+
+Changing the search, resource type, topic, or sort order returns to page 1. Clearing the search or resetting all filters also returns to page 1. Later pages are stored in the URL as `page=2`, `page=3`, and so on; page 1 omits the `page` parameter. For example, `resources.html?page=2&sort=oldest` opens the second page in oldest-first order. Browser Back and Forward restore the page together with its search, filters, and sort order. Invalid page values fall back to page 1; pages beyond the available results are clamped to the last page. These corrections also update the URL without adding a history entry.
+
+To change the number of resources per page, edit the `PAGE_SIZE` constant in `js/resources.js`. The catalogue entries and article files do not need to change.
 
 ## Course notes
 

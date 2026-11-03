@@ -15,6 +15,12 @@
     const empty = document.querySelector('#resources-empty-state');
     const heading = document.querySelector('#resource-results-title');
     const total = document.querySelector('#resource-total');
+    const pagination = document.querySelector('#resource-pagination');
+    const previousPage = document.querySelector('#resource-page-prev');
+    const nextPage = document.querySelector('#resource-page-next');
+    const pageNumbers = document.querySelector('#resource-page-numbers');
+    const pageStatus = document.querySelector('#resource-page-status');
+    const PAGE_SIZE = 12;
     const buttons = [...document.querySelectorAll('[data-resource-type]')];
     const labels = { note: 'Note', component: 'Component', reference: 'Reference' };
     const titles = { all: 'All resources', course: 'Course notes', note: 'Notes & formulas', component: 'Components', reference: 'Tools & references' };
@@ -38,6 +44,8 @@
     ].join(' ')) }));
     const dateFormat = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
     let type = 'all';
+    let page = 1;
+    let pageCount = 1;
     let topicOptions = [];
     let activeTopic = 0;
     let topicQuery = '';
@@ -72,6 +80,7 @@
     function selectTopic(value) {
         topic.value = value;
         closeTopicPicker();
+        page = 1;
         render();
         topicToggle.focus();
     }
@@ -116,6 +125,9 @@
         search.value = params.get('q') || '';
         updateTopics(params.get('topic'));
         sort.value = params.get('sort') === 'oldest' ? 'oldest' : 'newest';
+        const pageParam = params.get('page') || '';
+        const requestedPage = Number(pageParam);
+        page = /^[1-9]\d*$/.test(pageParam) && Number.isSafeInteger(requestedPage) ? requestedPage : 1;
     }
     function resourceRow(item) {
         let url = '';
@@ -144,35 +156,89 @@
             </div>
         </li>`;
     }
-    function render(updateUrl = true) {
+    function renderPagination() {
+        pagination.hidden = pageCount <= 1;
+        previousPage.disabled = page === 1;
+        nextPage.disabled = page === pageCount;
+        pageStatus.textContent = `Page ${page} of ${pageCount}`;
+        pageNumbers.replaceChildren();
+        if (pagination.hidden) return;
+        // Keep nearby pages and both ends visible as the catalogue grows.
+        const nearby = new Set([1, pageCount, page - 1, page, page + 1]);
+        if (page <= 3) [2, 3, 4].forEach(number => nearby.add(number));
+        if (page >= pageCount - 2) [pageCount - 3, pageCount - 2, pageCount - 1].forEach(number => nearby.add(number));
+        let last = 0;
+        [...nearby].filter(number => number >= 1 && number <= pageCount).sort((a, b) => a - b).forEach(number => {
+            if (last && number - last > 1) {
+                const ellipsis = document.createElement('span');
+                ellipsis.className = 'library-page-ellipsis';
+                ellipsis.textContent = '…';
+                ellipsis.setAttribute('aria-hidden', 'true');
+                pageNumbers.append(ellipsis);
+            }
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = number;
+            button.setAttribute('data-resource-page', number);
+            button.setAttribute('aria-label', `Page ${number}`);
+            button.setAttribute('aria-controls', 'resource-list');
+            if (number === page) button.setAttribute('aria-current', 'page');
+            button.addEventListener('click', () => goToPage(number));
+            pageNumbers.append(button);
+            last = number;
+        });
+    }
+    function goToPage(number) {
+        if (number < 1 || number > pageCount || number === page) return;
+        page = number;
+        render(true, 'push');
+        heading.focus({ preventScroll: true });
+        heading.scrollIntoView({ block: 'start', behavior: 'auto' });
+    }
+    function render(updateUrl = true, historyMode = 'replace') {
         const words = normalize(search.value).split(/\s+/).filter(Boolean);
         const visible = items.filter(item => matchesType(item, type)
             && (topic.value === 'all' || item.category === topic.value)
             && words.every(word => item.searchText.includes(word)));
         visible.sort((a, b) => (sort.value === 'newest' ? -1 : 1) * (a.date || '').localeCompare(b.date || '') || a.title.localeCompare(b.title));
-        list.innerHTML = visible.map(resourceRow).join('');
+        pageCount = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+        page = Math.max(1, Math.min(page, pageCount));
+        const start = (page - 1) * PAGE_SIZE;
+        const end = Math.min(start + PAGE_SIZE, visible.length);
+        list.innerHTML = visible.slice(start, end).map(resourceRow).join('');
         empty.hidden = visible.length > 0;
         list.hidden = visible.length === 0;
         clear.hidden = search.value.length === 0;
         resetInline.hidden = search.value.length === 0 && type === 'all' && topic.value === 'all' && sort.value === 'newest';
         heading.textContent = titles[type];
         syncTopicPicker();
-        status.textContent = visible.length === items.length
-            ? `${items.length} resources`
-            : `${visible.length} of ${items.length} resources`;
+        status.textContent = visible.length ? `Showing ${start + 1}–${end} of ${visible.length} resources` : '0 resources';
+        renderPagination();
         buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.resourceType === type)));
         if (updateUrl) {
             const url = new URL(location.href);
-            for (const key of ['q', 'type', 'topic', 'sort']) url.searchParams.delete(key);
+            for (const key of ['q', 'type', 'topic', 'sort', 'page']) url.searchParams.delete(key);
             if (search.value.trim()) url.searchParams.set('q', search.value.trim());
             if (type !== 'all') url.searchParams.set('type', type);
             if (topic.value !== 'all') url.searchParams.set('topic', topic.value);
             if (sort.value !== 'newest') url.searchParams.set('sort', sort.value);
-            history.replaceState(null, '', url);
+            if (page > 1) url.searchParams.set('page', page);
+            if (historyMode === 'push') history.pushState(null, '', url);
+            else history.replaceState(null, '', url);
+        } else {
+            // Keep direct links and restored history in sync after clamping.
+            const url = new URL(location.href);
+            const canonicalPage = page > 1 ? String(page) : null;
+            if (url.searchParams.get('page') !== canonicalPage) {
+                if (canonicalPage) url.searchParams.set('page', canonicalPage);
+                else url.searchParams.delete('page');
+                history.replaceState(null, '', url);
+            }
         }
     }
     buttons.forEach(button => button.addEventListener('click', () => {
         type = button.dataset.resourceType;
+        page = 1;
         updateTopics();
         render();
     }));
@@ -190,13 +256,13 @@
         event.preventDefault();
         search.focus();
     });
-    search.addEventListener('input', () => render());
+    search.addEventListener('input', () => { page = 1; render(); });
     search.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && !event.isComposing) { search.value = ''; render(); }
+        if (event.key === 'Escape' && !event.isComposing) { search.value = ''; page = 1; render(); }
     });
     document.querySelector('#library-search-form').addEventListener('submit', event => event.preventDefault());
-    clear.addEventListener('click', () => { search.value = ''; render(); search.focus(); });
-    topic.addEventListener('change', () => render());
+    clear.addEventListener('click', () => { search.value = ''; page = 1; render(); search.focus(); });
+    topic.addEventListener('change', () => { page = 1; render(); });
     topicToggle.addEventListener('click', () => {
         if (topicMenu.hidden) openTopicPicker();
         else closeTopicPicker();
@@ -243,9 +309,11 @@
     document.addEventListener('focusin', event => {
         if (!topicPicker.contains(event.target)) closeTopicPicker();
     });
-    sort.addEventListener('change', () => render());
+    sort.addEventListener('change', () => { page = 1; render(); });
+    previousPage.addEventListener('click', () => goToPage(page - 1));
+    nextPage.addEventListener('click', () => goToPage(page + 1));
     function resetFilters() {
-        search.value = ''; type = 'all'; sort.value = 'newest';
+        search.value = ''; type = 'all'; sort.value = 'newest'; page = 1;
         updateTopics('all');
         render(); search.focus();
     }

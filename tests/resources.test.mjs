@@ -30,6 +30,7 @@ class FixtureElement {
         this.children = [];
         this.listeners = new Map();
         this.hidden = false;
+        this.disabled = false;
         this.open = false;
         this._value = '';
         this._html = '';
@@ -42,12 +43,14 @@ class FixtureElement {
         if (name === 'id') this.id = String(value);
         if (name === 'value') this._value = String(value);
         if (name === 'hidden') this.hidden = true;
+        if (name === 'disabled') this.disabled = true;
         if (name.startsWith('data-')) this.dataset[name.slice(5).replace(/-([a-z])/g, (_, char) => char.toUpperCase())] = String(value);
     }
     getAttribute(name) { return this.attributes.get(name) ?? null; }
     hasAttribute(name) { return this.attributes.has(name); }
     removeAttribute(name) {
         this.attributes.delete(name);
+        if (name === 'disabled') this.disabled = false;
         if (name.startsWith('data-')) delete this.dataset[name.slice(5).replace(/-([a-z])/g, (_, char) => char.toUpperCase())];
     }
     get value() { return this._value; }
@@ -98,7 +101,7 @@ class FixtureElement {
     }
     focus() { this.ownerDocument.activeElement = this; }
     contains(node) { return node === this || this.children.some(child => child.contains(node)); }
-    scrollIntoView() { this.scrollCalls = (this.scrollCalls || 0) + 1; }
+    scrollIntoView(options) { this.scrollCalls = (this.scrollCalls || 0) + 1; this.scrollOptions = options; }
     matches(selector) {
         if (selector.includes(',')) return selector.split(',').some(part => this.matches(part.trim()));
         if (selector.startsWith('#')) return this.id === selector.slice(1);
@@ -142,9 +145,13 @@ function createLibrary(query = '', mutateItems) {
     const location = new URL('https://site.test/resources.html' + query);
     const window = new FixtureElement('window');
     const replacedURLs = [];
+    const pushedURLs = [];
     const context = vm.createContext({
         document, window, location, URL, URLSearchParams, console, Event: FixtureEvent,
-        history: { replaceState(_state, _title, url) { location.href = String(url); replacedURLs.push(String(url)); } },
+        history: {
+            replaceState(_state, _title, url) { location.href = String(url); replacedURLs.push(String(url)); },
+            pushState(_state, _title, url) { location.href = String(url); pushedURLs.push(String(url)); }
+        },
         renderMathElements(element) { element.mathRenderCalls = (element.mathRenderCalls || 0) + 1; }
     });
     vm.runInContext(dataSource, context, { filename: 'resources-data.js' });
@@ -155,16 +162,28 @@ function createLibrary(query = '', mutateItems) {
     const button = type => document.querySelector(`[data-resource-type="${type}"]`);
     const search = value => { get('resource-search').value = value; get('resource-search').dispatch('input'); };
     const change = (id, value) => { get(id).value = value; get(id).dispatch('change'); };
-    return { document, window, location, items, get, button, search, change, replacedURLs };
+    return { document, window, location, items, get, button, search, change, replacedURLs, pushedURLs };
 }
 
 const rows = library => [...library.get('resource-list').innerHTML.matchAll(/<li\b[^>]*class="resource-row\b[\s\S]*?<\/li>/g)].map(match => match[0]);
+const rowIDs = library => [...library.get('resource-list').innerHTML.matchAll(/data-resource-id="([^"]+)"/g)].map(match => match[1]);
+const pageButton = (library, number) => library.get('resource-page-numbers').querySelector(`[data-resource-page="${number}"]`);
+function collectPages(library) {
+    const allRows = [...rows(library)];
+    let visited = 1;
+    while (!library.get('resource-page-next').disabled) {
+        assert.ok(visited++ < 100, 'Pagination must eventually reach its final page');
+        library.get('resource-page-next').dispatch('click');
+        allRows.push(...rows(library));
+    }
+    return allRows;
+}
 let passed = 0;
 function test(name, check) { check(); passed++; console.log('PASS ' + name); }
 
-test('The default library shows every item newest first and offers only date sorting', () => {
+test('The default library shows twelve items newest first and offers only date sorting', () => {
     const library = createLibrary();
-    assert.equal(rows(library).length, library.items.length);
+    assert.equal(rows(library).length, Math.min(12, library.items.length));
     assert.equal(library.get('resources-empty-state').hidden, true);
     assert.equal(library.button('all').getAttribute('aria-pressed'), 'true');
     assert.equal(library.get('resource-list').mathRenderCalls, undefined);
@@ -216,7 +235,7 @@ test('Zero matches announces an empty state and reset restores the library', () 
     assert.equal(library.get('resource-list').hidden, true);
     assert.equal(library.get('resource-reset-inline').hidden, false);
     library.get('resource-reset').dispatch('click');
-    assert.equal(rows(library).length, library.items.length);
+    assert.equal(rows(library).length, Math.min(12, library.items.length));
     assert.equal(library.get('resource-search').value, '');
     assert.equal(library.location.search, '');
     assert.equal(library.get('resources-empty-state').hidden, true);
@@ -248,16 +267,18 @@ test('Slash focuses search, typing shortcuts are ignored, and Escape clears it',
     assert.equal(library.get('resource-search').value, 'esp32');
     library.get('resource-search').dispatch('keydown', { key: 'Escape' });
     assert.equal(library.get('resource-search').value, '');
-    assert.equal(rows(library).length, library.items.length);
+    assert.equal(rows(library).length, Math.min(12, library.items.length));
 });
 
 test('Inline references retain formula and specifications previews without fake links', () => {
     const library = createLibrary();
+    library.search('ohms-law');
     const ohms = rows(library).find(row => row.includes("Ohm&#39;s Law"));
     assert.ok(ohms);
     assert.match(ohms, /<details\b/);
     assert.match(ohms, /data-math="V = IR"/);
     assert.doesNotMatch(ohms, /<a\b/);
+    library.search('pn532');
     const pn532 = rows(library).find(row => row.includes('PN532 NFC Module'));
     assert.match(pn532, /<details\b/);
     assert.match(pn532, /PN532-based NFC reader module/);
@@ -269,10 +290,12 @@ test('External links have safe attributes and executable catalogue URLs are reje
         id: 'unsafe', kind: 'reference', category: 'Tools', title: '<unsafe> & "quoted"',
         description: '<img src=x onerror=alert(1)>', url: 'javascript:alert(1)', external: true
     }));
+    library.search('kicad');
     const external = rows(library).find(row => row.includes('href="https://docs.kicad.org/"'));
     assert.ok(external);
     assert.match(external, /target="_blank"/);
     assert.match(external, /rel="noopener noreferrer"/);
+    library.search('unsafe');
     const unsafe = rows(library).find(row => row.includes('&lt;unsafe&gt;'));
     assert.ok(unsafe);
     assert.match(unsafe, /&lt;img src=x onerror=alert\(1\)&gt;/);
@@ -285,13 +308,11 @@ test('Sorting updates shareable state while preserving unrelated URL state', () 
     assert.equal(library.location.searchParams.has('sort'), false);
     assert.equal(library.location.searchParams.get('utm_source'), 'bookmark');
     assert.equal(library.location.hash, '#library');
-    const newest = library.get('resource-list').innerHTML;
-    const sortedIDs = () => [...library.get('resource-list').innerHTML.matchAll(/data-resource-id="([^"]+)"/g)].map(match => match[1]);
+    const sortedIDs = () => collectPages(library).map(row => row.match(/data-resource-id="([^"]+)"/)[1]);
     const expectedOrder = direction => [...library.items].sort((a, b) => direction * (a.date || '').localeCompare(b.date || '') || a.title.localeCompare(b.title)).map(item => item.id);
     assert.deepEqual(sortedIDs(), expectedOrder(-1));
     library.change('resource-sort', 'oldest');
     assert.equal(library.location.searchParams.get('sort'), 'oldest');
-    assert.notEqual(library.get('resource-list').innerHTML, newest);
     assert.deepEqual(sortedIDs(), expectedOrder(1));
     library.change('resource-sort', 'newest');
     assert.equal(library.location.searchParams.has('sort'), false);
@@ -317,7 +338,7 @@ test('History navigation restores type, topic, query, and sorting without rewrit
 test('Invalid filters and legacy title sorting fall back to the full library newest first', () => {
     for (const sort of ['invalid', 'title']) {
         const library = createLibrary(`?type=unknown&topic=missing&sort=${sort}`);
-        assert.equal(rows(library).length, library.items.length);
+        assert.equal(rows(library).length, Math.min(12, library.items.length));
         assert.equal(library.get('resource-topic').value, 'all');
         assert.equal(library.get('resource-sort').value, 'newest');
         assert.equal(library.button('all').getAttribute('aria-pressed'), 'true');
@@ -491,6 +512,230 @@ test('Topic labels and selected options stay in sync with URL state, category ch
     assert.equal(library.get('resource-topic-value').textContent, 'All topics');
     assert.equal(library.get('resource-topic-menu').hidden, true);
     assert.equal(library.get('resource-topic-menu').querySelector('[data-topic-value="all"]').getAttribute('aria-selected'), 'true');
+});
+
+test('Pagination visits every resource exactly once with at most twelve entries per page', () => {
+    const library = createLibrary();
+    const expectedPages = Math.ceil(library.items.length / 12);
+    assert.equal(library.get('resource-pagination').hidden, false);
+    assert.equal(library.get('resource-page-prev').disabled, true);
+    assert.equal(library.get('resource-page-next').disabled, false);
+    assert.equal(library.get('resource-page-status').textContent, `Page 1 of ${expectedPages}`);
+    assert.equal(pageButton(library, 1).getAttribute('aria-current'), 'page');
+    const visited = [];
+    for (let page = 1; page <= expectedPages; page++) {
+        const start = (page - 1) * 12;
+        const end = Math.min(page * 12, library.items.length);
+        assert.equal(rows(library).length, end - start);
+        assert.equal(library.get('resource-status').textContent, `Showing ${start + 1}–${end} of ${library.items.length} resources`);
+        visited.push(...rowIDs(library));
+        if (page < expectedPages) library.get('resource-page-next').dispatch('click');
+    }
+    assert.equal(visited.length, library.items.length);
+    assert.equal(new Set(visited).size, library.items.length);
+    assert.deepEqual([...visited].sort(), [...library.items].map(item => item.id).sort());
+    assert.equal(library.get('resource-page-next').disabled, true);
+    assert.equal(library.get('resource-page-prev').disabled, false);
+    assert.equal(library.get('resource-page-status').textContent, `Page ${expectedPages} of ${expectedPages}`);
+    assert.equal(pageButton(library, expectedPages).getAttribute('aria-current'), 'page');
+});
+
+test('Page URLs restore middle pages, clamp out of range values, and reject invalid pages', () => {
+    const first = createLibrary();
+    const expected = collectPages(first).map(row => row.match(/data-resource-id="([^"]+)"/)[1]);
+    const middle = createLibrary('?page=2');
+    assert.deepEqual(rowIDs(middle), expected.slice(12, 24));
+    assert.equal(middle.get('resource-page-status').textContent, `Page 2 of ${Math.ceil(expected.length / 12)}`);
+    assert.equal(middle.replacedURLs.length, 0);
+    assert.equal(middle.pushedURLs.length, 0);
+    const overflow = createLibrary('?page=999&utm_source=bookmark#library');
+    const lastPage = Math.ceil(expected.length / 12);
+    assert.deepEqual(rowIDs(overflow), expected.slice((lastPage - 1) * 12));
+    assert.equal(overflow.get('resource-page-status').textContent, `Page ${lastPage} of ${lastPage}`);
+    assert.equal(overflow.location.searchParams.get('page'), String(lastPage));
+    assert.equal(overflow.location.searchParams.get('utm_source'), 'bookmark');
+    assert.equal(overflow.location.hash, '#library');
+    assert.equal(overflow.replacedURLs.length, 1);
+    assert.equal(overflow.pushedURLs.length, 0);
+    for (const value of ['', '0', '1', '-1', '1.5', 'invalid', 'Infinity', '9007199254740992', '999999999999999999999999999999999999999999']) {
+        const library = createLibrary('?page=' + value);
+        assert.deepEqual(rowIDs(library), expected.slice(0, 12));
+        assert.equal(library.get('resource-page-status').textContent, `Page 1 of ${lastPage}`);
+        assert.equal(library.location.searchParams.has('page'), false);
+        assert.equal(library.replacedURLs.length, 1);
+        assert.equal(library.pushedURLs.length, 0);
+    }
+});
+
+test('Exact page boundaries avoid empty pages and one-page or empty results hide navigation', () => {
+    for (const count of [12, 13, 24, 25]) {
+        const library = createLibrary('', items => items.splice(count));
+        assert.equal(library.get('resource-pagination').hidden, count <= 12);
+        assert.equal(library.get('resource-page-numbers').querySelectorAll('[data-resource-page]').length, count > 12 ? Math.ceil(count / 12) : 0);
+        const visited = collectPages(library);
+        assert.equal(visited.length, count);
+        assert.ok(rows(library).length > 0);
+    }
+    const library = createLibrary('?type=course&page=2');
+    assert.equal(rows(library).length, 4);
+    assert.equal(library.get('resource-pagination').hidden, true);
+    assert.equal(library.location.searchParams.has('page'), false);
+    assert.equal(library.location.searchParams.get('type'), 'course');
+    assert.equal(library.replacedURLs.length, 1);
+    assert.equal(library.pushedURLs.length, 0);
+    library.search('nothing-matches-987654321');
+    assert.equal(rows(library).length, 0);
+    assert.equal(library.get('resource-pagination').hidden, true);
+    assert.equal(library.get('resources-empty-state').hidden, false);
+    assert.equal(library.get('resource-status').textContent, '0 resources');
+});
+
+test('Page navigation pushes history, retains filters, and focuses the result heading', () => {
+    const library = createLibrary('?sort=oldest&utm_source=bookmark#library');
+    pageButton(library, 1).dispatch('click');
+    library.get('resource-page-prev').dispatch('click');
+    assert.equal(library.pushedURLs.length, 0);
+    library.get('resource-page-next').dispatch('click');
+    const secondPageIDs = rowIDs(library);
+    const secondPageURL = library.location.href;
+    assert.equal(library.location.searchParams.get('page'), '2');
+    assert.equal(library.location.searchParams.get('sort'), 'oldest');
+    assert.equal(library.location.searchParams.get('utm_source'), 'bookmark');
+    assert.equal(library.location.hash, '#library');
+    assert.equal(library.pushedURLs.length, 1);
+    assert.equal(library.document.activeElement?.id, 'resource-results-title');
+    const heading = library.get('resource-results-title');
+    assert.ok(heading.scrollCalls > 0);
+    assert.equal(heading.scrollOptions.block, 'start');
+    assert.equal(heading.scrollOptions.behavior, 'auto');
+    assert.equal(heading.getAttribute('tabindex'), '-1');
+    library.get('resource-page-next').dispatch('click');
+    library.get('resource-page-prev').dispatch('click');
+    assert.deepEqual(rowIDs(library), secondPageIDs);
+    pageButton(library, 1).dispatch('click');
+    assert.equal(library.location.searchParams.has('page'), false);
+    const pushes = library.pushedURLs.length;
+    const replacements = library.replacedURLs.length;
+    library.location.href = secondPageURL;
+    library.window.dispatch('popstate');
+    assert.deepEqual(rowIDs(library), secondPageIDs);
+    assert.equal(library.get('resource-page-status').textContent, `Page 2 of ${Math.ceil(library.items.length / 12)}`);
+    assert.equal(library.pushedURLs.length, pushes);
+    assert.equal(library.replacedURLs.length, replacements);
+    library.location.href = 'https://site.test/resources.html?page=999&sort=oldest&utm_source=history#library';
+    library.window.dispatch('popstate');
+    const lastPage = Math.ceil(library.items.length / 12);
+    assert.equal(library.location.searchParams.get('page'), String(lastPage));
+    assert.equal(library.location.searchParams.get('sort'), 'oldest');
+    assert.equal(library.location.searchParams.get('utm_source'), 'history');
+    assert.equal(library.location.hash, '#library');
+    assert.equal(library.get('resource-page-status').textContent, `Page ${lastPage} of ${lastPage}`);
+    assert.equal(library.replacedURLs.length, replacements + 1);
+    assert.equal(library.pushedURLs.length, pushes);
+});
+
+test('Changing search, type, topic, sorting, or reset returns pagination to page one', () => {
+    const cases = [
+        library => library.search('eele201'),
+        library => library.button('note').dispatch('click'),
+        library => library.change('resource-topic', 'Display'),
+        library => {
+            library.get('resource-topic-toggle').dispatch('click');
+            library.get('resource-topic-menu').querySelector('[data-topic-value="Display"]').dispatch('click');
+        },
+        library => library.change('resource-sort', 'oldest')
+    ];
+    for (const update of cases) {
+        const library = createLibrary('?page=2');
+        update(library);
+        assert.equal(library.location.searchParams.has('page'), false);
+        assert.match(library.get('resource-page-status').textContent, /^Page 1 of /);
+    }
+    for (const reset of [
+        library => library.get('resource-reset-inline').dispatch('click'),
+        library => library.get('resource-search-clear').dispatch('click'),
+        library => library.get('resource-search').dispatch('keydown', { key: 'Escape' })
+    ]) {
+        const library = createLibrary('?q=a&page=2');
+        assert.match(library.get('resource-page-status').textContent, /^Page 2 of /);
+        reset(library);
+        assert.equal(library.location.searchParams.has('page'), false);
+        assert.equal(library.location.searchParams.has('q'), false);
+        assert.match(library.get('resource-page-status').textContent, /^Page 1 of /);
+    }
+});
+
+test('Search considers resources outside the current page and preserves catalogue counts', () => {
+    const library = createLibrary();
+    const initialIDs = rowIDs(library);
+    const target = library.items.find(item => !initialIDs.includes(item.id));
+    assert.ok(target);
+    const countsBefore = library.document.querySelectorAll('[data-resource-count]').map(counter => Number(counter.textContent));
+    library.get('resource-page-next').dispatch('click');
+    library.search(target.id);
+    assert.ok(rowIDs(library).includes(target.id));
+    assert.equal(library.location.searchParams.has('page'), false);
+    assert.equal(library.get('resource-pagination').hidden, true);
+    assert.deepEqual(library.document.querySelectorAll('[data-resource-count]').map(counter => Number(counter.textContent)), countsBefore);
+    assert.equal(library.get('resource-total').textContent, `${library.items.length} resources`);
+});
+
+test('Combined filtering runs before pagination and page changes retain every filter', () => {
+    const library = createLibrary('?type=reference&topic=Pagination%20fixture&q=paginationfixture&sort=oldest&page=2', items => {
+        for (let number = 1; number <= 14; number++) items.push({
+            id: `paginationfixture-${number}`, kind: 'reference', category: 'Pagination fixture',
+            title: `Pagination fixture ${String(number).padStart(2, '0')}`,
+            description: 'A fixture for checking filtered pagination.', date: `2026-10-${String(number).padStart(2, '0')}`
+        });
+    });
+    assert.deepEqual(rowIDs(library), ['paginationfixture-13', 'paginationfixture-14']);
+    assert.equal(library.get('resource-page-status').textContent, 'Page 2 of 2');
+    assert.equal(library.get('resource-status').textContent, 'Showing 13–14 of 14 resources');
+    assert.equal(library.get('resource-page-next').disabled, true);
+    library.get('resource-page-prev').dispatch('click');
+    assert.equal(rows(library).length, 12);
+    assert.equal(library.location.searchParams.has('page'), false);
+    assert.equal(library.location.searchParams.get('type'), 'reference');
+    assert.equal(library.location.searchParams.get('topic'), 'Pagination fixture');
+    assert.equal(library.location.searchParams.get('q'), 'paginationfixture');
+    assert.equal(library.location.searchParams.get('sort'), 'oldest');
+});
+
+test('Large catalogues keep compact page controls with reachable ends and complete coverage', () => {
+    const library = createLibrary('?page=10', items => {
+        while (items.length < 240) {
+            const number = items.length + 1;
+            items.push({
+                id: `large-catalogue-${number}`, kind: 'reference', category: 'Pagination fixture',
+                title: `Large catalogue fixture ${String(number).padStart(3, '0')}`,
+                description: 'A fixture for checking compact page controls.', date: '2026-11-01'
+            });
+        }
+    });
+    const controls = library.get('resource-page-numbers');
+    const pageControls = controls.querySelectorAll('[data-resource-page]');
+    const visiblePages = pageControls.map(button => Number(button.dataset.resourcePage));
+    assert.ok(pageControls.length <= 7, 'Numeric page controls should stay compact for twenty pages');
+    for (const number of [1, 9, 10, 11, 20]) assert.ok(visiblePages.includes(number));
+    assert.equal(new Set(visiblePages).size, visiblePages.length);
+    assert.ok(visiblePages.every(number => number >= 1 && number <= 20));
+    assert.ok(controls.children.some(child => child.textContent === '…'));
+    assert.equal(controls.querySelectorAll('[aria-current="page"]').length, 1);
+    assert.equal(controls.querySelector('[aria-current="page"]').dataset.resourcePage, '10');
+    pageButton(library, 20).dispatch('click');
+    assert.equal(library.location.searchParams.get('page'), '20');
+    assert.equal(library.get('resource-page-status').textContent, 'Page 20 of 20');
+    assert.equal(rows(library).length, 12);
+    assert.equal(library.get('resource-page-next').disabled, true);
+    assert.equal(pageButton(library, 20).getAttribute('aria-current'), 'page');
+    pageButton(library, 1).dispatch('click');
+    assert.equal(library.location.searchParams.has('page'), false);
+    assert.equal(library.get('resource-page-status').textContent, 'Page 1 of 20');
+    assert.equal(library.get('resource-page-prev').disabled, true);
+    const visited = collectPages(library).map(row => row.match(/data-resource-id="([^"]+)"/)[1]);
+    assert.equal(visited.length, 240);
+    assert.equal(new Set(visited).size, 240);
+    assert.deepEqual([...visited].sort(), [...library.items].map(item => item.id).sort());
 });
 
 console.log(`\n${passed} resources checks passed.`);
