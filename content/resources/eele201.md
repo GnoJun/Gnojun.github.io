@@ -37,9 +37,17 @@ Choose a reference node and call its voltage zero. A node voltage $V_A$ means th
 
 Draw a current arrow and mark a voltage polarity before calculating. Under the **passive sign convention**, the reference current enters the positive voltage terminal. A linear resistor then obeys
 
+:::reference Ohm's law
 $$
 v=iR
 $$
+
+- `v`: voltage across the resistor, in volts.
+- `i`: current entering its positive terminal, in amperes.
+- `R`: resistance, in ohms.
+
+For a linear resistor, using the passive sign convention.
+:::
 
 A negative current means the actual current flows opposite to the arrow. A negative voltage means the marked positive terminal is at the lower potential. Both are useful descriptions of the circuit.
 

@@ -433,6 +433,41 @@ test('Quiz image URLs cannot enable executable content', () => {
     assert.doesNotMatch(form, /<script\b|\bonerror=/i);
 });
 
+const formulaReference = ':::reference Ohm\'s law\n$$\nV = IR\n$$\n\n| Symbol | Meaning | Unit |\n| --- | --- | --- |\n| $V$ | Voltage | V |\n| $I$ | Current | A |\n| $R$ | Resistance | ohm |\n\n[Read the note](../../notes/voltage-divider.html)\n:::';
+
+test('Author-selected references preserve equations, symbol tables and source links', () => {
+    const html = render(formulaReference);
+    assert.match(html, /class="markdown-reference"/);
+    assert.match(html, /\bdata-markdown-reference(?:="[^"]*")?/);
+    assert.match(html, /data-reference-title="Ohm(?:&#39;|')s law"/);
+    assert.match(html, /class="markdown-reference-body"/);
+    assert.match(html, /data-math="V = IR"/);
+    assert.match(html, /<th[^>]*>Symbol<\/th>/);
+    assert.match(html, /Resistance/);
+    assert.match(html, /href="https:\/\/site\.test\/notes\/voltage-divider\.html"/);
+    assert.doesNotMatch(html, /<h1\b/);
+});
+
+test('Reference anchors stay unique and stable beside matching headings and reserved IDs', () => {
+    const markdown = '## Reference Ohms Law\n\n' + formulaReference + '\n\n' + formulaReference;
+    const settings = { reservedIds: ['reference-ohms-law'], documentId: 'reference-fixture' };
+    const html = render(markdown, settings);
+    const sections = [...html.matchAll(/<section\b(?=[^>]*\bdata-markdown-reference)[^>]*\bid="([^"]+)"[^>]*>/g)];
+    assert.equal(sections.length, 2);
+    const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
+    assert.equal(new Set(ids).size, ids.length);
+    assert.ok(sections.every(match => match[1] !== 'reference-ohms-law'));
+    assert.equal(html, render(markdown, settings));
+});
+
+test('Reference examples in fences remain literal and titles cannot inject attributes', () => {
+    const html = render(fence + 'markdown\n' + formulaReference + '\n' + fence + '\n\n:::reference <img src=x onerror=alert(1)>\nA safe explanation and $I$.\n:::');
+    assert.equal(count(html, /\bdata-markdown-reference(?:[\s=>])/g), 1);
+    assert.match(html, /:::reference Ohm/);
+    assert.doesNotMatch(html, /<img\b|<script\b/);
+    assert.match(html, /&lt;img src=x onerror=alert\(1\)&gt;/);
+});
+
 vm.runInContext(await readFile(new URL('js/vendor/highlight-11.12.0.min.js', root), 'utf8'), context);
 test('Known code languages highlight; unknown or oversized blocks stay plain', () => {
     const html = render(fence + 'javascript\nconst voltage = 2.5;\n' + fence + '\n\n' + fence + 'unknown-language\n<tag>\n' + fence);

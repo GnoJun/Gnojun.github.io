@@ -108,7 +108,27 @@ After adding a resource, check its article, images, topic selection, search, Pre
 
 Open [Markdown Article Template](markdown-template.html) through the local website server for a complete source-to-result guide. Its download buttons provide both the guide's Markdown and a shorter teaching starter. Article pages fetch their Markdown; opening a shell as a `file://` URL may fail.
 
-The HTML shell owns the page's single H1. Begin major Markdown sections with `##`; these sections drive the automatic navigation and reading progress. Smaller headings use `###` through `######`. A Markdown `#` is rendered as H2.
+The HTML shell owns the page's single H1. Begin major Markdown sections with `##` and subsections with `###`; these drive the automatic directory and reading progress. Smaller headings use `####` through `######`. A Markdown `#` is rendered as H2. On screens at least 1200 px wide, the directory appears vertically in a sticky right sidebar and highlights the current section. Narrower screens keep the collapsible navigation above the article.
+
+### Formula and symbol quick reference
+
+Use `:::reference Title`, a formula and concise symbol definitions, then a closing `:::` to mark material for **Formulas & symbols**. The original block stays in the article, while the sidebar collects a reference card with **View in article** and **Copy formula** controls for display equations. Copy provides the original LaTeX; when clipboard access is unavailable, the card shows and selects that source for manual copying. The list follows article order and only includes explicitly marked, visible blocks; references inside quizzes or expandable answers are excluded. On narrow screens the reference list moves below the article as a collapsible section. Articles without marked references have no empty reference list.
+
+```markdown
+:::reference Ohm's law
+$$
+V = IR
+$$
+
+- `V`: voltage across the resistor, in volts.
+- `I`: current entering its positive terminal, in amperes.
+- `R`: resistance, in ohms.
+:::
+```
+
+**Formulas & symbols** starts collapsed on all screen sizes and retains the reader's choice when resizing. On wide screens, **Navigation Bar** uses the available sidebar height with its own scroll area. Expanding the reference list automatically hides the directory and gives the references that space; closing it restores the directory. On narrow screens, opening references below the article leaves the top navigation available.
+
+Use this block for key formulas, assumptions, and variable units; keep intermediate calculations in the normal article body. See the template's **Formula and symbol quick reference** section for copyable source and a live example.
 
 Supported features include emphasis, strikethrough, literal inline code, safe inline/reference/bare links, nested lists, ordered-list start values, read-only task lists, multi-paragraph blockquotes, separators, aligned tables, footnotes, and source-relative images with captions and zoom. Raw HTML is displayed as text.
 

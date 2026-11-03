@@ -1,662 +1,260 @@
+﻿/* Shared article navigation and author-selected formula/symbol references. */
 (function () {
-    const navigation =
-        document.querySelector(
-            "[data-markdown-navigation]"
-        );
+    'use strict';
 
-    const markdownDocument =
-        document.querySelector(
-            ".markdown-document[data-markdown-src]"
-        );
+    const navigation = document.querySelector('[data-markdown-navigation]');
+    const markdownDocument = document.querySelector('.markdown-document[data-markdown-src]');
+    if (!navigation || !markdownDocument) return;
 
+    const tocList = navigation.querySelector('[data-markdown-toc-list]');
+    const progressElement = navigation.querySelector('.markdown-reading-progress');
+    const progressBar = navigation.querySelector('.markdown-reading-progress-bar');
+    const navigationContent = navigation.querySelector('[data-markdown-navigation-content]');
+    const navigationToggle = navigation.querySelector('[data-markdown-navigation-toggle]');
+    if (!tocList || !progressElement || !progressBar || !navigationContent || !navigationToggle) return;
 
-    if (
-        !navigation ||
-        !markdownDocument
-    ) {
-        return;
-    }
+    const wideScreen = window.matchMedia('(min-width: 1200px)');
+    // Download toolbars and other article siblings belong to the page shell,
+    // not the two-column article layout. Keep them outside the grid.
+    const layout = document.createElement('div');
+    layout.className = 'markdown-article-layout';
+    markdownDocument.parentNode.insertBefore(layout, markdownDocument);
+    layout.appendChild(markdownDocument);
+    const originalPosition = document.createComment('Article navigation returns here on smaller screens.');
+    navigation.parentNode.insertBefore(originalPosition, navigation);
 
+    const sidebar = document.createElement('aside');
+    sidebar.className = 'markdown-article-sidebar';
+    sidebar.setAttribute('aria-label', 'Article tools');
+    const references = document.createElement('details');
+    references.className = 'markdown-quick-reference';
+    const summary = document.createElement('summary');
+    summary.textContent = 'Formulas & symbols';
+    const referenceList = document.createElement('div');
+    referenceList.className = 'markdown-reference-list';
+    references.append(summary, referenceList);
+    sidebar.appendChild(references);
+    layout.appendChild(sidebar);
 
-    const tocList =
-        navigation.querySelector(
-            "[data-markdown-toc-list]"
-        );
-
-    const progressElement =
-        navigation.querySelector(
-            ".markdown-reading-progress"
-        );
-
-    const progressBar =
-        navigation.querySelector(
-            ".markdown-reading-progress-bar"
-        );
-
-    const navigationContent =
-        navigation.querySelector(
-            "[data-markdown-navigation-content]"
-        );
-
-    const navigationToggle =
-        navigation.querySelector(
-            "[data-markdown-navigation-toggle]"
-        );
-
-
-    if (
-        !tocList ||
-        !progressElement ||
-        !progressBar ||
-        !navigationContent ||
-        !navigationToggle
-    ) {
-        return;
-    }
-
+    const navigationHeading = document.createElement('p');
+    navigationHeading.className = 'markdown-sidebar-heading';
+    navigationHeading.textContent = 'Navigation Bar';
+    const navigationLayout = navigation.querySelector('.markdown-navigation-layout') || navigationContent.parentElement;
+    navigationLayout.insertBefore(navigationHeading, navigationLayout.firstChild);
 
     let headings = [];
-
-    let currentSectionId = "";
-
+    let currentSectionId = '';
     let updateRequested = false;
-
-    let contentResizeObserver = null;
-
-    let navigationCollapsed =
-        false;
-
-
-    function createHeadingId(text) {
-        return String(text ?? "")
-            .toLowerCase()
-            .replace(
-                /[^a-z0-9\s-]/g,
-                ""
-            )
-            .trim()
-            .replace(
-                /\s+/g,
-                "-"
-            );
-    }
-
-
-    function prepareHeadingIds(
-        headingElements
-    ) {
-        const usedIds =
-            new Set();
-
-
-        headingElements.forEach(
-            function (
-                heading,
-                index
-            ) {
-                const headingText =
-                    heading
-                        .textContent
-                        .trim();
-
-
-                const baseId =
-                    heading.id ||
-                    createHeadingId(
-                        headingText
-                    ) ||
-                    `section-${index + 1}`;
-
-
-                let finalId =
-                    baseId;
-
-                let suffix = 2;
-
-
-                while (
-                    usedIds.has(
-                        finalId
-                    )
-                ) {
-                    finalId =
-                        `${baseId}-${suffix}`;
-
-                    suffix += 1;
-                }
-
-
-                heading.id =
-                    finalId;
-
-                usedIds.add(
-                    finalId
-                );
-            }
-        );
-    }
-
+    let contentResizeObserver;
+    let navigationCollapsed = false;
+    let hasReferences = false;
 
     function getMarkdownHeadings() {
-        return Array.from(
-            markdownDocument
-                .querySelectorAll(
-                    "h2"
-                )
-        ).filter(
-            function (heading) {
-                return !heading.closest("details") && Boolean(
-                    heading
-                        .textContent
-                        .trim()
-                );
-            }
+        return Array.from(markdownDocument.querySelectorAll('h2, h3')).filter(heading =>
+            !heading.closest('details, .markdown-quiz, .footnotes, .markdown-reference, [hidden]') &&
+            Boolean(heading.textContent.trim())
         );
     }
 
-
-    function createTocLink(
-        heading
-    ) {
-        const listItem =
-            document.createElement(
-                "li"
-            );
-
-        const link =
-            document.createElement(
-                "a"
-            );
-
-
-        link.className =
-            "project-toc-link";
-
-        link.href =
-            `#${heading.id}`;
-
-        link.textContent =
-            heading
-                .textContent
-                .trim();
-
-
-        listItem.appendChild(
-            link
-        );
-
-
-        return listItem;
-    }
-
-
-    function renderToc() {
-        tocList.replaceChildren();
-
-
-        const fragment =
-            document
-                .createDocumentFragment();
-
-
-        headings.forEach(
-            function (heading) {
-                fragment.appendChild(
-                    createTocLink(
-                        heading
-                    )
-                );
-            }
-        );
-
-
-        tocList.appendChild(
-            fragment
-        );
-    }
-
-
-    function getTocLinks() {
-        return Array.from(
-            tocList.querySelectorAll(
-                ".project-toc-link"
-            )
-        );
-    }
-
-    function updateNavigationToggle() {
-        navigation.classList.toggle(
-            "is-collapsed",
-            navigationCollapsed
-        );
-
-
-        navigationToggle.setAttribute(
-            "aria-expanded",
-            String(
-                !navigationCollapsed
-            )
-        );
-
-
-        navigationToggle.setAttribute(
-            "aria-label",
-            navigationCollapsed
-                ? "Show section navigation"
-                : "Hide section navigation"
-        );
-
-
-        navigationToggle.setAttribute(
-            "title",
-            navigationCollapsed
-                ? "Show section navigation"
-                : "Hide section navigation"
-        );
-
-
-        const label =
-            navigationToggle.querySelector(
-                ".markdown-navigation-toggle-label"
-            );
-
-
-        if (label) {
-            label.textContent =
-                navigationCollapsed
-                    ? "Sections"
-                    : "Hide";
-        }
-
-
-        document.documentElement
-            .style
-            .setProperty(
-                "--markdown-toc-offset",
-                navigationCollapsed
-                    ? "0px"
-                    : "var(--toc-height)"
-            );
-    }
-
-    function getStickyOffset() {
-        const siteHeader =
-            document.querySelector(
-                ".site-header"
-            );
-
-
-        const navigationHeight =
-            navigationCollapsed
-                ? 0
-                : navigation.offsetHeight;
-
-
-        return (
-            (siteHeader?.offsetHeight || 0) +
-            navigationHeight +
-            16
-        );
-    }
-
-    function setActiveHeading(
-        headingId
-    ) {
-        if (
-            !headingId ||
-            currentSectionId ===
-                headingId
-        ) {
-            return;
-        }
-
-
-        const tocLinks =
-            getTocLinks();
-
-
-        const activeLink =
-            tocLinks.find(
-                function (link) {
-                    return (
-                        decodeURIComponent(link.hash.slice(1)) ===
-                        headingId
-                    );
-                }
-            );
-
-
-        if (!activeLink) {
-            return;
-        }
-
-
-        currentSectionId =
-            headingId;
-
-
-        tocLinks.forEach(
-            function (link) {
-                link.removeAttribute(
-                    "aria-current"
-                );
-            }
-        );
-
-
-        activeLink.setAttribute(
-            "aria-current",
-            "location"
-        );
-
-
-        const prefersReducedMotion =
-            window.matchMedia(
-                "(prefers-reduced-motion: reduce)"
-            ).matches;
-
-
-        const targetLeft =
-            activeLink.offsetLeft -
-            (
-                tocList.clientWidth -
-                activeLink.clientWidth
-            ) / 2;
-
-
-        tocList.scrollTo({
-            left:
-                Math.max(
-                    0,
-                    targetLeft
-                ),
-
-            behavior:
-                prefersReducedMotion
-                    ? "auto"
-                    : "smooth"
+    function prepareHeadingIds() {
+        const usedIds = new Set(Array.from(document.querySelectorAll('[id]'))
+            .filter(element => !headings.includes(element)).map(element => element.id));
+        headings.forEach((heading, index) => {
+            const base = heading.id || heading.textContent.normalize('NFKD').toLowerCase()
+                .replace(/[\u0300-\u036f]/g, '').replace(/[^\p{L}\p{N}\s-]/gu, '')
+                .trim().replace(/\s+/g, '-') || 'section-' + (index + 1);
+            let id = base, suffix = 2;
+            while (usedIds.has(id)) id = base + '-' + suffix++;
+            heading.id = id;
+            usedIds.add(id);
         });
     }
 
+    function renderToc() {
+        tocList.replaceChildren();
+        headings.forEach(heading => {
+            const item = document.createElement('li');
+            item.setAttribute('data-toc-level', heading.tagName === 'H3' ? '3' : '2');
+            const link = document.createElement('a');
+            link.className = 'project-toc-link';
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent.trim();
+            item.appendChild(link);
+            tocList.appendChild(item);
+        });
+    }
 
-    function updateActiveHeading() {
-        if (
-            headings.length === 0
-        ) {
-            return;
-        }
-
-
-        const readingLine =
-            window.scrollY +
-            getStickyOffset() +
-            1;
-
-
-        let activeHeading =
-            headings[0];
-
-
-        headings.forEach(
-            function (heading) {
-                const headingTop =
-                    heading
-                        .getBoundingClientRect()
-                        .top +
-                    window.scrollY;
-
-
-                if (
-                    headingTop <=
-                    readingLine
-                ) {
-                    activeHeading =
-                        heading;
-                }
+    function buildReferences() {
+        referenceList.replaceChildren();
+        const sources = Array.from(markdownDocument.querySelectorAll('[data-markdown-reference]')).filter(source =>
+            !source.closest('.markdown-quiz, details, .footnotes, [hidden]') &&
+            !source.parentElement.closest('[data-markdown-reference]')
+        );
+        for (const source of sources) {
+            const sourceBody = source.querySelector('.markdown-reference-body');
+            if (!sourceBody || !source.id) continue;
+            const card = document.createElement('section');
+            card.className = 'markdown-reference-card';
+            const title = document.createElement('h3');
+            title.className = 'markdown-reference-card-title';
+            title.textContent = source.dataset.referenceTitle || 'Reference';
+            const body = sourceBody.cloneNode(true);
+            // Reference cards contain static teaching content, never duplicated
+            // controls, hidden answers, embedded documents, or ID destinations.
+            body.querySelectorAll('form, iframe, dialog, details, input, select, textarea, button, .markdown-code-toolbar, .markdown-table-toolbar, .footnote-ref, .footnote-backref, [hidden], [data-markdown-reference]')
+                .forEach(element => element.remove());
+            for (const element of [body, ...body.querySelectorAll('*')]) {
+                element.removeAttribute('id');
+                element.removeAttribute('aria-labelledby');
+                element.removeAttribute('aria-describedby');
+                element.removeAttribute('aria-controls');
             }
-        );
-
-
-        setActiveHeading(
-            activeHeading.id
-        );
-    }
-
-
-    function getProgressStartHeading() {
-        return (
-            markdownDocument
-                .querySelector(
-                    "#overview"
-                ) ||
-            headings[0] ||
-            null
-        );
-    }
-
-
-    function updateReadingProgress() {
-        const startHeading =
-            getProgressStartHeading();
-
-
-        if (!startHeading) {
-            return;
+            body.querySelectorAll('[data-math]').forEach(math => {
+                if (math.dataset.mathDisplay === 'false') return;
+                const group = document.createElement('div');
+                group.className = 'markdown-reference-formula';
+                math.parentNode.insertBefore(group, math);
+                const button = document.createElement('button');
+                button.className = 'markdown-reference-copy';
+                button.type = 'button';
+                button.setAttribute('data-reference-copy', math.dataset.math);
+                button.setAttribute('aria-label', 'Copy formula');
+                button.setAttribute('aria-live', 'polite');
+                button.setAttribute('aria-atomic', 'true');
+                button.textContent = 'Copy formula';
+                group.append(math, button);
+            });
+            const sourceLink = document.createElement('a');
+            sourceLink.className = 'markdown-reference-source';
+            sourceLink.href = '#' + source.id;
+            sourceLink.textContent = 'View in article';
+            card.append(title, body, sourceLink);
+            referenceList.appendChild(card);
         }
-
-
-        const stickyOffset =
-            getStickyOffset();
-
-
-        const headingTop =
-            startHeading
-                .getBoundingClientRect()
-                .top +
-            window.scrollY;
-
-
-        const documentBottom =
-            markdownDocument
-                .getBoundingClientRect()
-                .bottom +
-            window.scrollY;
-
-
-        const startScroll =
-            headingTop -
-            stickyOffset;
-
-
-        const endScroll =
-            Math.max(
-                startScroll + 1,
-
-                documentBottom -
-                window.innerHeight
-            );
-
-
-        const rawProgress =
-            (
-                window.scrollY -
-                startScroll
-            ) /
-            (
-                endScroll -
-                startScroll
-            );
-
-
-        const progress =
-            Math.min(
-                Math.max(
-                    rawProgress,
-                    0
-                ),
-                1
-            );
-
-
-        const percentage =
-            Math.round(
-                progress * 100
-            );
-
-
-        progressBar.style.transform =
-            `scaleX(${progress})`;
-
-
-        progressElement.setAttribute(
-            "aria-valuenow",
-            String(
-                percentage
-            )
-        );
+        hasReferences = Boolean(referenceList.children.length);
+        references.hidden = !hasReferences;
+        document.dispatchEvent(new CustomEvent('markdown:reference-ready', { detail: { container: referenceList } }));
     }
 
-
-    function updateNavigation() {
-        updateActiveHeading();
-
-        updateReadingProgress();
+    function updateNavigationToggle() {
+        const collapsed = !wideScreen.matches && navigationCollapsed;
+        navigation.classList.toggle('is-collapsed', collapsed);
+        navigationToggle.setAttribute('aria-expanded', String(!collapsed));
+        navigationToggle.setAttribute('aria-label', collapsed ? 'Show section navigation' : 'Hide section navigation');
+        navigationToggle.setAttribute('title', collapsed ? 'Show section navigation' : 'Hide section navigation');
+        const label = navigationToggle.querySelector('.markdown-navigation-toggle-label');
+        if (label) label.textContent = collapsed ? 'Sections' : 'Hide';
+        document.documentElement.style.setProperty('--markdown-toc-offset',
+            wideScreen.matches || collapsed || navigation.hidden ? '0px' : 'var(--toc-height)');
     }
 
-
-    function requestNavigationUpdate() {
-        if (updateRequested) {
-            return;
-        }
-
-
-        updateRequested = true;
-
-
-        window.requestAnimationFrame(
-            function () {
-                updateNavigation();
-
-                updateRequested =
-                    false;
-            }
-        );
-    }
-
-    function toggleNavigation() {
-        navigationCollapsed =
-            !navigationCollapsed;
-
-
+    function updateLayout() {
+        if (wideScreen.matches) sidebar.insertBefore(navigation, references);
+        else originalPosition.parentNode.insertBefore(navigation, originalPosition.nextSibling);
+        navigation.hidden = !headings.length || (wideScreen.matches && hasReferences && references.open);
+        sidebar.hidden = !wideScreen.matches ? !hasReferences : navigation.hidden && !hasReferences;
+        layout.classList.toggle('has-article-tools', !sidebar.hidden);
+        currentSectionId = '';
         updateNavigationToggle();
-
-
         requestNavigationUpdate();
     }
 
-    function initializeNavigation() {
-        headings =
-            getMarkdownHeadings();
+    function getStickyOffset() {
+        const siteHeader = document.querySelector('.site-header');
+        const navigationHeight = wideScreen.matches || navigationCollapsed || navigation.hidden ? 0 : navigation.offsetHeight;
+        return (siteHeader?.offsetHeight || 0) + navigationHeight + 16;
+    }
 
-
-        if (
-            headings.length === 0
-        ) {
-            navigation.hidden =
-                true;
-
-            return;
-        }
-
-
-        navigation.hidden =
-            false;
-
-        updateNavigationToggle();
-
-
-        prepareHeadingIds(
-            headings
-        );
-
-
-        renderToc();
-
-
-        currentSectionId =
-            "";
-
-
-        updateNavigation();
-
-
-        if (
-            typeof ResizeObserver !==
-            "undefined"
-        ) {
-            if (
-                contentResizeObserver
-            ) {
-                contentResizeObserver
-                    .disconnect();
-            }
-
-
-            contentResizeObserver =
-                new ResizeObserver(
-                    requestNavigationUpdate
-                );
-
-
-            contentResizeObserver
-                .observe(
-                    markdownDocument
-                );
+    function setActiveHeading(id) {
+        if (!id || currentSectionId === id) return;
+        const links = Array.from(tocList.querySelectorAll('.project-toc-link'));
+        const activeLink = links.find(link => {
+            try { return decodeURIComponent(link.hash.slice(1)) === id; } catch { return false; }
+        });
+        if (!activeLink) return;
+        currentSectionId = id;
+        links.forEach(link => link.removeAttribute('aria-current'));
+        activeLink.setAttribute('aria-current', 'location');
+        const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+        const bounds = tocList.getBoundingClientRect();
+        const activeBounds = activeLink.getBoundingClientRect();
+        if (wideScreen.matches) {
+            const delta = activeBounds.top < bounds.top ? activeBounds.top - bounds.top :
+                activeBounds.bottom > bounds.bottom ? activeBounds.bottom - bounds.bottom : 0;
+            if (delta) tocList.scrollTo({ top: Math.max(0, tocList.scrollTop + delta), behavior });
+        } else {
+            tocList.scrollTo({ left: Math.max(0, tocList.scrollLeft + activeBounds.left - bounds.left -
+                (tocList.clientWidth - activeBounds.width) / 2), behavior });
         }
     }
 
+    function updateActiveHeading() {
+        if (!headings.length) return;
+        const readingLine = window.scrollY + getStickyOffset() + 1;
+        let active = headings[0];
+        headings.forEach(heading => {
+            if (heading.getBoundingClientRect().top + window.scrollY <= readingLine) active = heading;
+        });
+        setActiveHeading(active.id);
+    }
 
-    window.addEventListener(
-        "scroll",
-        requestNavigationUpdate,
-        {
-            passive: true
+    function updateReadingProgress() {
+        const startHeading = headings.find(heading => heading.id === 'overview') || headings[0];
+        if (!startHeading) return;
+        const start = startHeading.getBoundingClientRect().top + window.scrollY - getStickyOffset();
+        const end = Math.max(start + 1, markdownDocument.getBoundingClientRect().bottom + window.scrollY - window.innerHeight);
+        const progress = Math.min(Math.max((window.scrollY - start) / (end - start), 0), 1);
+        progressBar.style.transform = 'scaleX(' + progress + ')';
+        progressElement.setAttribute('aria-valuenow', String(Math.round(progress * 100)));
+    }
+
+    function requestNavigationUpdate() {
+        if (updateRequested) return;
+        updateRequested = true;
+        window.requestAnimationFrame(() => {
+            updateRequested = false;
+            updateActiveHeading();
+            updateReadingProgress();
+        });
+    }
+
+    function initializeNavigation() {
+        headings = getMarkdownHeadings();
+        navigation.hidden = !headings.length;
+        prepareHeadingIds();
+        renderToc();
+        buildReferences();
+        updateLayout();
+        if (typeof ResizeObserver !== 'undefined') {
+            contentResizeObserver?.disconnect();
+            contentResizeObserver = new ResizeObserver(requestNavigationUpdate);
+            contentResizeObserver.observe(markdownDocument);
         }
-    );
+    }
 
-
-    window.addEventListener(
-        "resize",
-        requestNavigationUpdate
-    );
-
-    navigationToggle
-        .addEventListener(
-            "click",
-            toggleNavigation
-        );
-
-
-    document.addEventListener(
-        "markdown:rendered",
-        function (event) {
-            if (
-                event.target !==
-                markdownDocument
-            ) {
-                return;
-            }
-
-
-            initializeNavigation();
-        }
-    );
-
-
-    if (
-        markdownDocument
-            .querySelector("h2")
-    ) {
-        initializeNavigation();
+    references.addEventListener('toggle', updateLayout);
+    navigationToggle.addEventListener('click', () => {
+        if (wideScreen.matches) return;
+        navigationCollapsed = !navigationCollapsed;
+        updateNavigationToggle();
+        requestNavigationUpdate();
+    });
+    window.addEventListener('scroll', requestNavigationUpdate, { passive: true });
+    window.addEventListener('resize', requestNavigationUpdate);
+    window.addEventListener('hashchange', () => { currentSectionId = ''; requestNavigationUpdate(); });
+    if (typeof wideScreen.addEventListener === 'function') wideScreen.addEventListener('change', updateLayout);
+    else wideScreen.addListener(updateLayout);
+    document.addEventListener('markdown:rendered', event => {
+        if (event.target === markdownDocument) initializeNavigation();
+    });
+    document.addEventListener('markdown:enhanced', event => {
+        if (event.target === markdownDocument) requestNavigationUpdate();
+    });
+    markdownDocument.addEventListener('toggle', requestNavigationUpdate, true);
+    if (markdownDocument.querySelector('h2, h3, [data-markdown-reference]')) initializeNavigation();
+    else {
+        navigation.hidden = true;
+        references.hidden = true;
+        updateLayout();
     }
 })();

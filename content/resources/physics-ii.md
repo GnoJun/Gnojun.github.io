@@ -20,6 +20,7 @@ Use this suggested outline to organize your notes, and adapt it to your course s
 
 The electric field at a point relates the electric force on a small, nonzero test charge to that charge:
 
+:::reference Electric field and force
 $$
 \vec{E} = \frac{\vec{F}_{\text{electric}}}{q}
 $$
@@ -29,6 +30,7 @@ $$
 - $q$ is the test charge in coulombs, including its sign.
 
 The test charge should be small enough that it does not appreciably change the source charge distribution.
+:::
 
 ## Practice
 

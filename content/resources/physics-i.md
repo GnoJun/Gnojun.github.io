@@ -61,7 +61,19 @@ For a horizontal launch at a fixed speed, the drop is proportional to flight tim
 
 ## 2. Forces and Circular Motion
 
-Newton's second law is $\sum\vec{F} = m\vec{a}$. In circular motion, the radial component becomes
+:::reference Newton's second law
+$$
+\sum\vec{F} = m\vec{a}
+$$
+
+- `ΣF`: net external force on the object, in newtons.
+- `m`: mass, in kilograms.
+- `a`: acceleration, in metres per second squared.
+
+For a constant-mass object in an inertial reference frame.
+:::
+
+In circular motion, the radial component becomes
 
 $$
 \sum F_{\text{inward}} = \frac{mv^2}{R}

@@ -124,13 +124,14 @@
         }
     }
 
-    async function copyContent(button, text, selectionTarget, originalLabel, selectedLabel) {
+    async function copyContent(button, text, selectionTarget, originalLabel, selectedLabel, manualTarget) {
         let status;
         try {
             if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
             await navigator.clipboard.writeText(text);
             status = 'Copied';
         } catch {
+            if (manualTarget) selectionTarget = manualTarget();
             const selection = window.getSelection();
             if (selection) {
                 const range = document.createRange();
@@ -290,10 +291,37 @@
         (numeric || form.querySelector('input[type="radio"]'))?.focus();
     });
 
+    document.addEventListener('markdown:reference-ready', event => {
+        const container = event.detail?.container;
+        if (!container?.closest('.markdown-article-sidebar')) return;
+        // The reference cards share the article's lazy math loader and retain
+        // readable TeX when the optional renderer is unavailable.
+        void renderMath(container).catch(() => {});
+    });
+
     document.addEventListener('click', event => {
-        const button = event.target.closest?.('[data-code-copy], [data-code-wrap], [data-table-copy], [data-image-open]');
-        if (!button || !button.closest('[data-markdown-src]')) return;
-        if (button.hasAttribute('data-code-wrap')) {
+        const button = event.target.closest?.('[data-code-copy], [data-code-wrap], [data-table-copy], [data-image-open], [data-reference-copy]');
+        if (!button || (!button.closest('[data-markdown-src]') &&
+            !(button.hasAttribute('data-reference-copy') && button.closest('.markdown-article-sidebar')))) return;
+        if (button.hasAttribute('data-reference-copy')) {
+            const group = button.closest('.markdown-reference-formula') || button.parentElement;
+            const formula = group.querySelector('[data-math]') || button;
+            const text = button.getAttribute('data-reference-copy');
+            void copyContent(button, text, formula, 'Copy formula', 'Formula selected', () => {
+                // KaTeX contains visual and MathML output. A manual selection
+                // must expose the original TeX rather than that rendered text.
+                let source = group.querySelector('.markdown-reference-copy-source');
+                if (!source) {
+                    source = document.createElement('code');
+                    source.className = 'markdown-reference-copy-source';
+                    source.setAttribute('tabindex', '0');
+                    source.setAttribute('aria-label', 'Formula LaTeX source for manual copying');
+                    group.appendChild(source);
+                }
+                source.textContent = text;
+                return source;
+            });
+        } else if (button.hasAttribute('data-code-wrap')) {
             const block = button.closest('.markdown-code-block');
             const wrapped = block.classList.toggle('is-wrapped');
             button.setAttribute('aria-pressed', String(wrapped));

@@ -39,6 +39,20 @@
                 return `<details class="markdown-details"><summary>${titleMd.renderInline(title, env)}</summary><div class="markdown-details-body">\n`;
             }
         });
+        md.use(root.markdownitContainer, 'reference', {
+            validate: params => /^reference(?:\s|$)/.test(params.trim()),
+            render(tokens, index, _options, env) {
+                if (tokens[index].nesting === -1) return '</div></section>\n';
+                const title = tokens[index].info.trim().replace(/^reference\s*/, '') || 'Formula reference';
+                const slug = title.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+                    .replace(/[^\p{L}\p{N}\s-]/gu, '').trim().replace(/\s+/g, '-') || 'formula';
+                const base = 'reference-' + slug;
+                let id = base, suffix = 2;
+                while (env.usedIds.has(id)) id = `${base}-${suffix++}`;
+                env.usedIds.add(id);
+                return `<section class="markdown-reference" id="${escape(id)}" data-markdown-reference data-reference-title="${escape(title)}" aria-label="${escape(title)}"><p class="markdown-reference-title"><strong>${escape(title)}</strong></p><div class="markdown-reference-body">\n`;
+            }
+        });
         md.use(root.markdownitContainer, 'quiz', {
             validate: params => /^quiz(?:\s|$)/.test(params.trim())
         });

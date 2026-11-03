@@ -20,6 +20,7 @@ Use this suggested outline to organize your notes, and adapt it to your course s
 
 In sinusoidal steady state, a series resistor and ideal inductor have the combined impedance
 
+:::reference Series RL impedance
 $$
 Z_{RL} = R + j\omega L
 $$
@@ -29,6 +30,9 @@ $$
 - $L$ is the inductance in henries.
 - $\omega$ is the angular frequency in radians per second, with $\omega = 2\pi f$.
 - $j$ is the imaginary unit, and $f$ is the frequency in hertz.
+
+For an ideal inductor in sinusoidal steady state.
+:::
 
 Record the frequency and component assumptions before substituting values.
 

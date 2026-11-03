@@ -164,6 +164,7 @@ async function harness({ sources = ['# Fixture\n\nArticle **content**.'], failur
     };
     return {
         document, articles, loaded, copied, opened, errors, events, fetches, timers, selection, element,
+        setMathRenderer(render) { sandbox.katex = { render }; },
         click(target, properties = {}) { document.dispatchEvent(new FixtureEvent('click', { target, ...properties })); },
         submit(form) {
             const event = new FixtureEvent('submit', { target: form, cancelable: true });
@@ -185,6 +186,59 @@ async function harness({ sources = ['# Fixture\n\nArticle **content**.'], failur
 }
 
 async function check(name, callback) { await callback(); results.push(name); }
+
+function referenceControls(h, parent) {
+    const wrapper = h.element('div', { class: 'markdown-reference-formula' });
+    const tex = '\\frac{V_1R_2-V_2R_1}{R_1R_2+R_1R_3+R_2R_3}';
+    const math = h.element('div', { 'data-math': tex, 'data-math-display': 'true' }, tex);
+    const button = h.element('button', { class: 'markdown-reference-copy', type: 'button', 'data-reference-copy': tex }, 'Copy formula');
+    wrapper.append(math, button); parent.appendChild(wrapper);
+    return { math, button, tex };
+}
+
+await check('Reference formula copying uses raw TeX inside an article or its tools sidebar only', async () => {
+    const h = await harness();
+    const sidebar = h.element('aside', { class: 'markdown-article-sidebar' }); h.document.body.appendChild(sidebar);
+    const sidebarFormula = referenceControls(h, sidebar);
+    h.click(sidebarFormula.button); await nextTurn();
+    assert.deepEqual(h.copied, [sidebarFormula.tex]);
+    assert.equal(sidebarFormula.button.textContent, 'Copied');
+    h.resetLabels(); assert.equal(sidebarFormula.button.textContent, 'Copy formula');
+    const articleFormula = referenceControls(h, h.articles[0]);
+    h.click(articleFormula.button); await nextTurn();
+    assert.deepEqual(h.copied, [sidebarFormula.tex, articleFormula.tex]);
+    const unrelated = referenceControls(h, h.document.body);
+    h.click(unrelated.button); await nextTurn();
+    assert.equal(h.copied.length, 2);
+    assert.equal(unrelated.button.textContent, 'Copy formula');
+});
+
+await check('Reference formula copying provides a selectable fallback when clipboard is denied', async () => {
+    const h = await harness({ clipboard: 'reject' });
+    const sidebar = h.element('aside', { class: 'markdown-article-sidebar' }); h.document.body.appendChild(sidebar);
+    const { button, math, tex } = referenceControls(h, sidebar);
+    math.textContent = 'Rendered MathML and visual math text differ from the original TeX.';
+    h.click(button); await nextTurn();
+    assert.equal(button.textContent, 'Formula selected');
+    const source = sidebar.querySelector('.markdown-reference-copy-source');
+    assert.ok(source); assert.equal(source.textContent, tex);
+    assert.equal(h.selection.ranges[0].target, source);
+    assert.notEqual(source, math);
+    h.resetLabels(); assert.equal(button.textContent, 'Copy formula');
+});
+
+await check('Reference-ready events enhance sidebar equations with the shared math renderer', async () => {
+    const h = await harness(); const rendered = [];
+    h.setMathRenderer((tex, target, options) => rendered.push({ tex, target, options }));
+    const sidebar = h.element('aside', { class: 'markdown-article-sidebar' });
+    const list = h.element('div', { class: 'markdown-reference-list' });
+    sidebar.appendChild(list); h.document.body.appendChild(sidebar);
+    const { math, tex } = referenceControls(h, list);
+    h.document.dispatchEvent(new FixtureEvent('markdown:reference-ready', { detail: { container: list } }));
+    await until(() => math.dataset.mathRendered === 'true');
+    assert.equal(rendered.length, 1); assert.equal(rendered[0].tex, tex); assert.equal(rendered[0].target, math);
+    assert.equal(rendered[0].options.displayMode, true); assert.equal(rendered[0].options.trust, false);
+});
 
 await check('Local parser assets load once for concurrent articles; real Markdown renders before enhancement', async () => {
     const h = await harness({ sources: ['# First\n\n**Readable** article.', '## Second\n\n- nested\n  - item'] });

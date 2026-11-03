@@ -31,7 +31,7 @@ The HTML page supplies the article title. Start Markdown sections with `##`, the
 
 ###### A final detail
 
-This section's “Headings and navigation” title is a live H2 example. The automatic section navigation and reading progress use major sections. Select a section in the navigation, then copy the browser URL to share it. Headings keep their IDs for `#heading-id` links; repeated heading names receive distinct IDs.
+This section's “Headings and navigation” title is a live H2 example. The automatic directory includes H2 sections and H3 subsections, with the current section highlighted as you read. On screens at least 1200 px wide, it appears vertically to the right of the article; on narrower screens, the existing collapsible navigation stays above the article. Reading progress remains available in both layouts. Select a section in the navigation, then copy the browser URL to share it. Headings keep their IDs for `#heading-id` links; repeated heading names receive distinct IDs.
 
 ## Paragraphs and emphasis
 
@@ -294,6 +294,48 @@ V_{\text{out}} &= 5\frac{10}{10 + 10} \\
                 &= 2.5\,\text{V}
 \end{aligned}
 \]
+
+## Formula and symbol quick reference
+
+Wrap a key formula and its symbol definitions in `:::reference Title`, then close the block with `:::`. The block remains part of your article and also appears in **Formulas & symbols** beside the article on wide screens. This section starts collapsed; select its title to expand it. Expanding it hides **Navigation Bar** and uses the sidebar height for references; closing it restores the directory. Both views scroll internally. On narrower screens, the same reference list is available in a collapsible section after the article, while the top navigation stays available.
+
+Only blocks you mark with `:::reference` are collected. Ordinary equations remain in the body. Keep each reference short: state a formula, define its symbols and units, and include an assumption when it changes how the formula applies. References inside quizzes, expandable answers, or other hidden content are excluded from the quick-reference list.
+
+**Source**
+
+```markdown
+:::reference Ohm's law
+$$
+V = IR
+$$
+
+| Symbol | Meaning | SI unit |
+| :--- | :--- | :--- |
+| `V` | Voltage across the resistor | V |
+| `I` | Current entering its positive terminal | A |
+| `R` | Resistance | Ω |
+
+For an ideal linear resistor, using the passive sign convention.
+:::
+```
+
+**Result**
+
+:::reference Ohm's law
+$$
+V = IR
+$$
+
+| Symbol | Meaning | SI unit |
+| :--- | :--- | :--- |
+| `V` | Voltage across the resistor | V |
+| `I` | Current entering its positive terminal | A |
+| `R` | Resistance | Ω |
+
+For an ideal linear resistor, using the passive sign convention.
+:::
+
+Use **View in article** on a reference card to jump back to the original block. **Copy formula** copies a display formula's original LaTeX so you can reuse it in notes. If clipboard access is unavailable, the card shows and selects the LaTeX for manual copying. Give each block a descriptive title; source links receive stable, unique anchors. The list follows the order of the marked blocks in the article and is hidden when there are none. Titles inside reference blocks are not added as extra directory entries.
 
 ## Images, captions, and zoom
 
