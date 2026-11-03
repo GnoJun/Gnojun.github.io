@@ -31,7 +31,9 @@ The HTML page supplies the article title. Start Markdown sections with `##`, the
 
 ###### A final detail
 
-This section's “Headings and navigation” title is a live H2 example. The automatic directory includes H2 sections and H3 subsections, with the current section highlighted as you read. On screens at least 1200 px wide, it appears vertically to the right of the article; on narrower screens, the existing collapsible navigation stays above the article. Reading progress remains available in both layouts. Select a section in the navigation, then copy the browser URL to share it. Headings keep their IDs for `#heading-id` links; repeated heading names receive distinct IDs.
+This section's “Headings and navigation” title is a live H2 example. The automatic directory includes H2 sections and H3 subsections, with the current section highlighted as you read. On screens at least 1200 px wide, the right panel starts hidden. Select the small **Navigation Bar** button to open or close the whole panel, including its directory and formula references. The open panel is 220 px wide and uses the available height below the site header, with internal scrolling.
+
+On narrower screens, **Navigation Bar** stays above the article and also starts collapsed. Its open or closed state is independent of the desktop panel. Each layout retains the reader's choice when resizing or rerendering the current page; reloading starts collapsed again. The expanded navigation shows reading progress in either layout. Select a section in the navigation, then copy the browser URL to share it. Headings keep their IDs for `#heading-id` links; repeated heading names receive distinct IDs.
 
 ## Paragraphs and emphasis
 
@@ -297,7 +299,7 @@ V_{\text{out}} &= 5\frac{10}{10 + 10} \\
 
 ## Formula and symbol quick reference
 
-Wrap a key formula and its symbol definitions in `:::reference Title`, then close the block with `:::`. The block remains part of your article and also appears in **Formulas & symbols** beside the article on wide screens. This section starts collapsed; select its title to expand it. Expanding it hides **Navigation Bar** and uses the sidebar height for references; closing it restores the directory. Both views scroll internally. On narrower screens, the same reference list is available in a collapsible section after the article, while the top navigation stays available.
+Wrap a key formula and its symbol definitions in `:::reference Title`, then close the block with `:::`. The block remains part of your article and also appears in **Formulas & symbols** inside the right panel on wide screens. Open the panel with **Navigation Bar**, then select **Formulas & symbols**, which starts collapsed. Expanding the formula list hides the directory inside the panel and gives the references its available height; closing the list restores the directory. The outer **Navigation Bar** button remains accessible to close the whole panel. Both views scroll internally. On narrower screens, the reference list starts collapsed after the article, and opening it leaves the independent top navigation available.
 
 Only blocks you mark with `:::reference` are collected. Ordinary equations remain in the body. Keep each reference short: state a formula, define its symbols and units, and include an assumption when it changes how the formula applies. References inside quizzes, expandable answers, or other hidden content are excluded from the quick-reference list.
 

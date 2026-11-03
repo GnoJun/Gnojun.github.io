@@ -116,7 +116,7 @@ After adding a resource, check its article, images, topic selection, search, Pre
 
 Open [Markdown Article Template](markdown-template.html) through the local website server for a complete source-to-result guide. Its download buttons provide both the guide's Markdown and a shorter teaching starter. Article pages fetch their Markdown; opening a shell as a `file://` URL may fail.
 
-The HTML shell owns the page's single H1. Begin major Markdown sections with `##` and subsections with `###`; these drive the automatic directory and reading progress. Smaller headings use `####` through `######`. A Markdown `#` is rendered as H2. On screens at least 1200 px wide, the directory appears vertically in a sticky right sidebar and highlights the current section. Narrower screens keep the collapsible navigation above the article.
+The HTML shell owns the page's single H1. Begin major Markdown sections with `##` and subsections with `###`; these drive the automatic directory and reading progress. Smaller headings use `####` through `######`. A Markdown `#` is rendered as H2. On screens at least 1200 px wide, the right panel starts hidden. Its small **Navigation Bar** button opens or closes the whole panel, including the vertical directory and formula references. The open panel is 220 px wide and uses the available height below the site header, with internal scrolling and current-section highlighting. On narrower screens, the top **Navigation Bar** also starts collapsed. The desktop panel and mobile navigation retain separate open or closed choices through resizing and article rerendering on the current page; reloading starts collapsed again.
 
 ### Formula and symbol quick reference
 
@@ -134,7 +134,7 @@ $$
 :::
 ```
 
-**Formulas & symbols** starts collapsed on all screen sizes and retains the reader's choice when resizing. On wide screens, **Navigation Bar** uses the available sidebar height with its own scroll area. Expanding the reference list automatically hides the directory and gives the references that space; closing it restores the directory. On narrow screens, opening references below the article leaves the top navigation available.
+**Formulas & symbols** starts collapsed on all screen sizes. On wide screens, first open the panel with **Navigation Bar**. Expanding the reference list hides the directory inside the panel and gives the references that space; closing the list restores the directory. The outer **Navigation Bar** button remains accessible to close the whole panel in either view. On narrow screens, opening references below the article leaves the independent top navigation available.
 
 Use this block for key formulas, assumptions, and variable units; keep intermediate calculations in the normal article body. See the template's **Formula and symbol quick reference** section for copyable source and a live example.
 

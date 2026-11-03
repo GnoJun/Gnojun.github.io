@@ -99,6 +99,7 @@ class Element {
         (this.listeners.get(event.type) || []).forEach(callback => callback(event));
         if (event.bubbles && this.parentNode) this.parentNode.dispatchEvent(event);
     }
+    focus(options) { this.ownerDocument.activeElement = this; this.focusOptions = options; }
     getBoundingClientRect() {
         const scroll = this.ownerDocument?.window?.scrollY || 0;
         return { ...this.rect, top: this.rect.top - scroll, bottom: this.rect.bottom - scroll };
@@ -135,6 +136,7 @@ function parseShell(html, document) {
 function harness({ desktop = true, content = true, reference = true, legacyMedia = false, shellSource, siblings = false, implementation = navigationSource } = {}) {
     const document = new Element('document', null, 9); document.ownerDocument = document;
     document.createElement = tag => new Element(tag, document);
+    document.getElementById = id => document.querySelectorAll('[id]').find(node => node.id === id) || null;
     document.createComment = text => { const node = new Element('comment', document, 8); node._text = text; return node; };
     const make = (tag, attributes = {}, text = '') => {
         const node = document.createElement(tag); Object.entries(attributes).forEach(([name, value]) => node.setAttribute(name, value)); node.textContent = text; return node;
@@ -217,8 +219,11 @@ function harness({ desktop = true, content = true, reference = true, legacyMedia
     function flush() { let count = 0; while (frames.length) { assert.ok(count++ < 20); frames.shift()(); } }
     flush();
     const layout = article.parentElement;
+    const sidebar = layout.querySelector('.markdown-article-sidebar');
+    const sidebarPanel = sidebar.querySelector('.markdown-sidebar-panel');
+    const sidebarToggle = sidebar.querySelector('.markdown-sidebar-toggle');
     return {
-        document, window, main, navigation, section, layout, originalContainer, originalSiblings, originalOrder, before, after, article, headings, toc, progress, bar, toggle, make, heading, sourceReference, referenceEvents, flush,
+        document, window, main, navigation, section, layout, originalContainer, originalSiblings, originalOrder, before, after, article, headings, toc, progress, bar, toggle, sidebarPanel, sidebarToggle, make, heading, sourceReference, referenceEvents, flush,
         breakpoint(wide) { media.matches = wide; mediaListeners.forEach(callback => callback({ matches: wide })); flush(); },
         rendered() { article.dispatchEvent(new Event('markdown:rendered', { bubbles: true })); flush(); },
         toggleReferences(open) {
@@ -228,6 +233,7 @@ function harness({ desktop = true, content = true, reference = true, legacyMedia
             flush();
         },
         scroll(top) { window.scrollY = top; window.dispatchEvent(new Event('scroll')); flush(); },
+        keydown(target, key) { target.dispatchEvent(new Event('keydown', { key, bubbles: true })); flush(); },
         click(node) { node.dispatchEvent(new Event('click', { bubbles: true })); flush(); }
     };
 }
@@ -237,7 +243,14 @@ function check(name, callback) { callback(); results.push(name); }
 
 check('Desktop reuses one existing navigation and lists visible H2/H3 only', () => {
     const h = harness(); const sidebar = h.layout.querySelector('.markdown-article-sidebar');
-    assert.equal(h.navigation.parentElement, sidebar);
+    assert.equal(h.navigation.parentElement, h.sidebarPanel);
+    assert.equal(h.sidebarPanel.parentElement, sidebar);
+    assert.equal(h.sidebarPanel.hidden, true);
+    assert.equal(h.sidebarToggle.textContent, 'Navigation Bar');
+    assert.equal(h.sidebarToggle.getAttribute('aria-expanded'), 'false');
+    assert.equal(h.sidebarToggle.getAttribute('aria-controls'), h.sidebarPanel.id);
+    assert.ok(h.layout.classList.contains('is-sidebar-collapsed'));
+    assert.ok(sidebar.classList.contains('is-collapsed'));
     assert.equal(h.document.querySelectorAll('[data-markdown-navigation]').length, 1);
     assert.ok(h.layout.classList.contains('markdown-article-layout'));
     const links = h.toc.querySelectorAll('a');
@@ -254,17 +267,69 @@ check('Crossing the breakpoint restores navigation order and narrow-screen colla
     assert.equal(h.navigation.nextSibling, h.section);
     assert.equal(sidebar.querySelector('[data-markdown-navigation]'), null);
     assert.equal(sidebar.querySelector('.markdown-quick-reference').open, false);
-    h.click(h.toggle);
     assert.equal(h.toggle.getAttribute('aria-expanded'), 'false');
     assert.ok(h.navigation.classList.contains('is-collapsed'));
-    assert.equal(h.document.documentElement.style['--markdown-toc-offset'], '0px');
     h.click(h.toggle);
     assert.equal(h.toggle.getAttribute('aria-expanded'), 'true');
     assert.equal(h.document.documentElement.style['--markdown-toc-offset'], 'var(--toc-height)');
+    h.click(h.toggle);
+    assert.equal(h.toggle.getAttribute('aria-expanded'), 'false');
+    assert.equal(h.document.documentElement.style['--markdown-toc-offset'], '0px');
     h.breakpoint(true);
-    assert.equal(h.navigation.parentElement, sidebar);
+    assert.equal(h.navigation.parentElement, h.sidebarPanel);
     assert.equal(sidebar.querySelector('.markdown-quick-reference').open, false);
     assert.equal(h.document.querySelectorAll('.markdown-article-sidebar').length, 1);
+});
+
+check('The desktop Navigation Bar launcher opens and closes the whole panel while formulas stay independent', () => {
+    const h = harness();
+    assert.equal(h.sidebarPanel.hidden, true);
+    h.click(h.sidebarToggle);
+    assert.equal(h.sidebarPanel.hidden, false);
+    assert.equal(h.sidebarToggle.getAttribute('aria-expanded'), 'true');
+    assert.equal(h.layout.classList.contains('is-sidebar-collapsed'), false);
+    assert.equal(h.navigation.hidden, false);
+    h.toggleReferences(true);
+    assert.equal(h.navigation.hidden, true);
+    assert.equal(h.sidebarToggle.hidden, false);
+    h.click(h.sidebarToggle);
+    assert.equal(h.sidebarPanel.hidden, true);
+    assert.equal(h.sidebarToggle.getAttribute('aria-expanded'), 'false');
+    h.click(h.sidebarToggle);
+    assert.equal(h.sidebarPanel.hidden, false);
+    assert.equal(h.layout.querySelector('.markdown-quick-reference').open, true);
+    assert.equal(h.navigation.hidden, true);
+    h.toggleReferences(false); assert.equal(h.navigation.hidden, false);
+});
+
+check('Desktop panel state survives rerender and remains independent of the mobile section toggle', () => {
+    const h = harness(); h.click(h.sidebarToggle); h.rendered();
+    assert.equal(h.sidebarPanel.hidden, false);
+    h.breakpoint(false);
+    assert.equal(h.sidebarPanel.hidden, false, 'Mobile references remain visible below the article');
+    assert.equal(h.sidebarToggle.hidden, true);
+    assert.equal(h.toggle.getAttribute('aria-expanded'), 'false');
+    h.click(h.toggle); assert.equal(h.toggle.getAttribute('aria-expanded'), 'true');
+    h.breakpoint(true);
+    assert.equal(h.sidebarPanel.hidden, false);
+    assert.equal(h.sidebarToggle.getAttribute('aria-expanded'), 'true');
+    h.click(h.sidebarToggle); h.rendered();
+    assert.equal(h.sidebarPanel.hidden, true);
+    h.breakpoint(false);
+    assert.equal(h.sidebarPanel.hidden, false);
+    assert.equal(h.toggle.getAttribute('aria-expanded'), 'true', 'The mobile section choice is preserved');
+    h.breakpoint(true);
+    assert.equal(h.sidebarPanel.hidden, true);
+    assert.equal(h.sidebarToggle.getAttribute('aria-expanded'), 'false');
+});
+
+check('Escape closes an open desktop Navigation Bar and returns keyboard focus to its launcher', () => {
+    const h = harness(); h.click(h.sidebarToggle);
+    const link = h.toc.querySelector('a'); link.focus();
+    h.keydown(link, 'Escape');
+    assert.equal(h.sidebarPanel.hidden, true);
+    assert.equal(h.sidebarToggle.getAttribute('aria-expanded'), 'false');
+    assert.equal(h.document.activeElement, h.sidebarToggle);
 });
 
 check('Formula references start closed and preserve the reader choice across layouts and renders', () => {
@@ -286,12 +351,15 @@ check('Formula references start closed and preserve the reader choice across lay
 
 check('Opening desktop formula references hides the whole section navigation and closing restores it', () => {
     const h = harness(); const sidebar = h.layout.querySelector('.markdown-article-sidebar');
+    h.click(h.sidebarToggle);
+    assert.equal(h.sidebarPanel.hidden, false);
     assert.equal(h.navigation.hidden, false);
     h.toggleReferences(true);
     assert.equal(h.navigation.hidden, true, 'The complete section navigation is hidden while references are open');
     assert.equal(sidebar.hidden, false);
     assert.equal(h.layout.querySelector('.markdown-quick-reference').open, true);
     assert.equal(h.toc.querySelectorAll('a').length, 3, 'Section links remain available when navigation is restored');
+    assert.equal(h.sidebarToggle.hidden, false, 'The outer launcher stays available while formulas are open');
     h.toggleReferences(false);
     assert.equal(h.navigation.hidden, false);
     assert.equal(h.toc.querySelectorAll('a').filter(link => link.getAttribute('aria-current') === 'location').length, 1);
@@ -299,7 +367,6 @@ check('Opening desktop formula references hides the whole section navigation and
 
 check('Reference expansion leaves mobile navigation available and preserves its collapsed state across breakpoints', () => {
     const h = harness({ desktop: false });
-    h.click(h.toggle);
     assert.ok(h.navigation.classList.contains('is-collapsed'));
     h.toggleReferences(true);
     assert.equal(h.navigation.hidden, false, 'References below the article do not hide mobile navigation');
@@ -307,6 +374,7 @@ check('Reference expansion leaves mobile navigation available and preserves its 
     assert.ok(h.navigation.classList.contains('is-collapsed'));
     h.breakpoint(true);
     assert.equal(h.navigation.hidden, true);
+    assert.equal(h.sidebarPanel.hidden, true, 'Desktop launcher starts closed independently of mobile references');
     h.breakpoint(false);
     assert.equal(h.navigation.hidden, false);
     assert.ok(h.navigation.classList.contains('is-collapsed'));
@@ -397,10 +465,11 @@ check('Pages without references hide their empty tools below the article on narr
     const sidebar = h.layout.querySelector('.markdown-article-sidebar');
     assert.equal(h.navigation.parentElement, h.main); assert.equal(sidebar.hidden, true);
     h.breakpoint(true); assert.equal(sidebar.hidden, false);
-    assert.equal(h.navigation.parentElement, sidebar);
+    assert.equal(h.navigation.parentElement, h.sidebarPanel);
     const empty = harness({ content: false });
     assert.equal(empty.navigation.hidden, true);
     assert.equal(empty.layout.querySelector('.markdown-article-sidebar').hidden, true);
+    assert.equal(empty.sidebarToggle.hidden, true);
 });
 
 function assertIsolatedArticleLayout(h) {
@@ -444,13 +513,16 @@ for (const { path, html } of shellCases) {
     check('Real article shell preserves its tools and content layout: ' + path, () => {
         const h = harness({ shellSource: html });
         assertIsolatedArticleLayout(h);
-        assert.equal(h.navigation.parentElement, h.layout.querySelector('.markdown-article-sidebar'));
+        assert.equal(h.navigation.parentElement, h.sidebarPanel);
+        assert.equal(h.sidebarPanel.hidden, true);
         assert.equal(h.toc.querySelectorAll('a').length, 3);
         assert.equal(h.layout.querySelectorAll('.markdown-reference-card').length, 1);
         h.rendered(); h.breakpoint(false); h.breakpoint(true);
         assertIsolatedArticleLayout(h);
         assert.equal(h.document.querySelectorAll('.markdown-article-layout').length, 1);
         assert.equal(h.document.querySelectorAll('[data-markdown-navigation]').length, 1);
+        assert.equal(h.document.querySelectorAll('.markdown-sidebar-panel').length, 1);
+        assert.equal(h.document.querySelectorAll('.markdown-sidebar-toggle').length, 1);
     });
 }
 

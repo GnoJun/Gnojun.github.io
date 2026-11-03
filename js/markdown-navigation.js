@@ -26,6 +26,17 @@
     const sidebar = document.createElement('aside');
     sidebar.className = 'markdown-article-sidebar';
     sidebar.setAttribute('aria-label', 'Article tools');
+    const panelIds = new Set(Array.from(document.querySelectorAll('[id]'), element => element.id));
+    let panelId = 'markdown-sidebar-panel', panelSuffix = 2;
+    while (panelIds.has(panelId)) panelId = 'markdown-sidebar-panel-' + panelSuffix++;
+    const sidebarToggle = document.createElement('button');
+    sidebarToggle.className = 'markdown-sidebar-toggle';
+    sidebarToggle.type = 'button';
+    sidebarToggle.textContent = 'Navigation Bar';
+    sidebarToggle.setAttribute('aria-controls', panelId);
+    const sidebarPanel = document.createElement('div');
+    sidebarPanel.className = 'markdown-sidebar-panel';
+    sidebarPanel.setAttribute('id', panelId);
     const references = document.createElement('details');
     references.className = 'markdown-quick-reference';
     const summary = document.createElement('summary');
@@ -33,7 +44,8 @@
     const referenceList = document.createElement('div');
     referenceList.className = 'markdown-reference-list';
     references.append(summary, referenceList);
-    sidebar.appendChild(references);
+    sidebarPanel.appendChild(references);
+    sidebar.append(sidebarToggle, sidebarPanel);
     layout.appendChild(sidebar);
 
     const navigationHeading = document.createElement('p');
@@ -46,7 +58,8 @@
     let currentSectionId = '';
     let updateRequested = false;
     let contentResizeObserver;
-    let navigationCollapsed = false;
+    let navigationCollapsed = true;
+    let desktopSidebarOpen = false;
     let hasReferences = false;
 
     function getMarkdownHeadings() {
@@ -149,10 +162,19 @@
     }
 
     function updateLayout() {
-        if (wideScreen.matches) sidebar.insertBefore(navigation, references);
+        if (wideScreen.matches) sidebarPanel.insertBefore(navigation, references);
         else originalPosition.parentNode.insertBefore(navigation, originalPosition.nextSibling);
+        const hasTools = Boolean(headings.length || hasReferences);
+        const collapsed = wideScreen.matches && hasTools && !desktopSidebarOpen;
         navigation.hidden = !headings.length || (wideScreen.matches && hasReferences && references.open);
-        sidebar.hidden = !wideScreen.matches ? !hasReferences : navigation.hidden && !hasReferences;
+        sidebarPanel.hidden = wideScreen.matches && !desktopSidebarOpen;
+        sidebarToggle.hidden = !wideScreen.matches || !hasTools;
+        sidebarToggle.setAttribute('aria-expanded', String(!sidebarPanel.hidden));
+        sidebarToggle.setAttribute('aria-label', sidebarPanel.hidden ? 'Show article navigation' : 'Hide article navigation');
+        sidebarToggle.setAttribute('title', sidebarPanel.hidden ? 'Show article navigation' : 'Hide article navigation');
+        sidebar.hidden = wideScreen.matches ? !hasTools : !hasReferences;
+        sidebar.classList.toggle('is-collapsed', collapsed);
+        layout.classList.toggle('is-sidebar-collapsed', collapsed);
         layout.classList.toggle('has-article-tools', !sidebar.hidden);
         currentSectionId = '';
         updateNavigationToggle();
@@ -232,6 +254,20 @@
         }
     }
 
+    sidebarToggle.addEventListener('click', () => {
+        if (!wideScreen.matches || (!headings.length && !hasReferences)) return;
+        desktopSidebarOpen = !desktopSidebarOpen;
+        updateLayout();
+        sidebarToggle.focus({ preventScroll: true });
+    });
+    sidebar.addEventListener('keydown', event => {
+        if (event.key !== 'Escape' || !wideScreen.matches || !desktopSidebarOpen ||
+            (event.target !== sidebarToggle && !sidebarPanel.contains(event.target))) return;
+        event.preventDefault();
+        desktopSidebarOpen = false;
+        updateLayout();
+        sidebarToggle.focus({ preventScroll: true });
+    });
     references.addEventListener('toggle', updateLayout);
     navigationToggle.addEventListener('click', () => {
         if (wideScreen.matches) return;
