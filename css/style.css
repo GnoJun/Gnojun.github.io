@@ -3442,7 +3442,7 @@ html[data-theme="light"] .markdown-quiz-input[aria-invalid="true"] { border-colo
 .markdown-reference-source:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
 
 @media (min-width: 1200px) {
-    .markdown-article-layout.has-article-tools { display: grid; grid-template-columns: minmax(0, 1fr) 260px; align-items: start; gap: 2.5rem; }
+    .markdown-article-layout.has-article-tools { display: grid; grid-template-columns: minmax(0, 1fr) 220px; align-items: start; gap: 3rem; }
     .markdown-article-sidebar {
         position: sticky;
         top: calc(var(--header-height) + 1.5rem);
@@ -3483,13 +3483,13 @@ html[data-theme="light"] .markdown-quiz-input[aria-invalid="true"] { border-colo
         justify-content: center;
         flex-shrink: 0;
         gap: .55rem;
-        margin: 0 0 1.2rem;
-        padding: .65rem .75rem;
-        border: 1px solid var(--color-accent-border);
+        margin: 0 0 .85rem;
+        padding: .5rem .6rem;
+        border: 1px solid var(--color-border);
         border-radius: .75rem;
-        background: linear-gradient(135deg, var(--color-accent-surface-strong), var(--color-surface-soft));
-        color: var(--color-accent-text);
-        font-size: .9375rem;
+        background: var(--color-surface-soft);
+        color: var(--color-text-secondary);
+        font-size: .875rem;
         font-weight: 600;
         line-height: 1.6;
         letter-spacing: .02em;
@@ -3498,9 +3498,9 @@ html[data-theme="light"] .markdown-quiz-input[aria-invalid="true"] { border-colo
     .markdown-article-sidebar .markdown-sidebar-heading::before {
         --navigation-heading-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M9 6h11M9 12h11M9 18h11'/%3E%3Ccircle cx='4' cy='6' r='1'/%3E%3Ccircle cx='4' cy='12' r='1'/%3E%3Ccircle cx='4' cy='18' r='1'/%3E%3C/svg%3E");
         content: '';
-        flex: 0 0 1rem;
-        width: 1rem;
-        height: 1rem;
+        flex: 0 0 .9rem;
+        width: .9rem;
+        height: .9rem;
         background: currentColor;
         -webkit-mask: var(--navigation-heading-icon) center / contain no-repeat;
         mask: var(--navigation-heading-icon) center / contain no-repeat;
@@ -3509,7 +3509,7 @@ html[data-theme="light"] .markdown-quiz-input[aria-invalid="true"] { border-colo
     .markdown-article-sidebar .project-toc-list::-webkit-scrollbar { display: block; width: 4px; }
     .markdown-article-sidebar .project-toc-list::-webkit-scrollbar-thumb { border-radius: var(--radius-pill); background: var(--color-border); }
     .markdown-article-sidebar .project-toc-list li + li { margin-top: .15rem; }
-    .markdown-article-sidebar .project-toc-link { display: block; min-height: 36px; padding: .45rem .65rem; border-radius: .45rem; font-size: .875rem; font-weight: 400; line-height: 1.65; white-space: normal; overflow-wrap: anywhere; }
+    .markdown-article-sidebar .project-toc-link { display: block; min-height: 36px; padding: .4rem .5rem; border-radius: .45rem; font-size: .875rem; font-weight: 400; line-height: 1.65; white-space: normal; overflow-wrap: anywhere; }
     .markdown-article-sidebar .project-toc-list li[data-toc-level="2"]:not(:first-child) { margin-top: .75rem; }
     .markdown-article-sidebar .project-toc-list li[data-toc-level="2"] .project-toc-link { color: var(--color-text-primary); font-weight: 600; }
     .markdown-article-sidebar .project-toc-list li[data-toc-level="3"] .project-toc-link { padding-left: 1.75rem; color: var(--color-text-secondary); }
@@ -3519,6 +3519,6 @@ html[data-theme="light"] .markdown-quiz-input[aria-invalid="true"] { border-colo
     .markdown-article-sidebar .markdown-quick-reference { flex: 0 0 auto; }
     .markdown-article-sidebar .markdown-quick-reference[open] { flex: 1 1 0; min-height: 0; max-height: none; overflow-y: auto; scrollbar-width: thin; }
     .markdown-article-sidebar .markdown-quick-reference[open] > summary { position: sticky; top: 0; z-index: 1; background: var(--color-background); }
-    .markdown-article-sidebar .markdown-quick-reference > summary { padding-top: 1rem; }
+    .markdown-article-sidebar .markdown-quick-reference > summary { padding-top: .85rem; font-size: .875rem; }
     .markdown-article-sidebar .markdown-reference-card { padding: .85rem; }
 }
