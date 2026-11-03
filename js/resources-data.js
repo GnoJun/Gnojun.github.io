@@ -145,12 +145,12 @@ const resourceLibrary = [
         "kind": "note",
         "category": "Physics",
         "title": "Physics I",
-        "description": "Course-note starter for motion, forces, energy, momentum, and introductory mechanics.",
-        "tags": ["Courses", "Physics", "Mechanics", "Motion", "Energy"],
+        "description": "PHSX 220 final exam review based on Practice Exams A and B, with worked examples on mechanics, rotation, oscillations, and waves.",
+        "tags": ["Courses", "Physics", "PHSX 220", "PHSX220", "Mechanics", "Motion", "Energy", "Angular Momentum", "Oscillations", "Waves"],
         "url": "notes/physics-i.html",
         "external": false,
-        "date": "2026-10-29",
-        "status": "Starter",
+        "date": "2026-11-02",
+        "status": "Documented",
         "resourceType": "Course Notes"
     },
     {

@@ -113,6 +113,94 @@ test('Expandable answers support rich content and nesting inside lists', () => {
     assert.ok(html.includes('<summary><strong>Answer</strong></summary>'));
     assert.doesNotMatch(html, /<details[^>]*\bopen\b/);
 });
+const pdfBlock = (settings, body = '') => [':::pdf ' + settings, '', body, ':::'].join('\n');
+
+test('PDF cards resolve article paths and offer open, download, and collapsed preview controls', () => {
+    const html = render(pdfBlock('src="../../files/courses/phsx220/practice-exam-a.pdf" title="Practice Exam A" download="220-Final Exam-Practice Exam A.pdf"',
+        '**12 pages.** Read the [review](#review) and check $x=3$.\n\n- Questions: pages 1-6\n- Solutions: pages 7-12'));
+    assert.match(html, /class="markdown-pdf"/);
+    assert.match(html, /<h3\b[^>]*class="markdown-pdf-title"[^>]*>Practice Exam A<\/h3>/);
+    assert.equal(count(html, /href="https:\/\/site\.test\/files\/courses\/phsx220\/practice-exam-a\.pdf"/g), 2);
+    assert.match(html, /<a\b[^>]*target="_blank"[^>]*rel="noopener noreferrer"/);
+    assert.match(html, /download="220-Final Exam-Practice Exam A\.pdf"/);
+    assert.match(html, /<details\b[^>]*class="markdown-details"/);
+    assert.doesNotMatch(html, /<details[^>]*\bopen\b/);
+    assert.match(html, /<iframe\b[^>]*class="markdown-pdf-preview"/);
+    assert.match(html, /src="https:\/\/site\.test\/files\/courses\/phsx220\/practice-exam-a\.pdf#view=FitH"/);
+    assert.match(html, /<iframe\b[^>]*title="[^"]*Practice Exam A[^"]*"/);
+    assert.match(html, /<iframe\b[^>]*loading="lazy"/);
+    assert.match(html, /<strong>12 pages\.<\/strong>/);
+    assert.match(html, /href="#review"/);
+    assert.match(html, /data-math="x=3"/);
+    assert.match(html, /<li>Questions: pages 1-6<\/li>/);
+});
+
+test('PDF defaults use the decoded filename and preserve external query strings and preview fragments', () => {
+    const html = render(pdfBlock("src='https://example.org/Practice%20Exam.PDF?version=2&part=all#page=3'"));
+    assert.match(html, /class="markdown-pdf-title"[^>]*>Practice Exam\.PDF<\/h3>/);
+    assert.match(html, /download="Practice Exam\.PDF"/);
+    assert.match(html, /src="https:\/\/example\.org\/Practice%20Exam\.PDF\?version=2&amp;part=all#page=3"/);
+    assert.doesNotMatch(html, /#page=3#|#page=3&amp;view=/);
+    const plain = render(pdfBlock('src=http://example.org/exam.pdf'));
+    assert.match(plain, /href="http:\/\/example\.org\/exam\.pdf"/);
+    assert.match(plain, /src="http:\/\/example\.org\/exam\.pdf#view=FitH"/);
+});
+
+test('Malformed PDF settings preserve surrounding content without creating active file controls', () => {
+    for (const settings of [
+        '', 'title="Missing file"', 'src=""', 'src="../../files/exam.pdf',
+        'src="../../files/exam.pdf" src="../../files/other.pdf"',
+        'src="../../files/exam.pdf" unknown=setting',
+        'src="../../files/exam.pdf" stray text',
+        'src="javascript:alert(1)"', 'src="jav&#x61;script:alert(1)"',
+        'src="data:application/pdf;base64,JVBERi0="', 'src="file:///private/exam.pdf"',
+        'src="mailto:exam.pdf@example.org"', 'src="https://example.org/page.html?file=exam.pdf"',
+        'src="https://example.org/exam.pdf/"'
+    ]) {
+        const html = render('Before the PDF.\n\n' + pdfBlock(settings, '**Description remains readable.**') + '\n\nAfter the PDF.');
+        assert.match(html, /markdown-pdf-error/, settings);
+        assert.doesNotMatch(html, /<(?:iframe|a)\b|\bdownload=/, settings);
+        assert.ok(html.includes('Before the PDF.') && html.includes('After the PDF.'), settings);
+        assert.match(html, /<strong>Description remains readable\.<\/strong>/, settings);
+    }
+});
+
+test('PDF labels and descriptions cannot inject HTML or executable attributes', () => {
+    const html = render(pdfBlock("src='../../files/exam.pdf' title='<img src=x onerror=alert(1)>' download='Exam & Review.pdf'",
+        '<script>alert(2)</script>\n\n<img src=x onerror=alert(3)>'));
+    assert.doesNotMatch(html, /<(?:script|img)\b/);
+    const preview = html.match(/<iframe\b([^>]*)>/)?.[1];
+    assert.ok(preview);
+    const attributes = [...preview.matchAll(/(?:^|\s)([\w:-]+)="[^"]*"/g)].map(match => match[1]);
+    assert.ok(attributes.every(name => !/^on/i.test(name)), 'Escaped title text must not become an event attribute');
+    assert.match(html, /&lt;img src=x onerror=alert\(1\)&gt;/);
+    assert.match(html, /&lt;script&gt;alert\(2\)&lt;\/script&gt;/);
+    assert.match(html, /download="Exam &amp; Review\.pdf"/);
+});
+
+test('PDF cards remain usable in details and lists, and code examples stay literal', () => {
+    const markdown = '::::details Course files\n\n' + pdfBlock('src="../../files/a.pdf" title="Shared title"') + '\n::::\n\n' +
+        '1. Read the next file.\n\n' + pdfBlock('src="../../files/b.pdf" title="Shared title"').split('\n').map(line => '   ' + line).join('\n') +
+        '\n\n' + fence + 'markdown\n' + pdfBlock('src="../../files/example.pdf"') + '\n' + fence;
+    const html = render(markdown);
+    assert.equal(count(html, /<iframe\b/g), 2);
+    assert.equal(count(html, /<details\b/g), 3);
+    assert.equal(count(html, /<details\b/g), count(html, /<\/details>/g));
+    assert.match(html, /<ol>\s*<li>/);
+    assert.match(html, /:::pdf src=&quot;\.\.\/\.\.\/files\/example\.pdf&quot;/);
+    const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
+    assert.equal(ids.length, new Set(ids).size);
+});
+
+test('Footnotes in PDF descriptions retain one complete article footnote section', () => {
+    const html = render(pdfBlock('src="../../files/exam.pdf" title="Exam"', 'Original answer key included.[^key]\n\n[^key]: Check the corrections in the review.'), { documentId: 'pdf-notes' });
+    assert.match(html, /href="#fn-pdf-notes-1"/);
+    assert.match(html, /href="#fnref-pdf-notes-1"/);
+    assert.equal(count(html, /<section class="footnotes">/g), 1);
+    assert.equal(count(html, /id="fn-pdf-notes-1"/g), 1);
+    assert.match(html, /Check the corrections in the review\./);
+});
+
 test('Tables preserve alignment and escaped pipes in inline code', () => {
     const html = render('| Left | Center | Right |\n| :--- | :---: | ---: |\n| A | ' + String.fromCharCode(96) + 'mode \\| flags' + String.fromCharCode(96) + ' | 2.5 |');
     assert.ok(html.includes('data-table-copy'));

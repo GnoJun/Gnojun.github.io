@@ -2,7 +2,7 @@
 
 This is a live, copyable guide to writing articles on this website. Each example pairs **Markdown source** with its **rendered result**. Use the download buttons above to save this guide or a shorter article starter.
 
-The article supports the rich text you expect in a chat response: readable explanations, highlighted code, equations, tables, diagrams, expandable answers, and interactive quizzes. It publishes your writing as an article; it does not generate AI responses or create a chat conversation.
+The article supports the rich text you expect in a chat response: readable explanations, highlighted code, equations, tables, diagrams, PDF cards, expandable answers, and interactive quizzes. It publishes your writing as an article; it does not generate AI responses or create a chat conversation.
 
 > [!TIP] A useful teaching sequence
 > State the learning goal, explain one idea, work through an example, and finish with a question the reader can try.
@@ -322,6 +322,45 @@ This is a filename convention, so the site does not inspect whether an image is 
 ```
 
 ![ESP32 lab-station hardware](../../images/projects/esp32-lab/esp32-lab.webp "The ESP32 lab station.")
+
+## PDF cards and previews
+
+Use a `:::pdf` block to generate a PDF card with a title, description, **open in a new tab** and **download** links, and a collapsed preview. Keep the card in the Markdown file; no page-specific HTML is needed.
+
+**Source**
+
+```markdown
+:::pdf src="../../files/courses/phsx220/practice-exam-a.pdf" title="Practice Exam A" download="220-Final Exam-Practice Exam A.pdf"
+
+12 pages: questions on pages **1-6**; supplied solutions on pages **7-12**.
+:::
+```
+
+**Result**
+
+:::pdf src="../../files/courses/phsx220/practice-exam-a.pdf" title="Practice Exam A" download="220-Final Exam-Practice Exam A.pdf"
+
+12 pages: questions on pages **1-6**; supplied solutions on pages **7-12**.
+:::
+
+| Setting | Required? | Meaning |
+| --- | --- | --- |
+| `src` | Yes | PDF URL or a path relative to this Markdown file. The URL pathname must end in `.pdf`; query parameters and fragments are allowed. |
+| `title` | No | Card title. Defaults to the PDF filename. |
+| `download` | No | Suggested filename when downloading. Defaults to the filename in the PDF URL. |
+
+Write settings as `name=value` pairs on the opening line. Use double or single quotes around values containing spaces. The body supports ordinary Markdown, including emphasis, lists, and equations. Close the block with `:::`.
+
+The shortest form uses only a source:
+
+```markdown
+:::pdf src="../../files/courses/phsx220/practice-exam-a.pdf"
+:::
+```
+
+PDF URLs can use HTTP or HTTPS. Preview support varies by browser, so the direct open and download links remain available outside the preview. For PDFs hosted on another website, download behavior depends on that host and the browser.
+
+Invalid or missing settings display an authoring error without creating active PDF links or a preview. Raw HTML in the description remains escaped, just as it does elsewhere in the article.
 
 ## Callouts and project status
 

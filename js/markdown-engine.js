@@ -42,6 +42,9 @@
         md.use(root.markdownitContainer, 'quiz', {
             validate: params => /^quiz(?:\s|$)/.test(params.trim())
         });
+        md.use(root.markdownitContainer, 'pdf', {
+            validate: params => /^pdf(?:\s|$)/.test(params.trim())
+        });
 
         // Math is tokenized before escaping, while code spans/fences stay literal.
         const inlineMath = (state, silent) => {
@@ -238,6 +241,63 @@
             };
         }
 
+        // PDF descriptions keep the normal Markdown and footnote processing.
+        md.core.ruler.after('footnote_tail', 'article_pdfs', state => {
+            // Work inward to outward so nested containers remain renderable.
+            for (let i = state.tokens.length - 1; i >= 0; i--) {
+                const opening = state.tokens[i];
+                if (opening.type !== 'container_pdf_open') continue;
+                const end = state.tokens.findIndex((token, index) => index > i &&
+                    token.type === 'container_pdf_close' && token.level === opening.level);
+                if (end < 0) continue;
+                const pdf = { body: state.tokens.slice(i + 1, end), error: '' };
+                const settings = {};
+                let remaining = opening.info.trim().replace(/^pdf\s*/, '');
+                while (remaining && !pdf.error) {
+                    const match = remaining.match(/^([a-z]+)=(?:"([^"]*)"|'([^']*)'|([^\s"']+))(?:\s+|$)/);
+                    if (!match || !['src', 'title', 'download'].includes(match[1]) || Object.hasOwn(settings, match[1])) {
+                        pdf.error = 'Use unique src, title, and download settings as name=value pairs.';
+                        break;
+                    }
+                    settings[match[1]] = match[2] ?? match[3] ?? match[4];
+                    remaining = remaining.slice(match[0].length);
+                }
+                if (!pdf.error && !settings.src?.trim()) pdf.error = 'Add src="path/to/file.pdf" to the opening line.';
+                if (!pdf.error) {
+                    const resolved = resolveUrl(settings.src, state.env.source, pageURL, true);
+                    if (!resolved || !/\.pdf$/i.test(new URL(resolved).pathname)) {
+                        pdf.error = 'The source must be an HTTP(S) URL or relative path ending in .pdf.';
+                    } else {
+                        const url = new URL(resolved);
+                        let filename = url.pathname.split('/').pop();
+                        try { filename = decodeURIComponent(filename); } catch { /* Keep the URL filename if decoding fails. */ }
+                        pdf.url = url.href;
+                        if (!url.hash) url.hash = 'view=FitH';
+                        pdf.preview = url.href;
+                        pdf.title = settings.title?.trim() || filename;
+                        pdf.download = settings.download?.trim() || filename;
+                    }
+                }
+                const token = new state.Token('article_pdf', '', 0);
+                token.block = true;
+                token.level = opening.level;
+                token.meta = pdf;
+                state.tokens.splice(i, end - i + 1, token);
+            }
+        });
+        md.renderer.rules.article_pdf = (tokens, index, opts, env, self) => {
+            const pdf = tokens[index].meta;
+            if (pdf.error) return `<aside class="markdown-pdf-error" role="note"><strong>PDF setup needs attention.</strong> ${escape(pdf.error)}${self.render(pdf.body, opts, env)}</aside>\n`;
+            let id;
+            do { id = 'pdf-' + String(env.docId).replace(/[^\w-]/g, '-') + '-' + (++env.pdfIndex); }
+            while (env.usedIds.has(id) || env.usedIds.has(id + '-title'));
+            env.usedIds.add(id);
+            env.usedIds.add(id + '-title');
+            const title = escape(pdf.title), url = escape(pdf.url);
+            const body = pdf.body.length ? `<div class="markdown-pdf-description">${self.render(pdf.body, opts, env)}</div>` : '';
+            return `<section class="markdown-pdf" id="${id}" aria-labelledby="${id}-title"><h3 class="markdown-pdf-title" id="${id}-title">${title}</h3>${body}<div class="markdown-pdf-actions"><a class="button button-secondary" href="${url}" target="_blank" rel="noopener noreferrer">Open ${title} (PDF, new tab)</a><a class="button button-secondary" href="${url}" download="${escape(pdf.download)}">Download ${title}</a></div><details class="markdown-details"><summary>Preview ${title} on this page</summary><iframe class="markdown-pdf-preview" src="${escape(pdf.preview)}" title="${title} PDF preview" loading="lazy"></iframe></details></section>\n`;
+        };
+
         // Extract quizzes after ordinary inline, task, figure, and heading rules.
         // Their content still uses the same safe Markdown renderer as the article.
         md.core.ruler.after('footnote_tail', 'article_quizzes', state => {
@@ -352,7 +412,7 @@
 
         return Object.freeze({
             render(markdown, source, settings = {}) {
-                const env = { source, usedIds: new Set(settings.reservedIds || []), docId: settings.documentId || 'article', quizIndex: 0 };
+                const env = { source, usedIds: new Set(settings.reservedIds || []), docId: settings.documentId || 'article', quizIndex: 0, pdfIndex: 0 };
                 return md.render(String(markdown).replace(/\r\n?/g, '\n'), env);
             }
         });

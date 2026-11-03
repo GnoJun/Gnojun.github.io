@@ -197,6 +197,22 @@ await check('Local parser assets load once for concurrent articles; real Markdow
     assert.equal(h.errors.length, 0); assert.equal(h.timers.size, 0);
 });
 
+await check('The course loader generates PDF cards from Markdown without page-specific HTML', async () => {
+    const course = await readFile(new URL('../content/resources/physics-i.md', import.meta.url), 'utf8');
+    const shell = await readFile(new URL('../notes/physics-i.html', import.meta.url), 'utf8');
+    const h = await harness({ sources: [course] });
+    const html = h.articles[0].innerHTML;
+    assert.doesNotMatch(shell, /<iframe\b|course-exam-files/);
+    assert.match(html, /<h2 id="practice-exam-pdfs">Practice Exam PDFs<\/h2>/);
+    assert.equal([...html.matchAll(/class="markdown-pdf"/g)].length, 2);
+    assert.equal([...html.matchAll(/<iframe\b/g)].length, 2);
+    assert.match(html, /download="220-Final Exam-Practice Exam A\.pdf"/);
+    assert.match(html, /download="220-Final Exam-Practice Exam B\.pdf"/);
+    assert.doesNotMatch(html, /markdown-pdf-error/);
+    assert.deepEqual(h.events.map(event => event.type), ['markdown:rendered', 'markdown:enhanced']);
+    assert.equal(h.errors.length, 0);
+});
+
 await check('HTTP and network failures replace loading content with an accessible message', async () => {
     for (const failure of ['http', 'network']) {
         const h = await harness({ failure }); const article = h.articles[0];

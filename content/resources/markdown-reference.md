@@ -2,7 +2,7 @@
 
 This page is a living reference for the Markdown syntax used throughout the engineering portfolio.
 
-For the current authoring workflow and a complete set of copyable source-to-result examples, start with the [Markdown Article Template](../../resources/markdown-template.html). It includes downloadable lesson starters, highlighted code, equations, tables, footnotes, callouts, and expandable answers.
+For the current authoring workflow and a complete set of copyable source-to-result examples, start with the [Markdown Article Template](../../resources/markdown-template.html). It includes downloadable lesson starters, highlighted code, equations, tables, PDF cards, footnotes, callouts, and expandable answers.
 
 This reference also retains the original HTML and CSS implementation examples for readers inspecting the site's structure.
 
@@ -178,6 +178,23 @@ Use standard Markdown link syntax.
 
 *.markdown-document a*
 
+
+## PDF Cards
+
+Use `:::pdf` to generate open, download, and expandable preview controls from Markdown:
+
+```markdown
+:::pdf src="../../files/courses/phsx220/practice-exam-a.pdf" title="Practice Exam A" download="220-Final Exam-Practice Exam A.pdf"
+
+12 pages: questions on pages **1-6**; supplied solutions on pages **7-12**.
+:::
+```
+
+Only `src` is required. Paths resolve relative to the Markdown file; HTTP(S) URLs are also supported. The URL pathname must end in `.pdf`, with optional query parameters or a fragment. `title` defaults to the PDF filename, and `download` optionally sets the suggested download filename. Quote values containing spaces. The body supports ordinary Markdown.
+
+The preview starts collapsed. Direct links remain available when the browser cannot display PDFs inline; downloads from other hosts depend on the host and browser. Invalid settings display an authoring error without active PDF links or a preview.
+
+See [PDF cards and previews](../../resources/markdown-template.html#pdf-cards-and-previews) for the live example and settings table.
 
 ## Unordered Lists
 
