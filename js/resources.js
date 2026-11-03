@@ -2,6 +2,18 @@
 (() => {
     const list = document.querySelector('#resource-list');
     if (!list || typeof resourceLibrary === 'undefined') return;
+    const controls = document.querySelector('#resource-controls');
+    const searchForm = document.querySelector('#library-search-form');
+    const toolbar = document.querySelector('.library-toolbar');
+    const resultsScroll = document.querySelector('#resource-results-scroll');
+    const sidebar = document.querySelector('.library-sidebar');
+    const sidebarNavigation = document.querySelector('.library-sidebar-navigation');
+    const filtersOpen = document.querySelector('#resource-filters-open');
+    const filtersDialog = document.querySelector('#resource-filters-dialog');
+    const filtersBody = document.querySelector('#resource-mobile-filters-body');
+    const filtersCount = document.querySelector('#resource-filters-count');
+    const filtersApply = document.querySelector('#resource-filters-apply');
+    const filtersReset = document.querySelector('#resource-filters-reset');
     const search = document.querySelector('#resource-search');
     const topic = document.querySelector('#resource-topic');
     const topicPicker = document.querySelector('#resource-topic-picker');
@@ -20,7 +32,7 @@
     const nextPage = document.querySelector('#resource-page-next');
     const pageNumbers = document.querySelector('#resource-page-numbers');
     const pageStatus = document.querySelector('#resource-page-status');
-    const PAGE_SIZE = 12;
+    const PAGE_SIZE = 10;
     const buttons = [...document.querySelectorAll('[data-resource-type]')];
     const labels = { note: 'Note', component: 'Component', reference: 'Reference' };
     const titles = { all: 'All resources', course: 'Course notes', note: 'Notes & formulas', component: 'Components', reference: 'Tools & references' };
@@ -51,6 +63,20 @@
     let topicQuery = '';
     let lastTopicKey = 0;
 
+    function updateTopicMenuHeight() {
+        const trigger = topicToggle.getBoundingClientRect();
+        const top = trigger.bottom + 6;
+        const available = window.innerHeight - top - 4;
+        if (Number.isFinite(available) && Number.isFinite(trigger.width)) {
+            const width = Math.min(trigger.width, window.innerWidth - 16);
+            const left = Math.max(8, Math.min(trigger.left, window.innerWidth - width - 8));
+            topicMenu.style.setProperty('top', `${top}px`);
+            topicMenu.style.setProperty('left', `${left}px`);
+            topicMenu.style.setProperty('width', `${width}px`);
+            topicMenu.style.setProperty('max-height', `${Math.max(0, Math.min(288, available))}px`);
+        }
+    }
+
     function closeTopicPicker() {
         topicMenu.hidden = true;
         topicToggle.setAttribute('aria-expanded', 'false');
@@ -72,8 +98,12 @@
     }
 
     function openTopicPicker() {
+        const menuHost = filtersDialog.open ? filtersDialog : document.querySelector('body');
+        if (topicMenu.parentElement !== menuHost) menuHost.append(topicMenu);
+        if (toolbar.parentElement === resultsScroll) resultsScroll.scrollTop = 0;
         topicMenu.hidden = false;
         topicToggle.setAttribute('aria-expanded', 'true');
+        updateTopicMenuHeight();
         highlightTopic([...topic.options].findIndex(option => option.value === topic.value));
     }
 
@@ -193,7 +223,6 @@
         page = number;
         render(true, 'push');
         heading.focus({ preventScroll: true });
-        heading.scrollIntoView({ block: 'start', behavior: 'auto' });
     }
     function render(updateUrl = true, historyMode = 'replace') {
         const words = normalize(search.value).split(/\s+/).filter(Boolean);
@@ -214,7 +243,13 @@
         syncTopicPicker();
         status.textContent = visible.length ? `Showing ${start + 1}–${end} of ${visible.length} resources` : '0 resources';
         renderPagination();
+        resultsScroll.scrollTop = 0;
         buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.resourceType === type)));
+        const activeFilters = Number(type !== 'all') + Number(topic.value !== 'all') + Number(sort.value !== 'newest');
+        filtersCount.textContent = activeFilters ? String(activeFilters) : '';
+        filtersCount.hidden = activeFilters === 0;
+        filtersOpen.setAttribute('aria-label', activeFilters ? `Filter resources, ${activeFilters} active filters` : 'Filter resources');
+        filtersApply.textContent = `Show ${visible.length} ${visible.length === 1 ? 'resource' : 'resources'}`;
         if (updateUrl) {
             const url = new URL(location.href);
             for (const key of ['q', 'type', 'topic', 'sort', 'page']) url.searchParams.delete(key);
@@ -260,7 +295,7 @@
     search.addEventListener('keydown', event => {
         if (event.key === 'Escape' && !event.isComposing) { search.value = ''; page = 1; render(); }
     });
-    document.querySelector('#library-search-form').addEventListener('submit', event => event.preventDefault());
+    searchForm.addEventListener('submit', event => event.preventDefault());
     clear.addEventListener('click', () => { search.value = ''; page = 1; render(); search.focus(); });
     topic.addEventListener('change', () => { page = 1; render(); });
     topicToggle.addEventListener('click', () => {
@@ -304,18 +339,48 @@
         }
     });
     document.addEventListener('click', event => {
-        if (!topicPicker.contains(event.target)) closeTopicPicker();
+        if (!topicPicker.contains(event.target) && !topicMenu.contains(event.target)) closeTopicPicker();
     });
     document.addEventListener('focusin', event => {
-        if (!topicPicker.contains(event.target)) closeTopicPicker();
+        if (!topicPicker.contains(event.target) && !topicMenu.contains(event.target)) closeTopicPicker();
     });
     sort.addEventListener('change', () => { page = 1; render(); });
+    filtersOpen.addEventListener('click', () => {
+        if (filtersOpen.hidden || filtersDialog.open) return;
+        closeTopicPicker();
+        filtersDialog.showModal();
+        filtersOpen.setAttribute('aria-expanded', 'true');
+    });
+    function closeFilters() {
+        if (filtersDialog.open) filtersDialog.close();
+    }
+    document.querySelector('#resource-filters-close').addEventListener('click', closeFilters);
+    filtersApply.addEventListener('click', closeFilters);
+    filtersReset.addEventListener('click', resetFilters);
+    filtersDialog.addEventListener('close', () => {
+        closeTopicPicker();
+        document.querySelector('body').append(topicMenu);
+        filtersOpen.setAttribute('aria-expanded', 'false');
+        (filtersOpen.hidden ? search : filtersOpen).focus({ preventScroll: true });
+    });
+    filtersDialog.addEventListener('cancel', event => {
+        if (!topicMenu.hidden) {
+            event.preventDefault();
+            closeTopicPicker();
+        }
+    });
+    filtersDialog.addEventListener('click', event => {
+        if (event.target !== filtersDialog) return;
+        const rect = filtersDialog.getBoundingClientRect();
+        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) closeFilters();
+    });
     previousPage.addEventListener('click', () => goToPage(page - 1));
     nextPage.addEventListener('click', () => goToPage(page + 1));
     function resetFilters() {
         search.value = ''; type = 'all'; sort.value = 'newest'; page = 1;
         updateTopics('all');
-        render(); search.focus();
+        render();
+        (filtersDialog.open ? filtersReset : search).focus({ preventScroll: true });
     }
     resetInline.addEventListener('click', resetFilters);
     document.querySelector('#resource-reset').addEventListener('click', resetFilters);
@@ -325,4 +390,41 @@
     topic.hidden = true;
     topicToggle.hidden = false;
     document.querySelector('#resource-topic-label').setAttribute('for', topicToggle.id);
+    // Keep the menu outside scroll containers so it can always open downward.
+    document.querySelector('body').append(topicMenu);
+    if (typeof window.matchMedia === 'function') {
+        const shortViewport = window.matchMedia('(max-height: 540px)');
+        const mobileViewport = window.matchMedia('(max-width: 768px)');
+        const desktopPlaceholder = search.getAttribute('placeholder');
+        const updateLayout = () => {
+            const wasOpen = filtersDialog.open;
+            if (!mobileViewport.matches && wasOpen) closeFilters();
+            closeTopicPicker();
+            filtersOpen.hidden = !mobileViewport.matches;
+            search.setAttribute('placeholder', mobileViewport.matches ? 'Search resources…' : desktopPlaceholder);
+            if (mobileViewport.matches) {
+                if (sidebarNavigation.parentElement !== filtersBody) filtersBody.append(sidebarNavigation);
+                if (toolbar.parentElement !== filtersBody) filtersBody.append(toolbar);
+            } else {
+                if (sidebarNavigation.parentElement !== sidebar) sidebar.append(sidebarNavigation);
+                const toolbarHost = shortViewport.matches ? resultsScroll : controls;
+                if (toolbar.parentElement !== toolbarHost) {
+                    if (shortViewport.matches) resultsScroll.prepend(toolbar);
+                    else controls.append(toolbar);
+                }
+            }
+            resultsScroll.scrollTop = 0;
+            if (!mobileViewport.matches && wasOpen) search.focus({ preventScroll: true });
+        };
+        updateLayout();
+        shortViewport.addEventListener('change', updateLayout);
+        mobileViewport.addEventListener('change', updateLayout);
+    }
+    window.addEventListener('resize', () => { if (!topicMenu.hidden) updateTopicMenuHeight(); });
+    resultsScroll.addEventListener('scroll', () => {
+        if (!topicMenu.hidden) updateTopicMenuHeight();
+    }, { passive: true });
+    filtersBody.addEventListener('scroll', () => {
+        if (!topicMenu.hidden) updateTopicMenuHeight();
+    }, { passive: true });
 })();

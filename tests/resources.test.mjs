@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 
 const root = new URL('../', import.meta.url);
+const EXPECTED_PAGE_SIZE = 10;
 const [pageSource, dataSource, controllerSource] = await Promise.all([
     readFile(new URL('resources.html', root), 'utf8'),
     readFile(new URL('js/resources-data.js', root), 'utf8'),
@@ -32,10 +33,29 @@ class FixtureElement {
         this.hidden = false;
         this.disabled = false;
         this.open = false;
+        this.scrollTop = 0;
         this._value = '';
         this._html = '';
         this.textContent = '';
         this.classList = { add() {}, remove() {}, toggle() {}, contains() { return false; } };
+        const styleProperties = new Map();
+        this.style = {
+            setProperty(name, value) { styleProperties.set(name, String(value)); },
+            getPropertyValue(name) { return styleProperties.get(name) || ''; }
+        };
+        if (this.tagName === 'DIALOG') {
+            this.showModal = () => {
+                this.open = true;
+                this.attributes.set('open', '');
+                this.modalCalls = (this.modalCalls || 0) + 1;
+            };
+            this.close = () => {
+                const wasOpen = this.open;
+                this.open = false;
+                this.attributes.delete('open');
+                if (wasOpen) this.dispatch('close');
+            };
+        }
         Object.entries(attributes).forEach(([name, value]) => this.setAttribute(name, value));
     }
     setAttribute(name, value) {
@@ -44,6 +64,7 @@ class FixtureElement {
         if (name === 'value') this._value = String(value);
         if (name === 'hidden') this.hidden = true;
         if (name === 'disabled') this.disabled = true;
+        if (name === 'open') this.open = true;
         if (name.startsWith('data-')) this.dataset[name.slice(5).replace(/-([a-z])/g, (_, char) => char.toUpperCase())] = String(value);
     }
     getAttribute(name) { return this.attributes.get(name) ?? null; }
@@ -51,6 +72,7 @@ class FixtureElement {
     removeAttribute(name) {
         this.attributes.delete(name);
         if (name === 'disabled') this.disabled = false;
+        if (name === 'open') this.open = false;
         if (name.startsWith('data-')) delete this.dataset[name.slice(5).replace(/-([a-z])/g, (_, char) => char.toUpperCase())];
     }
     get value() { return this._value; }
@@ -62,6 +84,7 @@ class FixtureElement {
     get innerHTML() { return this._html; }
     set innerHTML(value) {
         this._html = String(value);
+        this.children.forEach(child => { child.parentElement = null; });
         this.children = [];
         if (this.tagName === 'SELECT') {
             this._value = '';
@@ -74,13 +97,22 @@ class FixtureElement {
     }
     append(...children) {
         children.forEach(child => {
+            if (child.parentElement) child.parentElement.children = child.parentElement.children.filter(node => node !== child);
             child.parentElement = this;
             this.children.push(child);
             if (this.tagName === 'SELECT' && this.children.length === 1) this._value = child.value;
         });
     }
+    prepend(...children) {
+        children.forEach(child => {
+            if (child.parentElement) child.parentElement.children = child.parentElement.children.filter(node => node !== child);
+            child.parentElement = this;
+        });
+        this.children.unshift(...children);
+    }
     appendChild(child) { this.append(child); return child; }
     replaceChildren(...children) {
+        this.children.forEach(child => { child.parentElement = null; });
         this.children = []; this._html = '';
         if (this.tagName === 'SELECT') this._value = '';
         this.append(...children);
@@ -92,6 +124,7 @@ class FixtureElement {
     dispatch(name, attributes = {}) {
         const event = new FixtureEvent(name, { target: this, ...attributes });
         this.dispatchEvent(event);
+        if (name === 'cancel' && this.tagName === 'DIALOG' && !event.defaultPrevented) this.close();
         return event;
     }
     dispatchEvent(event) {
@@ -99,15 +132,21 @@ class FixtureElement {
         for (const handler of this.listeners.get(event.type) || []) handler(event);
         return !event.defaultPrevented;
     }
-    focus() { this.ownerDocument.activeElement = this; }
+    focus(options) { this.ownerDocument.activeElement = this; this.focusOptions = options; }
     contains(node) { return node === this || this.children.some(child => child.contains(node)); }
+    getBoundingClientRect() {
+        return {
+            height: this.rectHeight ?? 0, width: this.rectWidth ?? 0,
+            left: this.rectLeft ?? 0, bottom: this.rectBottom ?? 0
+        };
+    }
     scrollIntoView(options) { this.scrollCalls = (this.scrollCalls || 0) + 1; this.scrollOptions = options; }
     matches(selector) {
         if (selector.includes(',')) return selector.split(',').some(part => this.matches(part.trim()));
         if (selector.startsWith('#')) return this.id === selector.slice(1);
         if (selector.startsWith('.')) return (this.getAttribute('class') || '').split(/\s+/).includes(selector.slice(1));
-        const data = selector.match(/^\[([^=\]]+)(?:=["']?([^"'\]]+)["']?)?\]$/);
-        if (data) return this.hasAttribute(data[1]) && (data[2] === undefined || this.getAttribute(data[1]) === data[2]);
+        const data = selector.match(/^(\w+)?\[([^=\]]+)(?:=["']?([^"'\]]+)["']?)?\]$/);
+        if (data) return (!data[1] || this.tagName === data[1].toUpperCase()) && this.hasAttribute(data[2]) && (data[3] === undefined || this.getAttribute(data[2]) === data[3]);
         return selector.split(',').some(tag => this.tagName === tag.trim().toUpperCase());
     }
     closest(selector) { return this.matches(selector) ? this : this.parentElement?.closest(selector) || null; }
@@ -123,7 +162,7 @@ function parseAttributes(source) {
     return attributes;
 }
 
-function createLibrary(query = '', mutateItems) {
+function createLibrary(query = '', mutateItems, environment = {}) {
     const document = new FixtureElement('document');
     document.activeElement = null;
     document.ownerDocument = document;
@@ -144,6 +183,24 @@ function createLibrary(query = '', mutateItems) {
     document.createElement = tag => { const element = new FixtureElement(tag); element.ownerDocument = document; return element; };
     const location = new URL('https://site.test/resources.html' + query);
     const window = new FixtureElement('window');
+    window.innerWidth = environment.innerWidth ?? 1280;
+    window.innerHeight = environment.innerHeight ?? 800;
+    const makeViewport = matches => {
+        const listeners = [];
+        return {
+            matches,
+            addEventListener(type, listener) { if (type === 'change') listeners.push(listener); },
+            update(next) {
+                this.matches = next;
+                listeners.forEach(listener => listener(new FixtureEvent('change', { matches: next })));
+            }
+        };
+    };
+    const shortViewport = makeViewport(Boolean(environment.shortViewport));
+    const mobileViewport = makeViewport(Boolean(environment.mobileViewport));
+    if ('shortViewport' in environment || 'mobileViewport' in environment) window.matchMedia = query => query.includes('max-width') ? mobileViewport : shortViewport;
+    const setShortViewport = matches => shortViewport.update(matches);
+    const setMobileViewport = matches => mobileViewport.update(matches);
     const replacedURLs = [];
     const pushedURLs = [];
     const context = vm.createContext({
@@ -162,7 +219,7 @@ function createLibrary(query = '', mutateItems) {
     const button = type => document.querySelector(`[data-resource-type="${type}"]`);
     const search = value => { get('resource-search').value = value; get('resource-search').dispatch('input'); };
     const change = (id, value) => { get(id).value = value; get(id).dispatch('change'); };
-    return { document, window, location, items, get, button, search, change, replacedURLs, pushedURLs };
+    return { document, window, location, items, get, button, search, change, replacedURLs, pushedURLs, setShortViewport, setMobileViewport };
 }
 
 const rows = library => [...library.get('resource-list').innerHTML.matchAll(/<li\b[^>]*class="resource-row\b[\s\S]*?<\/li>/g)].map(match => match[0]);
@@ -178,12 +235,33 @@ function collectPages(library) {
     }
     return allRows;
 }
+function expectOnlyResultsScrollReset(library) {
+    const results = library.get('resource-results-scroll');
+    assert.ok(results, 'Results must have a dedicated scroll region');
+    results.scrollTop = 360;
+    const outer = [...new Set([
+        library.document.querySelector('html'), library.document.querySelector('body'),
+        library.document.querySelector('.library-sidebar'), library.get('resource-controls'),
+        results.parentElement
+    ].filter(Boolean))].map((element, index) => {
+        element.scrollTop = 40 + index * 10;
+        return { element, top: element.scrollTop, scrollCalls: element.scrollCalls || 0 };
+    });
+    return () => {
+        assert.equal(results.scrollTop, 0, 'Result changes should return only the result region to its top');
+        for (const { element, top, scrollCalls } of outer) {
+            assert.equal(element.scrollTop, top, 'Outer layout scroll positions must stay unchanged');
+            assert.equal(element.scrollCalls || 0, scrollCalls, 'Outer elements must not be scrolled into view');
+        }
+        assert.equal(library.get('resource-results-title').scrollCalls || 0, 0, 'Focusing the result heading must not scroll outer containers');
+    };
+}
 let passed = 0;
 function test(name, check) { check(); passed++; console.log('PASS ' + name); }
 
-test('The default library shows twelve items newest first and offers only date sorting', () => {
+test('The default library shows ten items newest first and offers only date sorting', () => {
     const library = createLibrary();
-    assert.equal(rows(library).length, Math.min(12, library.items.length));
+    assert.equal(rows(library).length, Math.min(EXPECTED_PAGE_SIZE, library.items.length));
     assert.equal(library.get('resources-empty-state').hidden, true);
     assert.equal(library.button('all').getAttribute('aria-pressed'), 'true');
     assert.equal(library.get('resource-list').mathRenderCalls, undefined);
@@ -210,8 +288,12 @@ test('The course collection shows four courses and the note filter retains all n
     for (const title of ['Circuits I', 'Circuits II', 'Physics I', 'Physics II']) assert.match(courses.get('resource-list').innerHTML, new RegExp(title));
     assert.equal(courses.button('course').getAttribute('aria-pressed'), 'true');
     const notes = createLibrary('?type=note');
-    assert.equal(rows(notes).length, notes.items.filter(item => item.kind === 'note').length);
-    assert.match(notes.get('resource-list').innerHTML, /Circuits I/);
+    const noteCount = notes.items.filter(item => item.kind === 'note').length;
+    assert.equal(rows(notes).length, Math.min(EXPECTED_PAGE_SIZE, noteCount));
+    assert.equal(notes.get('resource-pagination').hidden, noteCount <= EXPECTED_PAGE_SIZE);
+    const noteRows = collectPages(notes);
+    assert.equal(noteRows.length, noteCount);
+    assert.match(noteRows.join(''), /Circuits I/);
 });
 
 test('Topics follow the selected type and an incompatible topic resets on type change', () => {
@@ -235,7 +317,7 @@ test('Zero matches announces an empty state and reset restores the library', () 
     assert.equal(library.get('resource-list').hidden, true);
     assert.equal(library.get('resource-reset-inline').hidden, false);
     library.get('resource-reset').dispatch('click');
-    assert.equal(rows(library).length, Math.min(12, library.items.length));
+    assert.equal(rows(library).length, Math.min(EXPECTED_PAGE_SIZE, library.items.length));
     assert.equal(library.get('resource-search').value, '');
     assert.equal(library.location.search, '');
     assert.equal(library.get('resources-empty-state').hidden, true);
@@ -267,7 +349,7 @@ test('Slash focuses search, typing shortcuts are ignored, and Escape clears it',
     assert.equal(library.get('resource-search').value, 'esp32');
     library.get('resource-search').dispatch('keydown', { key: 'Escape' });
     assert.equal(library.get('resource-search').value, '');
-    assert.equal(rows(library).length, Math.min(12, library.items.length));
+    assert.equal(rows(library).length, Math.min(EXPECTED_PAGE_SIZE, library.items.length));
 });
 
 test('Inline references retain formula and specifications previews without fake links', () => {
@@ -338,7 +420,7 @@ test('History navigation restores type, topic, query, and sorting without rewrit
 test('Invalid filters and legacy title sorting fall back to the full library newest first', () => {
     for (const sort of ['invalid', 'title']) {
         const library = createLibrary(`?type=unknown&topic=missing&sort=${sort}`);
-        assert.equal(rows(library).length, Math.min(12, library.items.length));
+        assert.equal(rows(library).length, Math.min(EXPECTED_PAGE_SIZE, library.items.length));
         assert.equal(library.get('resource-topic').value, 'all');
         assert.equal(library.get('resource-sort').value, 'newest');
         assert.equal(library.button('all').getAttribute('aria-pressed'), 'true');
@@ -514,9 +596,9 @@ test('Topic labels and selected options stay in sync with URL state, category ch
     assert.equal(library.get('resource-topic-menu').querySelector('[data-topic-value="all"]').getAttribute('aria-selected'), 'true');
 });
 
-test('Pagination visits every resource exactly once with at most twelve entries per page', () => {
+test('Pagination visits every resource exactly once with at most ten entries per page', () => {
     const library = createLibrary();
-    const expectedPages = Math.ceil(library.items.length / 12);
+    const expectedPages = Math.ceil(library.items.length / EXPECTED_PAGE_SIZE);
     assert.equal(library.get('resource-pagination').hidden, false);
     assert.equal(library.get('resource-page-prev').disabled, true);
     assert.equal(library.get('resource-page-next').disabled, false);
@@ -524,8 +606,8 @@ test('Pagination visits every resource exactly once with at most twelve entries 
     assert.equal(pageButton(library, 1).getAttribute('aria-current'), 'page');
     const visited = [];
     for (let page = 1; page <= expectedPages; page++) {
-        const start = (page - 1) * 12;
-        const end = Math.min(page * 12, library.items.length);
+        const start = (page - 1) * EXPECTED_PAGE_SIZE;
+        const end = Math.min(page * EXPECTED_PAGE_SIZE, library.items.length);
         assert.equal(rows(library).length, end - start);
         assert.equal(library.get('resource-status').textContent, `Showing ${start + 1}–${end} of ${library.items.length} resources`);
         visited.push(...rowIDs(library));
@@ -544,13 +626,13 @@ test('Page URLs restore middle pages, clamp out of range values, and reject inva
     const first = createLibrary();
     const expected = collectPages(first).map(row => row.match(/data-resource-id="([^"]+)"/)[1]);
     const middle = createLibrary('?page=2');
-    assert.deepEqual(rowIDs(middle), expected.slice(12, 24));
-    assert.equal(middle.get('resource-page-status').textContent, `Page 2 of ${Math.ceil(expected.length / 12)}`);
+    assert.deepEqual(rowIDs(middle), expected.slice(EXPECTED_PAGE_SIZE, EXPECTED_PAGE_SIZE * 2));
+    assert.equal(middle.get('resource-page-status').textContent, `Page 2 of ${Math.ceil(expected.length / EXPECTED_PAGE_SIZE)}`);
     assert.equal(middle.replacedURLs.length, 0);
     assert.equal(middle.pushedURLs.length, 0);
     const overflow = createLibrary('?page=999&utm_source=bookmark#library');
-    const lastPage = Math.ceil(expected.length / 12);
-    assert.deepEqual(rowIDs(overflow), expected.slice((lastPage - 1) * 12));
+    const lastPage = Math.ceil(expected.length / EXPECTED_PAGE_SIZE);
+    assert.deepEqual(rowIDs(overflow), expected.slice((lastPage - 1) * EXPECTED_PAGE_SIZE));
     assert.equal(overflow.get('resource-page-status').textContent, `Page ${lastPage} of ${lastPage}`);
     assert.equal(overflow.location.searchParams.get('page'), String(lastPage));
     assert.equal(overflow.location.searchParams.get('utm_source'), 'bookmark');
@@ -559,7 +641,7 @@ test('Page URLs restore middle pages, clamp out of range values, and reject inva
     assert.equal(overflow.pushedURLs.length, 0);
     for (const value of ['', '0', '1', '-1', '1.5', 'invalid', 'Infinity', '9007199254740992', '999999999999999999999999999999999999999999']) {
         const library = createLibrary('?page=' + value);
-        assert.deepEqual(rowIDs(library), expected.slice(0, 12));
+        assert.deepEqual(rowIDs(library), expected.slice(0, EXPECTED_PAGE_SIZE));
         assert.equal(library.get('resource-page-status').textContent, `Page 1 of ${lastPage}`);
         assert.equal(library.location.searchParams.has('page'), false);
         assert.equal(library.replacedURLs.length, 1);
@@ -568,10 +650,10 @@ test('Page URLs restore middle pages, clamp out of range values, and reject inva
 });
 
 test('Exact page boundaries avoid empty pages and one-page or empty results hide navigation', () => {
-    for (const count of [12, 13, 24, 25]) {
+    for (const count of [EXPECTED_PAGE_SIZE, EXPECTED_PAGE_SIZE + 1, EXPECTED_PAGE_SIZE * 2, EXPECTED_PAGE_SIZE * 2 + 1]) {
         const library = createLibrary('', items => items.splice(count));
-        assert.equal(library.get('resource-pagination').hidden, count <= 12);
-        assert.equal(library.get('resource-page-numbers').querySelectorAll('[data-resource-page]').length, count > 12 ? Math.ceil(count / 12) : 0);
+        assert.equal(library.get('resource-pagination').hidden, count <= EXPECTED_PAGE_SIZE);
+        assert.equal(library.get('resource-page-numbers').querySelectorAll('[data-resource-page]').length, count > EXPECTED_PAGE_SIZE ? Math.ceil(count / EXPECTED_PAGE_SIZE) : 0);
         const visited = collectPages(library);
         assert.equal(visited.length, count);
         assert.ok(rows(library).length > 0);
@@ -590,12 +672,14 @@ test('Exact page boundaries avoid empty pages and one-page or empty results hide
     assert.equal(library.get('resource-status').textContent, '0 resources');
 });
 
-test('Page navigation pushes history, retains filters, and focuses the result heading', () => {
+test('Page navigation restores only result scrolling, retains history and filters, and focuses the heading', () => {
     const library = createLibrary('?sort=oldest&utm_source=bookmark#library');
     pageButton(library, 1).dispatch('click');
     library.get('resource-page-prev').dispatch('click');
     assert.equal(library.pushedURLs.length, 0);
+    let checkScroll = expectOnlyResultsScrollReset(library);
     library.get('resource-page-next').dispatch('click');
+    checkScroll();
     const secondPageIDs = rowIDs(library);
     const secondPageURL = library.location.href;
     assert.equal(library.location.searchParams.get('page'), '2');
@@ -605,26 +689,31 @@ test('Page navigation pushes history, retains filters, and focuses the result he
     assert.equal(library.pushedURLs.length, 1);
     assert.equal(library.document.activeElement?.id, 'resource-results-title');
     const heading = library.get('resource-results-title');
-    assert.ok(heading.scrollCalls > 0);
-    assert.equal(heading.scrollOptions.block, 'start');
-    assert.equal(heading.scrollOptions.behavior, 'auto');
+    assert.equal(heading.scrollCalls || 0, 0);
+    assert.equal(heading.focusOptions.preventScroll, true);
     assert.equal(heading.getAttribute('tabindex'), '-1');
     library.get('resource-page-next').dispatch('click');
+    checkScroll = expectOnlyResultsScrollReset(library);
     library.get('resource-page-prev').dispatch('click');
+    checkScroll();
     assert.deepEqual(rowIDs(library), secondPageIDs);
     pageButton(library, 1).dispatch('click');
     assert.equal(library.location.searchParams.has('page'), false);
     const pushes = library.pushedURLs.length;
     const replacements = library.replacedURLs.length;
     library.location.href = secondPageURL;
+    checkScroll = expectOnlyResultsScrollReset(library);
     library.window.dispatch('popstate');
+    checkScroll();
     assert.deepEqual(rowIDs(library), secondPageIDs);
-    assert.equal(library.get('resource-page-status').textContent, `Page 2 of ${Math.ceil(library.items.length / 12)}`);
+    assert.equal(library.get('resource-page-status').textContent, `Page 2 of ${Math.ceil(library.items.length / EXPECTED_PAGE_SIZE)}`);
     assert.equal(library.pushedURLs.length, pushes);
     assert.equal(library.replacedURLs.length, replacements);
     library.location.href = 'https://site.test/resources.html?page=999&sort=oldest&utm_source=history#library';
+    checkScroll = expectOnlyResultsScrollReset(library);
     library.window.dispatch('popstate');
-    const lastPage = Math.ceil(library.items.length / 12);
+    checkScroll();
+    const lastPage = Math.ceil(library.items.length / EXPECTED_PAGE_SIZE);
     assert.equal(library.location.searchParams.get('page'), String(lastPage));
     assert.equal(library.location.searchParams.get('sort'), 'oldest');
     assert.equal(library.location.searchParams.get('utm_source'), 'history');
@@ -634,7 +723,7 @@ test('Page navigation pushes history, retains filters, and focuses the result he
     assert.equal(library.pushedURLs.length, pushes);
 });
 
-test('Changing search, type, topic, sorting, or reset returns pagination to page one', () => {
+test('Search, filters, sorting, and reset return to page one without moving outer containers', () => {
     const cases = [
         library => library.search('eele201'),
         library => library.button('note').dispatch('click'),
@@ -647,7 +736,9 @@ test('Changing search, type, topic, sorting, or reset returns pagination to page
     ];
     for (const update of cases) {
         const library = createLibrary('?page=2');
+        const checkScroll = expectOnlyResultsScrollReset(library);
         update(library);
+        checkScroll();
         assert.equal(library.location.searchParams.has('page'), false);
         assert.match(library.get('resource-page-status').textContent, /^Page 1 of /);
     }
@@ -658,7 +749,9 @@ test('Changing search, type, topic, sorting, or reset returns pagination to page
     ]) {
         const library = createLibrary('?q=a&page=2');
         assert.match(library.get('resource-page-status').textContent, /^Page 2 of /);
+        const checkScroll = expectOnlyResultsScrollReset(library);
         reset(library);
+        checkScroll();
         assert.equal(library.location.searchParams.has('page'), false);
         assert.equal(library.location.searchParams.has('q'), false);
         assert.match(library.get('resource-page-status').textContent, /^Page 1 of /);
@@ -688,12 +781,12 @@ test('Combined filtering runs before pagination and page changes retain every fi
             description: 'A fixture for checking filtered pagination.', date: `2026-10-${String(number).padStart(2, '0')}`
         });
     });
-    assert.deepEqual(rowIDs(library), ['paginationfixture-13', 'paginationfixture-14']);
+    assert.deepEqual(rowIDs(library), Array.from({ length: 14 - EXPECTED_PAGE_SIZE }, (_, index) => `paginationfixture-${EXPECTED_PAGE_SIZE + index + 1}`));
     assert.equal(library.get('resource-page-status').textContent, 'Page 2 of 2');
-    assert.equal(library.get('resource-status').textContent, 'Showing 13–14 of 14 resources');
+    assert.equal(library.get('resource-status').textContent, `Showing ${EXPECTED_PAGE_SIZE + 1}–14 of 14 resources`);
     assert.equal(library.get('resource-page-next').disabled, true);
     library.get('resource-page-prev').dispatch('click');
-    assert.equal(rows(library).length, 12);
+    assert.equal(rows(library).length, EXPECTED_PAGE_SIZE);
     assert.equal(library.location.searchParams.has('page'), false);
     assert.equal(library.location.searchParams.get('type'), 'reference');
     assert.equal(library.location.searchParams.get('topic'), 'Pagination fixture');
@@ -702,6 +795,7 @@ test('Combined filtering runs before pagination and page changes retain every fi
 });
 
 test('Large catalogues keep compact page controls with reachable ends and complete coverage', () => {
+    const expectedPages = 240 / EXPECTED_PAGE_SIZE;
     const library = createLibrary('?page=10', items => {
         while (items.length < 240) {
             const number = items.length + 1;
@@ -715,27 +809,208 @@ test('Large catalogues keep compact page controls with reachable ends and comple
     const controls = library.get('resource-page-numbers');
     const pageControls = controls.querySelectorAll('[data-resource-page]');
     const visiblePages = pageControls.map(button => Number(button.dataset.resourcePage));
-    assert.ok(pageControls.length <= 7, 'Numeric page controls should stay compact for twenty pages');
-    for (const number of [1, 9, 10, 11, 20]) assert.ok(visiblePages.includes(number));
+    assert.ok(pageControls.length <= 7, 'Numeric page controls should stay compact for a large catalogue');
+    for (const number of [1, 9, 10, 11, expectedPages]) assert.ok(visiblePages.includes(number));
     assert.equal(new Set(visiblePages).size, visiblePages.length);
-    assert.ok(visiblePages.every(number => number >= 1 && number <= 20));
+    assert.ok(visiblePages.every(number => number >= 1 && number <= expectedPages));
     assert.ok(controls.children.some(child => child.textContent === '…'));
     assert.equal(controls.querySelectorAll('[aria-current="page"]').length, 1);
     assert.equal(controls.querySelector('[aria-current="page"]').dataset.resourcePage, '10');
-    pageButton(library, 20).dispatch('click');
-    assert.equal(library.location.searchParams.get('page'), '20');
-    assert.equal(library.get('resource-page-status').textContent, 'Page 20 of 20');
-    assert.equal(rows(library).length, 12);
+    pageButton(library, expectedPages).dispatch('click');
+    assert.equal(library.location.searchParams.get('page'), String(expectedPages));
+    assert.equal(library.get('resource-page-status').textContent, `Page ${expectedPages} of ${expectedPages}`);
+    assert.equal(rows(library).length, EXPECTED_PAGE_SIZE);
     assert.equal(library.get('resource-page-next').disabled, true);
-    assert.equal(pageButton(library, 20).getAttribute('aria-current'), 'page');
+    assert.equal(pageButton(library, expectedPages).getAttribute('aria-current'), 'page');
     pageButton(library, 1).dispatch('click');
     assert.equal(library.location.searchParams.has('page'), false);
-    assert.equal(library.get('resource-page-status').textContent, 'Page 1 of 20');
+    assert.equal(library.get('resource-page-status').textContent, `Page 1 of ${expectedPages}`);
     assert.equal(library.get('resource-page-prev').disabled, true);
     const visited = collectPages(library).map(row => row.match(/data-resource-id="([^"]+)"/)[1]);
     assert.equal(visited.length, 240);
     assert.equal(new Set(visited).size, 240);
     assert.deepEqual([...visited].sort(), [...library.items].map(item => item.id).sort());
+});
+
+test('Short viewports move filters into results while keeping search and outer scroll positions fixed', () => {
+    const library = createLibrary('', undefined, { shortViewport: true });
+    const results = library.get('resource-results-scroll');
+    const controls = library.get('resource-controls');
+    const toolbar = library.document.querySelector('.library-toolbar');
+    assert.ok(toolbar.parentElement === results);
+    assert.ok(results.children[0] === toolbar);
+    assert.equal(controls.contains(library.get('library-search-form')), true);
+    assert.equal(library.document.querySelectorAll('.library-toolbar').length, 1);
+    let checkScroll = expectOnlyResultsScrollReset(library);
+    library.get('resource-topic-toggle').dispatch('click');
+    checkScroll();
+    assert.equal(library.get('resource-topic-menu').hidden, false);
+    checkScroll = expectOnlyResultsScrollReset(library);
+    library.setShortViewport(false);
+    checkScroll();
+    assert.ok(toolbar.parentElement === controls);
+    assert.equal(results.contains(toolbar), false);
+    assert.equal(library.get('resource-topic-menu').hidden, true);
+    checkScroll = expectOnlyResultsScrollReset(library);
+    library.setShortViewport(true);
+    checkScroll();
+    assert.ok(toolbar.parentElement === results);
+    assert.equal(library.document.querySelectorAll('.library-toolbar').length, 1);
+});
+
+test('The resource page has no footer and its controller works without footer elements', () => {
+    const library = createLibrary('?page=2&sort=oldest');
+    for (const selector of ['footer', '#resource-footer', '.library-footer', '.site-footer']) {
+        assert.equal(library.document.querySelector(selector), null);
+    }
+    assert.doesNotMatch(controllerSource, /resource-footer|footerToggle/);
+    library.document.dispatch('click', { target: library.get('resource-search') });
+    library.document.dispatch('focusin', { target: library.get('resource-search') });
+    assert.equal(library.location.searchParams.get('page'), '2');
+    assert.equal(library.location.searchParams.get('sort'), 'oldest');
+});
+
+test('The topic menu floats outside scrolling panels and fits the viewport below its trigger', () => {
+    const library = createLibrary('', undefined, { shortViewport: true, innerWidth: 640, innerHeight: 240 });
+    const toggle = library.get('resource-topic-toggle');
+    const menu = library.get('resource-topic-menu');
+    const results = library.get('resource-results-scroll');
+    assert.ok(menu.parentElement === library.document.querySelector('body'));
+    assert.equal(results.contains(menu), false);
+    toggle.rectBottom = 210; toggle.rectLeft = 24; toggle.rectWidth = 220; toggle.rectHeight = 44;
+    toggle.dispatch('click');
+    const top = Number.parseFloat(menu.style.getPropertyValue('top'));
+    const maxHeight = Number.parseFloat(menu.style.getPropertyValue('max-height'));
+    assert.equal(top, toggle.rectBottom + 6);
+    assert.ok(maxHeight >= 0 && maxHeight <= library.window.innerHeight - top);
+    assert.ok(maxHeight < 44, 'A short viewport must not force a minimum height beyond its remaining space');
+    assert.equal(menu.style.getPropertyValue('left'), '24px');
+    assert.equal(menu.style.getPropertyValue('width'), '220px');
+    library.document.dispatch('click', { target: menu });
+    assert.equal(menu.hidden, false, 'Clicking blank space inside the floating menu must keep it open');
+    toggle.rectBottom = 180;
+    results.scrollTop = 100;
+    results.dispatch('scroll');
+    assert.equal(menu.style.getPropertyValue('top'), '186px');
+    assert.equal(results.scrollTop, 100);
+    assert.equal(menu.hidden, false);
+    library.window.innerHeight = 800;
+    library.window.dispatch('resize');
+    assert.equal(menu.style.getPropertyValue('max-height'), '288px');
+});
+
+test('Mobile Filters keeps every category, topic, and sorting control available until results are requested', () => {
+    const library = createLibrary('', undefined, { mobileViewport: true, innerWidth: 390, innerHeight: 844 });
+    const dialog = library.get('resource-filters-dialog');
+    const panel = library.get('resource-mobile-filters-body');
+    const navigation = library.document.querySelector('.library-sidebar-navigation');
+    const toolbar = library.document.querySelector('.library-toolbar');
+    assert.equal(dialog.open, false);
+    assert.ok(panel.contains(navigation));
+    assert.ok(panel.contains(toolbar));
+    assert.equal(dialog.contains(library.get('library-search-form')), false);
+    library.get('resource-filters-open').dispatch('click');
+    assert.equal(dialog.open, true);
+    assert.equal(dialog.modalCalls, 1);
+    library.button('course').dispatch('click');
+    assert.equal(dialog.open, true);
+    assert.equal(rows(library).length, 4);
+    library.get('resource-topic-toggle').dispatch('click');
+    assert.ok(dialog.contains(library.get('resource-topic-menu')), 'The open menu must be within the active modal layer');
+    library.get('resource-topic-menu').querySelector('[data-topic-value="Physics"]').dispatch('click');
+    library.change('resource-sort', 'oldest');
+    assert.equal(dialog.open, true);
+    assert.equal(rows(library).length, 2);
+    assert.equal(String(library.get('resource-filters-count').textContent), '3');
+    assert.match(library.get('resource-filters-apply').textContent, /2/);
+    library.get('resource-filters-apply').dispatch('click');
+    assert.equal(dialog.open, false);
+    assert.equal(library.document.activeElement?.id, 'resource-filters-open');
+    assert.equal(library.get('resource-filters-open').focusOptions.preventScroll, true);
+    assert.equal(library.location.searchParams.get('type'), 'course');
+    assert.equal(library.location.searchParams.get('topic'), 'Physics');
+    assert.equal(library.location.searchParams.get('sort'), 'oldest');
+    assert.equal(library.get('resource-topic-value').textContent, 'Physics');
+    assert.equal(library.get('resource-topic-menu').hidden, true);
+});
+
+test('Closing or cancelling mobile Filters restores focus and preserves the current results', () => {
+    const library = createLibrary('?type=component&q=oled', undefined, { mobileViewport: true, innerWidth: 390, innerHeight: 844 });
+    const dialog = library.get('resource-filters-dialog');
+    const open = library.get('resource-filters-open');
+    const url = library.location.href;
+    const visibleIDs = rowIDs(library);
+    open.dispatch('click');
+    library.get('resource-filters-close').dispatch('click');
+    assert.equal(dialog.open, false);
+    assert.equal(library.document.activeElement?.id, open.id);
+    assert.equal(open.focusOptions.preventScroll, true);
+    open.dispatch('click');
+    library.get('resource-topic-toggle').dispatch('click');
+    assert.equal(dialog.dispatch('cancel').defaultPrevented, true);
+    assert.equal(dialog.open, true);
+    assert.equal(library.get('resource-topic-menu').hidden, true);
+    dialog.dispatch('cancel');
+    assert.equal(dialog.open, false);
+    assert.equal(library.document.activeElement?.id, open.id);
+    assert.equal(library.location.href, url);
+    assert.deepEqual(rowIDs(library), visibleIDs);
+    assert.equal(library.get('resource-search').value, 'oled');
+    assert.equal(library.button('component').getAttribute('aria-pressed'), 'true');
+    open.dispatch('click');
+    library.get('resource-filters-reset').dispatch('click');
+    assert.equal(dialog.open, true);
+    assert.equal(library.document.activeElement?.id, 'resource-filters-reset');
+    assert.equal(library.get('resource-filters-reset').focusOptions.preventScroll, true);
+    assert.equal(library.get('resource-search').value, '');
+    assert.equal(library.button('all').getAttribute('aria-pressed'), 'true');
+    assert.equal(library.get('resource-filters-count').hidden, true);
+    library.get('resource-filters-apply').dispatch('click');
+    assert.equal(dialog.open, false);
+    assert.equal(library.document.activeElement?.id, open.id);
+});
+
+test('Viewport changes relocate existing filters without duplication or loss of selected state', () => {
+    const library = createLibrary('?type=component&topic=Display&sort=oldest', undefined, { mobileViewport: false, shortViewport: false });
+    const navigation = library.document.querySelector('.library-sidebar-navigation');
+    const navigationHome = navigation.parentElement;
+    const toolbar = library.document.querySelector('.library-toolbar');
+    const controls = library.get('resource-controls');
+    const panel = library.get('resource-mobile-filters-body');
+    const results = library.get('resource-results-scroll');
+    const dialog = library.get('resource-filters-dialog');
+    const url = library.location.href;
+    const visibleIDs = rowIDs(library);
+    let checkScroll = expectOnlyResultsScrollReset(library);
+    library.setMobileViewport(true);
+    checkScroll();
+    assert.ok(panel.contains(navigation));
+    assert.ok(panel.contains(toolbar));
+    library.get('resource-filters-open').dispatch('click');
+    library.get('resource-topic-toggle').dispatch('click');
+    checkScroll = expectOnlyResultsScrollReset(library);
+    library.setMobileViewport(false);
+    checkScroll();
+    assert.equal(dialog.open, false);
+    assert.ok(navigation.parentElement === navigationHome);
+    assert.ok(toolbar.parentElement === controls);
+    assert.equal(library.get('resource-topic-menu').hidden, true);
+    library.setShortViewport(true);
+    assert.ok(toolbar.parentElement === results);
+    library.setMobileViewport(true);
+    assert.ok(panel.contains(toolbar));
+    assert.ok(panel.contains(navigation));
+    library.setMobileViewport(false);
+    assert.ok(toolbar.parentElement === results);
+    library.setShortViewport(false);
+    assert.ok(toolbar.parentElement === controls);
+    assert.equal(library.document.querySelectorAll('.library-sidebar-navigation').length, 1);
+    assert.equal(library.document.querySelectorAll('.library-toolbar').length, 1);
+    assert.equal(library.location.href, url);
+    assert.deepEqual(rowIDs(library), visibleIDs);
+    assert.equal(library.get('resource-topic').value, 'Display');
+    assert.equal(library.get('resource-sort').value, 'oldest');
+    assert.equal(library.button('component').getAttribute('aria-pressed'), 'true');
 });
 
 console.log(`\n${passed} resources checks passed.`);
